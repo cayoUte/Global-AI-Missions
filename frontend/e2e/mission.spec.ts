@@ -97,17 +97,20 @@ test('new student: check-in → full mission by keyboard → report → progress
   // The Progress width at 360 px is checked by the next test (known bug BUG-001).
 })
 
-test('Progress has no horizontal page scroll at 360 px', async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name !== 'mobile-360', 'a 360 px check')
-  // BUG-001 (docs/qa/CHECKLIST.md): the Attempt history table is ~25 px wider than 360 px.
-  // Expected to fail until the fix lands; Playwright then reports an unexpected pass, and this
-  // line must be removed.
-  test.fail(true, 'BUG-001: Attempt history table overflows at 360 px')
+test('Progress has no horizontal page scroll at 360 and 768 px', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'mobile-360', 'a small-screen check')
+  // BUG-001 (docs/qa/CHECKLIST.md): the Attempt history table is wider than the page at 360 px
+  // (+25 px) and at 768 px (+217 px). Expected to fail until the fix lands; Playwright then
+  // reports an unexpected pass, and this line must be removed.
+  test.fail(true, 'BUG-001: Attempt history table overflows the page')
   const login = await page.request.post('/api/auth/login', {
     data: { email: 'veteran@globalai.test', password: DEMO_PASSWORD },
   })
   expect(login.status()).toBe(200)
-  await page.goto('/progress')
-  await expect(page.getByRole('heading', { name: 'Attempt history' })).toBeVisible()
-  await expectNoHorizontalScroll(page)
+  for (const width of [360, 768]) {
+    await page.setViewportSize({ width, height: 900 })
+    await page.goto('/progress')
+    await expect(page.getByRole('heading', { name: 'Attempt history' })).toBeVisible()
+    await expectNoHorizontalScroll(page)
+  }
 })
