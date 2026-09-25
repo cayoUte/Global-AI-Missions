@@ -30,6 +30,8 @@ def list_classes(user: TeacherOrAdmin, session: SessionDep) -> ClassesResponse:
 
 
 @router.get("/teacher/classes/{class_id}/progress", tags=["teacher"])
-def class_progress(class_id: str, user: TeacherOrAdmin, session: SessionDep) -> ClassProgressResponse:
+def class_progress(
+    class_id: str, user: TeacherOrAdmin, session: SessionDep
+) -> ClassProgressResponse:
     """That class's teacher or an admin; another teacher's class is 404 (not 403)."""
     return world_service.class_progress(session, user, class_id)

@@ -19,7 +19,9 @@ def get_config() -> ConfigResponse:
 
 
 @router.post("/auth/login")
-def login(body: LoginRequest, request: Request, response: Response, session: SessionDep) -> UserView:
+def login(
+    body: LoginRequest, request: Request, response: Response, session: SessionDep
+) -> UserView:
     """Sets the httpOnly session cookie. Rate limited per (client IP, email)."""
     client_ip = request.client.host if request.client else "unknown"
     user, token = auth_service.login(session, body.email, body.password, client_ip)

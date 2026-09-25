@@ -82,4 +82,3 @@ class StateView(BaseModel):
     clock: Clock
     node: NodeView
     maya: MayaView
-

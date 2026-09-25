@@ -262,8 +262,9 @@ def _answer_action(item: Mapping[str, Any] | None, req: AnswerRequest) -> Action
 
 def _invalid(field: str, message: str) -> DomainError:
     return DomainError(
-        ErrorCode.VALIDATION_ERROR, "Invalid answer.", {"errors": [{"field": field,
-                                                                    "message": message}]}
+        ErrorCode.VALIDATION_ERROR,
+        "Invalid answer.",
+        {"errors": [{"field": field, "message": message}]},
     )
 
 
@@ -314,8 +315,10 @@ def _grade_and_level(session: Session, attempt: Any, loaded: LoadedMission) -> N
 def graded_items(session: Session, attempt: Any, loaded: LoadedMission) -> list[grading.GradedItem]:
     """Every item of the mission with the outcome stored when its answer was locked. The total
     is always the number of items (a missing answer, impossible by design, counts as incorrect)."""
-    stored = {row.item_id: bool(row.is_correct) for row in
-              attempts_repo.list_attempt_answers(session, attempt.id)}
+    stored = {
+        row.item_id: bool(row.is_correct)
+        for row in attempts_repo.list_attempt_answers(session, attempt.id)
+    }
     return [
         grading.GradedItem(item_id, item["skill"], item["cefr"], stored.get(item_id, False))
         for item_id, item in loaded.graph.items.items()

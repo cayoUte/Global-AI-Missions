@@ -183,8 +183,10 @@ def _maya_pick(session: Session, user: Any, history: Sequence[Any]) -> str | Non
     candidates = [m.id for m in candidate_missions(session)]
     if row is not None and row.content.get("next_mission_id") in candidates:
         return str(row.content["next_mission_id"])
-    results = [grading.SkillResult(s.skill, s.correct, s.total,
-                                   grading.percent(s.correct, s.total)) for s in history[0].skills]
+    results = [
+        grading.SkillResult(s.skill, s.correct, s.total, grading.percent(s.correct, s.total))
+        for s in history[0].skills
+    ]
     _, challenge = grading.strength_and_challenge(results)
     return coach.default_next_mission(challenge, candidates)
 

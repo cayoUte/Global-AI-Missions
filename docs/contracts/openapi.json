@@ -1,0 +1,2728 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Global AI Missions API",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/api/health": {
+      "get": {
+        "tags": [
+          "health"
+        ],
+        "summary": "Health",
+        "description": "Liveness probe. Public, no database access.",
+        "operationId": "health_api_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/config": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Get Config",
+        "description": "Public. Demo accounts and the demo password only when DEMO_MODE=true.",
+        "operationId": "get_config_api_config_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfigResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Login",
+        "description": "Sets the httpOnly session cookie. Rate limited per (client IP, email).",
+        "operationId": "login_api_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Logout",
+        "description": "Always 204; clears the cookie whether or not a session existed.",
+        "operationId": "logout_api_auth_logout_post",
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          }
+        }
+      }
+    },
+    "/api/auth/me": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Me",
+        "operationId": "me_api_auth_me_get",
+        "parameters": [
+          {
+            "name": "gam_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gam Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/world": {
+      "get": {
+        "tags": [
+          "world"
+        ],
+        "summary": "Get World",
+        "operationId": "get_world_api_world_get",
+        "parameters": [
+          {
+            "name": "gam_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gam Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorldResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me/progress": {
+      "get": {
+        "tags": [
+          "world"
+        ],
+        "summary": "Get Progress",
+        "operationId": "get_progress_api_me_progress_get",
+        "parameters": [
+          {
+            "name": "gam_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gam Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgressResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/teacher/classes": {
+      "get": {
+        "tags": [
+          "world",
+          "teacher"
+        ],
+        "summary": "List Classes",
+        "operationId": "list_classes_api_teacher_classes_get",
+        "parameters": [
+          {
+            "name": "gam_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gam Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClassesResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/teacher/classes/{class_id}/progress": {
+      "get": {
+        "tags": [
+          "world",
+          "teacher"
+        ],
+        "summary": "Class Progress",
+        "description": "That class's teacher or an admin; another teacher's class is 404 (not 403).",
+        "operationId": "class_progress_api_teacher_classes__class_id__progress_get",
+        "parameters": [
+          {
+            "name": "class_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Class Id"
+            }
+          },
+          {
+            "name": "gam_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gam Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClassProgressResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/missions/{mission_id}/attempts": {
+      "post": {
+        "tags": [
+          "attempts"
+        ],
+        "summary": "Start Attempt",
+        "description": "Start the mission, or return the OPEN attempt (200) so a finished run can be submitted.",
+        "operationId": "start_attempt_api_missions__mission_id__attempts_post",
+        "parameters": [
+          {
+            "name": "mission_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Mission Id"
+            }
+          },
+          {
+            "name": "gam_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gam Session"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StateView"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "The open attempt already existed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StateView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/attempts/{attempt_id}": {
+      "get": {
+        "tags": [
+          "attempts"
+        ],
+        "summary": "Get Attempt",
+        "description": "The current StateView: how a student resumes after a reload or a lost connection.",
+        "operationId": "get_attempt_api_attempts__attempt_id__get",
+        "parameters": [
+          {
+            "name": "attempt_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Attempt Id"
+            }
+          },
+          {
+            "name": "gam_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gam Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StateView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/attempts/{attempt_id}/advance": {
+      "post": {
+        "tags": [
+          "attempts"
+        ],
+        "summary": "Advance",
+        "description": "CONTINUE on a narrative or consequence node; node_id must be the current node.",
+        "operationId": "advance_api_attempts__attempt_id__advance_post",
+        "parameters": [
+          {
+            "name": "attempt_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Attempt Id"
+            }
+          },
+          {
+            "name": "gam_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gam Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdvanceRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StateView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/attempts/{attempt_id}/answer": {
+      "post": {
+        "tags": [
+          "attempts"
+        ],
+        "summary": "Answer",
+        "description": "Lock the checkpoint's answer; the server grades it. No outcome field (F-01).",
+        "operationId": "answer_api_attempts__attempt_id__answer_post",
+        "parameters": [
+          {
+            "name": "attempt_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Attempt Id"
+            }
+          },
+          {
+            "name": "gam_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gam Session"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnswerRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnswerResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/attempts/{attempt_id}/submit": {
+      "post": {
+        "tags": [
+          "attempts"
+        ],
+        "summary": "Submit",
+        "description": "Two-phase and idempotent: grade once, then Maya's feedback. Returns the Report.",
+        "operationId": "submit_api_attempts__attempt_id__submit_post",
+        "parameters": [
+          {
+            "name": "attempt_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Attempt Id"
+            }
+          },
+          {
+            "name": "gam_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gam Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Report"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/attempts/{attempt_id}/report": {
+      "get": {
+        "tags": [
+          "attempts"
+        ],
+        "summary": "Get Report",
+        "operationId": "get_report_api_attempts__attempt_id__report_get",
+        "parameters": [
+          {
+            "name": "attempt_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Attempt Id"
+            }
+          },
+          {
+            "name": "gam_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gam Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Report"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AdvanceRequest": {
+        "properties": {
+          "node_id": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Node Id"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "node_id"
+        ],
+        "title": "AdvanceRequest"
+      },
+      "AnswerRequest": {
+        "properties": {
+          "node_id": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Node Id"
+          },
+          "option_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-z0-9]{1,8}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Option Id"
+          },
+          "text": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "node_id"
+        ],
+        "title": "AnswerRequest"
+      },
+      "AnswerResponse": {
+        "properties": {
+          "maya_line": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Maya Line"
+          },
+          "state": {
+            "$ref": "#/components/schemas/StateView"
+          }
+        },
+        "type": "object",
+        "required": [
+          "maya_line",
+          "state"
+        ],
+        "title": "AnswerResponse",
+        "description": "No outcome / is_correct field (F-01): the story carries what happened."
+      },
+      "AttemptRecord": {
+        "properties": {
+          "attempt_number": {
+            "type": "integer",
+            "title": "Attempt Number"
+          },
+          "started_at": {
+            "type": "string",
+            "title": "Started At"
+          },
+          "submitted_at": {
+            "type": "string",
+            "title": "Submitted At"
+          },
+          "ending": {
+            "$ref": "#/components/schemas/EndingRef"
+          },
+          "story_minutes_used": {
+            "type": "integer",
+            "title": "Story Minutes Used"
+          },
+          "rescue_used": {
+            "type": "boolean",
+            "title": "Rescue Used"
+          },
+          "hints_received": {
+            "type": "integer",
+            "title": "Hints Received"
+          }
+        },
+        "type": "object",
+        "required": [
+          "attempt_number",
+          "started_at",
+          "submitted_at",
+          "ending",
+          "story_minutes_used",
+          "rescue_used",
+          "hints_received"
+        ],
+        "title": "AttemptRecord"
+      },
+      "AudioStimulus": {
+        "properties": {
+          "kind": {
+            "type": "string",
+            "const": "audio",
+            "title": "Kind"
+          },
+          "speaker": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Speaker"
+          },
+          "audio_script": {
+            "type": "string",
+            "title": "Audio Script"
+          },
+          "rate": {
+            "type": "number",
+            "title": "Rate"
+          },
+          "text": {
+            "type": "null",
+            "title": "Text"
+          }
+        },
+        "type": "object",
+        "required": [
+          "kind",
+          "speaker",
+          "audio_script",
+          "rate"
+        ],
+        "title": "AudioStimulus"
+      },
+      "CefrRange": {
+        "properties": {
+          "min": {
+            "type": "string",
+            "enum": [
+              "PRE_A1",
+              "A1",
+              "A2",
+              "B1",
+              "B2",
+              "C1"
+            ],
+            "title": "Min"
+          },
+          "max": {
+            "type": "string",
+            "enum": [
+              "PRE_A1",
+              "A1",
+              "A2",
+              "B1",
+              "B2",
+              "C1"
+            ],
+            "title": "Max"
+          }
+        },
+        "type": "object",
+        "required": [
+          "min",
+          "max"
+        ],
+        "title": "CefrRange"
+      },
+      "CheckpointView": {
+        "properties": {
+          "item_id": {
+            "type": "string",
+            "title": "Item Id"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "multiple_choice",
+              "fill_blank",
+              "comprehension",
+              "vocabulary"
+            ],
+            "title": "Type"
+          },
+          "prompt": {
+            "type": "string",
+            "title": "Prompt"
+          },
+          "stimulus": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AudioStimulus"
+              },
+              {
+                "$ref": "#/components/schemas/TextStimulus"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stimulus"
+          },
+          "options": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/OptionView"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Options"
+          }
+        },
+        "type": "object",
+        "required": [
+          "item_id",
+          "type",
+          "prompt",
+          "stimulus",
+          "options"
+        ],
+        "title": "CheckpointView"
+      },
+      "ClassProgressResponse": {
+        "properties": {
+          "class_id": {
+            "type": "string",
+            "title": "Class Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "students": {
+            "items": {
+              "$ref": "#/components/schemas/ClassStudent"
+            },
+            "type": "array",
+            "title": "Students"
+          }
+        },
+        "type": "object",
+        "required": [
+          "class_id",
+          "name",
+          "students"
+        ],
+        "title": "ClassProgressResponse"
+      },
+      "ClassStudent": {
+        "properties": {
+          "display_name": {
+            "type": "string",
+            "title": "Display Name"
+          },
+          "missions_played": {
+            "type": "integer",
+            "title": "Missions Played"
+          },
+          "latest_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latest Label"
+          },
+          "profile": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Profile"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "last_activity_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Activity At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "display_name",
+          "missions_played",
+          "latest_label",
+          "profile",
+          "last_activity_at"
+        ],
+        "title": "ClassStudent"
+      },
+      "ClassSummary": {
+        "properties": {
+          "class_id": {
+            "type": "string",
+            "title": "Class Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "teacher_name": {
+            "type": "string",
+            "title": "Teacher Name"
+          },
+          "student_count": {
+            "type": "integer",
+            "title": "Student Count"
+          }
+        },
+        "type": "object",
+        "required": [
+          "class_id",
+          "name",
+          "teacher_name",
+          "student_count"
+        ],
+        "title": "ClassSummary"
+      },
+      "ClassesResponse": {
+        "properties": {
+          "classes": {
+            "items": {
+              "$ref": "#/components/schemas/ClassSummary"
+            },
+            "type": "array",
+            "title": "Classes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "classes"
+        ],
+        "title": "ClassesResponse"
+      },
+      "Clock": {
+        "properties": {
+          "time": {
+            "type": "string",
+            "title": "Time"
+          },
+          "minutes_left": {
+            "type": "integer",
+            "title": "Minutes Left"
+          },
+          "train_departed": {
+            "type": "boolean",
+            "title": "Train Departed"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          }
+        },
+        "type": "object",
+        "required": [
+          "time",
+          "minutes_left",
+          "train_departed",
+          "label"
+        ],
+        "title": "Clock"
+      },
+      "ConfigResponse": {
+        "properties": {
+          "demo_mode": {
+            "type": "boolean",
+            "title": "Demo Mode"
+          },
+          "demo_accounts": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/DemoAccount"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Demo Accounts"
+          },
+          "demo_password": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Demo Password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "demo_mode",
+          "demo_accounts",
+          "demo_password"
+        ],
+        "title": "ConfigResponse"
+      },
+      "DemoAccount": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "display_name": {
+            "type": "string",
+            "title": "Display Name"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "student",
+              "teacher",
+              "admin"
+            ],
+            "title": "Role"
+          },
+          "purpose": {
+            "type": "string",
+            "title": "Purpose"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email",
+          "display_name",
+          "role",
+          "purpose"
+        ],
+        "title": "DemoAccount"
+      },
+      "DiaryCheckpoint": {
+        "properties": {
+          "item_id": {
+            "type": "string",
+            "title": "Item Id"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "multiple_choice",
+              "fill_blank",
+              "comprehension",
+              "vocabulary"
+            ],
+            "title": "Type"
+          },
+          "skill": {
+            "type": "string",
+            "enum": [
+              "grammar",
+              "vocabulary",
+              "reading",
+              "listening",
+              "speaking"
+            ],
+            "title": "Skill"
+          },
+          "cefr": {
+            "type": "string",
+            "enum": [
+              "PRE_A1",
+              "A1",
+              "A2",
+              "B1",
+              "B2",
+              "C1"
+            ],
+            "title": "Cefr"
+          },
+          "outcome": {
+            "type": "string",
+            "enum": [
+              "understood",
+              "missed"
+            ],
+            "title": "Outcome"
+          }
+        },
+        "type": "object",
+        "required": [
+          "item_id",
+          "type",
+          "skill",
+          "cefr",
+          "outcome"
+        ],
+        "title": "DiaryCheckpoint"
+      },
+      "DiaryEntryView": {
+        "properties": {
+          "seq": {
+            "type": "integer",
+            "title": "Seq"
+          },
+          "clock": {
+            "type": "string",
+            "title": "Clock"
+          },
+          "node_id": {
+            "type": "string",
+            "title": "Node Id"
+          },
+          "kind": {
+            "type": "string",
+            "title": "Kind"
+          },
+          "location": {
+            "type": "string",
+            "title": "Location"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text"
+          },
+          "checkpoint": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DiaryCheckpoint"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "maya_decision": {
+            "type": "string",
+            "enum": [
+              "quiet",
+              "hint",
+              "rescue"
+            ],
+            "title": "Maya Decision"
+          }
+        },
+        "type": "object",
+        "required": [
+          "seq",
+          "clock",
+          "node_id",
+          "kind",
+          "location",
+          "text",
+          "checkpoint",
+          "maya_decision"
+        ],
+        "title": "DiaryEntryView"
+      },
+      "EndingRef": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key",
+          "title"
+        ],
+        "title": "EndingRef"
+      },
+      "FeedbackSource": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ready",
+              "fallback"
+            ],
+            "title": "Status"
+          },
+          "provider_label": {
+            "type": "string",
+            "title": "Provider Label"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "provider_label"
+        ],
+        "title": "FeedbackSource"
+      },
+      "Greeting": {
+        "properties": {
+          "text": {
+            "type": "string",
+            "title": "Text"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "first_meeting",
+              "memory"
+            ],
+            "title": "Source"
+          },
+          "mood": {
+            "type": "string",
+            "enum": [
+              "curious",
+              "encouraging",
+              "worried",
+              "proud"
+            ],
+            "title": "Mood"
+          }
+        },
+        "type": "object",
+        "required": [
+          "text",
+          "source",
+          "mood"
+        ],
+        "title": "Greeting"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HealthResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "title": "HealthResponse"
+      },
+      "HistoryRow": {
+        "properties": {
+          "attempt_id": {
+            "type": "string",
+            "title": "Attempt Id"
+          },
+          "attempt_number": {
+            "type": "integer",
+            "title": "Attempt Number"
+          },
+          "mission_id": {
+            "type": "string",
+            "title": "Mission Id"
+          },
+          "mission_title": {
+            "type": "string",
+            "title": "Mission Title"
+          },
+          "submitted_at": {
+            "type": "string",
+            "title": "Submitted At"
+          },
+          "ending": {
+            "$ref": "#/components/schemas/EndingRef"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "suggested_cefr": {
+            "type": "string",
+            "enum": [
+              "PRE_A1",
+              "A1",
+              "A2",
+              "B1",
+              "B2",
+              "C1"
+            ],
+            "title": "Suggested Cefr"
+          },
+          "score_pct": {
+            "type": "integer",
+            "title": "Score Pct"
+          },
+          "correct": {
+            "type": "integer",
+            "title": "Correct"
+          },
+          "incorrect": {
+            "type": "integer",
+            "title": "Incorrect"
+          },
+          "skills": {
+            "items": {
+              "$ref": "#/components/schemas/SkillScore"
+            },
+            "type": "array",
+            "title": "Skills"
+          }
+        },
+        "type": "object",
+        "required": [
+          "attempt_id",
+          "attempt_number",
+          "mission_id",
+          "mission_title",
+          "submitted_at",
+          "ending",
+          "label",
+          "suggested_cefr",
+          "score_pct",
+          "correct",
+          "incorrect",
+          "skills"
+        ],
+        "title": "HistoryRow"
+      },
+      "Interpretation": {
+        "properties": {
+          "summary": {
+            "type": "string",
+            "title": "Summary"
+          },
+          "strength": {
+            "type": "string",
+            "enum": [
+              "grammar",
+              "vocabulary",
+              "reading",
+              "listening",
+              "speaking"
+            ],
+            "title": "Strength"
+          },
+          "challenge": {
+            "type": "string",
+            "enum": [
+              "grammar",
+              "vocabulary",
+              "reading",
+              "listening",
+              "speaking"
+            ],
+            "title": "Challenge"
+          },
+          "recommendation": {
+            "type": "string",
+            "title": "Recommendation"
+          }
+        },
+        "type": "object",
+        "required": [
+          "summary",
+          "strength",
+          "challenge",
+          "recommendation"
+        ],
+        "title": "Interpretation"
+      },
+      "LatestResult": {
+        "properties": {
+          "attempt_id": {
+            "type": "string",
+            "title": "Attempt Id"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "submitted_at": {
+            "type": "string",
+            "title": "Submitted At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "attempt_id",
+          "label",
+          "submitted_at"
+        ],
+        "title": "LatestResult"
+      },
+      "LevelEvidence": {
+        "properties": {
+          "cefr": {
+            "type": "string",
+            "enum": [
+              "PRE_A1",
+              "A1",
+              "A2",
+              "B1",
+              "B2",
+              "C1"
+            ],
+            "title": "Cefr"
+          },
+          "correct": {
+            "type": "integer",
+            "title": "Correct"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "required": {
+            "type": "integer",
+            "title": "Required"
+          },
+          "met": {
+            "type": "boolean",
+            "title": "Met"
+          }
+        },
+        "type": "object",
+        "required": [
+          "cefr",
+          "correct",
+          "total",
+          "required",
+          "met"
+        ],
+        "title": "LevelEvidence"
+      },
+      "LevelPoint": {
+        "properties": {
+          "attempt_id": {
+            "type": "string",
+            "title": "Attempt Id"
+          },
+          "submitted_at": {
+            "type": "string",
+            "title": "Submitted At"
+          },
+          "suggested_cefr": {
+            "type": "string",
+            "enum": [
+              "PRE_A1",
+              "A1",
+              "A2",
+              "B1",
+              "B2",
+              "C1"
+            ],
+            "title": "Suggested Cefr"
+          }
+        },
+        "type": "object",
+        "required": [
+          "attempt_id",
+          "submitted_at",
+          "suggested_cefr"
+        ],
+        "title": "LevelPoint"
+      },
+      "LoginRequest": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "maxLength": 254,
+            "title": "Email"
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1,
+            "title": "Password"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "email",
+          "password"
+        ],
+        "title": "LoginRequest"
+      },
+      "MayaView": {
+        "properties": {
+          "mood": {
+            "type": "string",
+            "enum": [
+              "curious",
+              "encouraging",
+              "worried",
+              "proud"
+            ],
+            "title": "Mood"
+          },
+          "decision": {
+            "type": "string",
+            "enum": [
+              "quiet",
+              "hint",
+              "rescue"
+            ],
+            "title": "Decision"
+          },
+          "line": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Line"
+          }
+        },
+        "type": "object",
+        "required": [
+          "mood",
+          "decision",
+          "line"
+        ],
+        "title": "MayaView"
+      },
+      "MissedCheckpoint": {
+        "properties": {
+          "item_id": {
+            "type": "string",
+            "title": "Item Id"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "multiple_choice",
+              "fill_blank",
+              "comprehension",
+              "vocabulary"
+            ],
+            "title": "Type"
+          },
+          "skill": {
+            "type": "string",
+            "enum": [
+              "grammar",
+              "vocabulary",
+              "reading",
+              "listening",
+              "speaking"
+            ],
+            "title": "Skill"
+          },
+          "cefr": {
+            "type": "string",
+            "enum": [
+              "PRE_A1",
+              "A1",
+              "A2",
+              "B1",
+              "B2",
+              "C1"
+            ],
+            "title": "Cefr"
+          },
+          "prompt": {
+            "type": "string",
+            "title": "Prompt"
+          },
+          "stimulus": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AudioStimulus"
+              },
+              {
+                "$ref": "#/components/schemas/TextStimulus"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stimulus"
+          },
+          "your_answer": {
+            "type": "string",
+            "title": "Your Answer"
+          },
+          "correct_answer": {
+            "type": "string",
+            "title": "Correct Answer"
+          },
+          "explanation": {
+            "type": "string",
+            "title": "Explanation"
+          },
+          "maya_tip": {
+            "type": "string",
+            "title": "Maya Tip"
+          }
+        },
+        "type": "object",
+        "required": [
+          "item_id",
+          "type",
+          "skill",
+          "cefr",
+          "prompt",
+          "stimulus",
+          "your_answer",
+          "correct_answer",
+          "explanation",
+          "maya_tip"
+        ],
+        "title": "MissedCheckpoint"
+      },
+      "MissionCard": {
+        "properties": {
+          "mission_id": {
+            "type": "string",
+            "title": "Mission Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "world_zone": {
+            "type": "string",
+            "title": "World Zone"
+          },
+          "teaser": {
+            "type": "string",
+            "title": "Teaser"
+          },
+          "sort_order": {
+            "type": "integer",
+            "title": "Sort Order"
+          },
+          "skill_focus": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "grammar",
+                "vocabulary",
+                "reading",
+                "listening",
+                "speaking"
+              ]
+            },
+            "type": "array",
+            "title": "Skill Focus"
+          },
+          "cefr_range": {
+            "$ref": "#/components/schemas/CefrRange"
+          },
+          "playable": {
+            "type": "boolean",
+            "title": "Playable"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "available",
+              "in_progress",
+              "waiting_to_submit",
+              "completed",
+              "locked",
+              "in_preparation"
+            ],
+            "title": "State"
+          },
+          "is_maya_pick": {
+            "type": "boolean",
+            "title": "Is Maya Pick"
+          },
+          "unlock_hint": {
+            "type": "string",
+            "title": "Unlock Hint"
+          },
+          "open_attempt": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OpenAttemptCard"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "latest_result": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LatestResult"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "attempts_submitted": {
+            "type": "integer",
+            "title": "Attempts Submitted"
+          }
+        },
+        "type": "object",
+        "required": [
+          "mission_id",
+          "title",
+          "world_zone",
+          "teaser",
+          "sort_order",
+          "skill_focus",
+          "cefr_range",
+          "playable",
+          "state",
+          "is_maya_pick",
+          "unlock_hint",
+          "open_attempt",
+          "latest_result",
+          "attempts_submitted"
+        ],
+        "title": "MissionCard"
+      },
+      "NextMission": {
+        "properties": {
+          "mission_id": {
+            "type": "string",
+            "title": "Mission Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "skill_focus": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "grammar",
+                "vocabulary",
+                "reading",
+                "listening",
+                "speaking"
+              ]
+            },
+            "type": "array",
+            "title": "Skill Focus"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "available",
+              "in_progress",
+              "waiting_to_submit",
+              "completed",
+              "locked",
+              "in_preparation"
+            ],
+            "title": "State"
+          },
+          "unlock_hint": {
+            "type": "string",
+            "title": "Unlock Hint"
+          }
+        },
+        "type": "object",
+        "required": [
+          "mission_id",
+          "title",
+          "skill_focus",
+          "reason",
+          "state",
+          "unlock_hint"
+        ],
+        "title": "NextMission"
+      },
+      "NodeView": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "narrative",
+              "checkpoint",
+              "consequence",
+              "ending"
+            ],
+            "title": "Kind"
+          },
+          "scene": {
+            "$ref": "#/components/schemas/SceneView"
+          },
+          "checkpoint": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CheckpointView"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "ending": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EndingRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "scene",
+          "checkpoint",
+          "ending"
+        ],
+        "title": "NodeView"
+      },
+      "Note": {
+        "properties": {
+          "text": {
+            "type": "string",
+            "title": "Text"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "text",
+          "created_at"
+        ],
+        "title": "Note"
+      },
+      "OpenAttemptCard": {
+        "properties": {
+          "attempt_id": {
+            "type": "string",
+            "title": "Attempt Id"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "in_progress",
+              "completed"
+            ],
+            "title": "Status"
+          },
+          "clock": {
+            "$ref": "#/components/schemas/Clock"
+          },
+          "location": {
+            "type": "string",
+            "title": "Location"
+          },
+          "ending": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EndingRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "attempt_id",
+          "status",
+          "clock",
+          "location",
+          "ending"
+        ],
+        "title": "OpenAttemptCard"
+      },
+      "OptionView": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "text"
+        ],
+        "title": "OptionView"
+      },
+      "Profile": {
+        "properties": {
+          "based_on_attempts": {
+            "type": "integer",
+            "title": "Based On Attempts"
+          },
+          "skills": {
+            "items": {
+              "$ref": "#/components/schemas/SkillPct"
+            },
+            "type": "array",
+            "title": "Skills"
+          }
+        },
+        "type": "object",
+        "required": [
+          "based_on_attempts",
+          "skills"
+        ],
+        "title": "Profile"
+      },
+      "ProgressOpenAttempt": {
+        "properties": {
+          "attempt_id": {
+            "type": "string",
+            "title": "Attempt Id"
+          },
+          "mission_id": {
+            "type": "string",
+            "title": "Mission Id"
+          },
+          "mission_title": {
+            "type": "string",
+            "title": "Mission Title"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "in_progress",
+              "completed"
+            ],
+            "title": "Status"
+          },
+          "clock": {
+            "$ref": "#/components/schemas/Clock"
+          }
+        },
+        "type": "object",
+        "required": [
+          "attempt_id",
+          "mission_id",
+          "mission_title",
+          "status",
+          "clock"
+        ],
+        "title": "ProgressOpenAttempt"
+      },
+      "ProgressResponse": {
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Profile"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "history": {
+            "items": {
+              "$ref": "#/components/schemas/HistoryRow"
+            },
+            "type": "array",
+            "title": "History"
+          },
+          "level_history": {
+            "items": {
+              "$ref": "#/components/schemas/LevelPoint"
+            },
+            "type": "array",
+            "title": "Level History"
+          },
+          "notes": {
+            "items": {
+              "$ref": "#/components/schemas/Note"
+            },
+            "type": "array",
+            "title": "Notes"
+          },
+          "open_attempt": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ProgressOpenAttempt"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "profile",
+          "history",
+          "level_history",
+          "notes",
+          "open_attempt"
+        ],
+        "title": "ProgressResponse"
+      },
+      "Report": {
+        "properties": {
+          "attempt_id": {
+            "type": "string",
+            "title": "Attempt Id"
+          },
+          "mission_id": {
+            "type": "string",
+            "title": "Mission Id"
+          },
+          "mission_title": {
+            "type": "string",
+            "title": "Mission Title"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "result": {
+            "$ref": "#/components/schemas/ResultBlock"
+          },
+          "attempt_record": {
+            "$ref": "#/components/schemas/AttemptRecord"
+          },
+          "interpretation": {
+            "$ref": "#/components/schemas/Interpretation"
+          },
+          "feedback_source": {
+            "$ref": "#/components/schemas/FeedbackSource"
+          },
+          "next_mission": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/NextMission"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "diary": {
+            "items": {
+              "$ref": "#/components/schemas/DiaryEntryView"
+            },
+            "type": "array",
+            "title": "Diary"
+          },
+          "missed": {
+            "items": {
+              "$ref": "#/components/schemas/MissedCheckpoint"
+            },
+            "type": "array",
+            "title": "Missed"
+          }
+        },
+        "type": "object",
+        "required": [
+          "attempt_id",
+          "mission_id",
+          "mission_title",
+          "label",
+          "result",
+          "attempt_record",
+          "interpretation",
+          "feedback_source",
+          "next_mission",
+          "diary",
+          "missed"
+        ],
+        "title": "Report"
+      },
+      "ResultBlock": {
+        "properties": {
+          "score_pct": {
+            "type": "integer",
+            "title": "Score Pct"
+          },
+          "correct": {
+            "type": "integer",
+            "title": "Correct"
+          },
+          "incorrect": {
+            "type": "integer",
+            "title": "Incorrect"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "skills": {
+            "items": {
+              "$ref": "#/components/schemas/SkillScore"
+            },
+            "type": "array",
+            "title": "Skills"
+          },
+          "unmeasured_skills": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "grammar",
+                "vocabulary",
+                "reading",
+                "listening",
+                "speaking"
+              ]
+            },
+            "type": "array",
+            "title": "Unmeasured Skills"
+          },
+          "suggested_level": {
+            "$ref": "#/components/schemas/SuggestedLevel"
+          }
+        },
+        "type": "object",
+        "required": [
+          "score_pct",
+          "correct",
+          "incorrect",
+          "total",
+          "skills",
+          "unmeasured_skills",
+          "suggested_level"
+        ],
+        "title": "ResultBlock"
+      },
+      "SceneLine": {
+        "properties": {
+          "speaker": {
+            "type": "string",
+            "title": "Speaker"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text"
+          }
+        },
+        "type": "object",
+        "required": [
+          "speaker",
+          "text"
+        ],
+        "title": "SceneLine"
+      },
+      "SceneView": {
+        "properties": {
+          "location": {
+            "type": "string",
+            "title": "Location"
+          },
+          "backdrop": {
+            "type": "string",
+            "title": "Backdrop"
+          },
+          "lines": {
+            "items": {
+              "$ref": "#/components/schemas/SceneLine"
+            },
+            "type": "array",
+            "title": "Lines"
+          }
+        },
+        "type": "object",
+        "required": [
+          "location",
+          "backdrop",
+          "lines"
+        ],
+        "title": "SceneView"
+      },
+      "SkillPct": {
+        "properties": {
+          "skill": {
+            "type": "string",
+            "enum": [
+              "grammar",
+              "vocabulary",
+              "reading",
+              "listening",
+              "speaking"
+            ],
+            "title": "Skill"
+          },
+          "pct": {
+            "type": "integer",
+            "title": "Pct"
+          }
+        },
+        "type": "object",
+        "required": [
+          "skill",
+          "pct"
+        ],
+        "title": "SkillPct"
+      },
+      "SkillScore": {
+        "properties": {
+          "skill": {
+            "type": "string",
+            "enum": [
+              "grammar",
+              "vocabulary",
+              "reading",
+              "listening",
+              "speaking"
+            ],
+            "title": "Skill"
+          },
+          "correct": {
+            "type": "integer",
+            "title": "Correct"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "pct": {
+            "type": "integer",
+            "title": "Pct"
+          }
+        },
+        "type": "object",
+        "required": [
+          "skill",
+          "correct",
+          "total",
+          "pct"
+        ],
+        "title": "SkillScore"
+      },
+      "Snapshot": {
+        "properties": {
+          "missions_played": {
+            "type": "integer",
+            "title": "Missions Played"
+          },
+          "latest_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latest Label"
+          },
+          "profile": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Profile"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "missions_played",
+          "latest_label",
+          "profile"
+        ],
+        "title": "Snapshot"
+      },
+      "StateView": {
+        "properties": {
+          "attempt_id": {
+            "type": "string",
+            "title": "Attempt Id"
+          },
+          "mission_id": {
+            "type": "string",
+            "title": "Mission Id"
+          },
+          "mission_title": {
+            "type": "string",
+            "title": "Mission Title"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "in_progress",
+              "completed",
+              "submitted"
+            ],
+            "title": "Status"
+          },
+          "clock": {
+            "$ref": "#/components/schemas/Clock"
+          },
+          "node": {
+            "$ref": "#/components/schemas/NodeView"
+          },
+          "maya": {
+            "$ref": "#/components/schemas/MayaView"
+          }
+        },
+        "type": "object",
+        "required": [
+          "attempt_id",
+          "mission_id",
+          "mission_title",
+          "status",
+          "clock",
+          "node",
+          "maya"
+        ],
+        "title": "StateView"
+      },
+      "StudentName": {
+        "properties": {
+          "display_name": {
+            "type": "string",
+            "title": "Display Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "display_name"
+        ],
+        "title": "StudentName"
+      },
+      "SuggestedLevel": {
+        "properties": {
+          "cefr": {
+            "type": "string",
+            "enum": [
+              "PRE_A1",
+              "A1",
+              "A2",
+              "B1",
+              "B2",
+              "C1"
+            ],
+            "title": "Cefr"
+          },
+          "base_cefr": {
+            "type": "string",
+            "enum": [
+              "PRE_A1",
+              "A1",
+              "A2",
+              "B1",
+              "B2",
+              "C1"
+            ],
+            "title": "Base Cefr"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/LevelEvidence"
+            },
+            "type": "array",
+            "title": "Evidence"
+          }
+        },
+        "type": "object",
+        "required": [
+          "cefr",
+          "base_cefr",
+          "reason",
+          "evidence"
+        ],
+        "title": "SuggestedLevel"
+      },
+      "TextStimulus": {
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "dialogue",
+              "sign",
+              "message",
+              "notice",
+              "timetable"
+            ],
+            "title": "Kind"
+          },
+          "speaker": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Speaker"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text"
+          }
+        },
+        "type": "object",
+        "required": [
+          "kind",
+          "speaker",
+          "text"
+        ],
+        "title": "TextStimulus"
+      },
+      "UserView": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "display_name": {
+            "type": "string",
+            "title": "Display Name"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "student",
+              "teacher",
+              "admin"
+            ],
+            "title": "Role"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "email",
+          "display_name",
+          "role"
+        ],
+        "title": "UserView"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "WorldResponse": {
+        "properties": {
+          "student": {
+            "$ref": "#/components/schemas/StudentName"
+          },
+          "greeting": {
+            "$ref": "#/components/schemas/Greeting"
+          },
+          "cards": {
+            "items": {
+              "$ref": "#/components/schemas/MissionCard"
+            },
+            "type": "array",
+            "title": "Cards"
+          },
+          "snapshot": {
+            "$ref": "#/components/schemas/Snapshot"
+          }
+        },
+        "type": "object",
+        "required": [
+          "student",
+          "greeting",
+          "cards",
+          "snapshot"
+        ],
+        "title": "WorldResponse"
+      }
+    }
+  }
+}

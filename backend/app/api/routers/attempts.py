@@ -17,7 +17,9 @@ router = APIRouter(prefix="/api", tags=["attempts"])
     status_code=status.HTTP_201_CREATED,
     responses={200: {"model": StateView, "description": "The open attempt already existed."}},
 )
-def start_attempt(mission_id: str, response: Response, user: Student, session: SessionDep) -> StateView:
+def start_attempt(
+    mission_id: str, response: Response, user: Student, session: SessionDep
+) -> StateView:
     """Start the mission, or return the OPEN attempt (200) so a finished run can be submitted."""
     result = attempts_service.start_attempt(session, user, mission_id)
     if not result.created:
@@ -38,7 +40,9 @@ def advance(attempt_id: str, body: AdvanceRequest, user: Student, session: Sessi
 
 
 @router.post("/attempts/{attempt_id}/answer")
-def answer(attempt_id: str, body: AnswerRequest, user: Student, session: SessionDep) -> AnswerResponse:
+def answer(
+    attempt_id: str, body: AnswerRequest, user: Student, session: SessionDep
+) -> AnswerResponse:
     """Lock the checkpoint's answer; the server grades it. No outcome field (F-01)."""
     return attempts_service.answer(session, user, attempt_id, body)
 

@@ -71,7 +71,8 @@ def build_report(session: Session, user: Any, attempt: Any) -> Report:
             started_at=feedback.iso(attempt.started_at) or "",
             submitted_at=feedback.iso(attempt.submitted_at) or "",
             ending=ending_ref(graph, attempt.ending_node_id),
-            story_minutes_used=graph.minutes_available - attempts.engine_state(attempt).minutes_left,
+            story_minutes_used=graph.minutes_available
+            - attempts.engine_state(attempt).minutes_left,
             rescue_used=attempts.engine_state(attempt).rescued,
             hints_received=sum(1 for a in answers if a.hint_shown),
         ),
@@ -95,15 +96,20 @@ def _result_block(
     by_cefr = grading.grade_attempt(graded).by_cefr
     level = leveling.suggest_level(attempt.score_pct, by_cefr)
     if level.cefr != attempt.suggested_cefr:  # stored value wins; flag the drift loudly
-        logger.warning("Stored level %s differs from re-derived %s for attempt %s",
-                       attempt.suggested_cefr, level.cefr, attempt.id)
+        logger.warning(
+            "Stored level %s differs from re-derived %s for attempt %s",
+            attempt.suggested_cefr,
+            level.cefr,
+            attempt.id,
+        )
     return ResultBlock(
         score_pct=attempt.score_pct,
         correct=attempt.correct_count,
         incorrect=attempt.incorrect_count,
         total=attempt.correct_count + attempt.incorrect_count,
-        skills=[SkillScore(skill=s.skill, correct=s.correct, total=s.total, pct=s.pct)
-                for s in skills],
+        skills=[
+            SkillScore(skill=s.skill, correct=s.correct, total=s.total, pct=s.pct) for s in skills
+        ],
         unmeasured_skills=list(grading.UNMEASURED_SKILLS),
         suggested_level=SuggestedLevel(
             cefr=attempt.suggested_cefr,
@@ -199,5 +205,3 @@ def _missed(session: Session, answers: list[Any], loaded: LoadedMission) -> list
             )
         )
     return missed
-
-

@@ -56,9 +56,7 @@ def public_config() -> ConfigResponse:
     return ConfigResponse(
         demo_mode=True,
         demo_accounts=[
-            DemoAccount(
-                email=a.email, display_name=a.display_name, role=a.role, purpose=a.purpose
-            )
+            DemoAccount(email=a.email, display_name=a.display_name, role=a.role, purpose=a.purpose)
             for a in demo.DEMO_ACCOUNTS
         ],
         demo_password=demo.DEMO_PASSWORD,
