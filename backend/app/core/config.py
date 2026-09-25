@@ -36,6 +36,14 @@ class Settings(BaseSettings):
     coach_provider: str = "mock"
     anthropic_api_key: SecretStr | None = None
     anthropic_model: str | None = None
+    # COACH_PROVIDER=openai_compatible (CR-009): any OpenAI-compatible chat-completions API, e.g.
+    # Groq (https://api.groq.com/openai/v1) or xAI (https://api.x.ai/v1). No default model: model
+    # ids change, check the provider's model list. The label is the report footer's provider name
+    # (default derived from the host: "Groq", "Grok (xAI)", otherwise "AI coach").
+    openai_compat_base_url: str | None = None
+    openai_compat_api_key: SecretStr | None = None
+    openai_compat_model: str | None = None
+    openai_compat_label: str | None = None
 
     # Production mode: FastAPI serves the built SPA (single origin, no CORS). Defaults to
     # frontend/dist when that folder exists; development uses the Vite dev server instead.

@@ -2,8 +2,10 @@
 
     cd backend && uv run python -m app.ai.samples
 
-Always runs the mock. Also runs Claude when COACH_PROVIDER=anthropic and ANTHROPIC_API_KEY are
-set in the environment / .env (one paid call per scenario, about a cent in total).
+Always runs the mock. Also runs the configured LLM when COACH_PROVIDER names one and its
+variables are set in the environment / .env (anthropic: ANTHROPIC_API_KEY; openai_compatible:
+OPENAI_COMPAT_BASE_URL, _API_KEY, _MODEL). One call per scenario, about a cent in total with
+Claude, free on Groq's free tier. For a quick live check use scripts/coach_smoke.py instead.
 """
 
 import json

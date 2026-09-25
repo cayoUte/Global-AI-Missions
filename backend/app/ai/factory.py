@@ -2,6 +2,9 @@
 
 - COACH_PROVIDER=mock (default): the deterministic mock; no key, no network.
 - COACH_PROVIDER=anthropic: Claude, if ANTHROPIC_API_KEY is set; otherwise the mock (logged).
+- COACH_PROVIDER=openai_compatible: any OpenAI-compatible chat-completions API (Groq, xAI Grok,
+  ...), if OPENAI_COMPAT_BASE_URL, OPENAI_COMPAT_API_KEY and OPENAI_COMPAT_MODEL are all set;
+  otherwise the mock (logged).
 - Unknown value or a constructor error: the mock (logged). Submit never breaks on configuration.
 Timeouts, API errors and invalid output fall back per call (service.generate_feedback and
 app.services.coach.run_coach).
@@ -42,9 +45,35 @@ def _build_anthropic(settings: Any) -> CoachProvider:
     return AnthropicCoachProvider(api_key, getattr(settings, "anthropic_model", None) or None)
 
 
+def _build_openai_compatible(settings: Any) -> CoachProvider:
+    base_url = str(getattr(settings, "openai_compat_base_url", None) or "").strip()
+    api_key = _secret(getattr(settings, "openai_compat_api_key", None))
+    model = str(getattr(settings, "openai_compat_model", None) or "").strip()
+    missing = [
+        name
+        for name, value in (
+            ("OPENAI_COMPAT_BASE_URL", base_url),
+            ("OPENAI_COMPAT_API_KEY", api_key),
+            ("OPENAI_COMPAT_MODEL", model),
+        )
+        if not value
+    ]
+    if missing or api_key is None:
+        logger.warning(
+            "COACH_PROVIDER=openai_compatible but %s is empty; using the mock", ", ".join(missing)
+        )
+        return MockCoachProvider()
+    from app.ai.openai_compatible_provider import OpenAICompatibleCoachProvider
+
+    return OpenAICompatibleCoachProvider(
+        base_url, api_key, model, label=getattr(settings, "openai_compat_label", None)
+    )
+
+
 PROVIDERS: dict[str, Callable[[Any], CoachProvider]] = {
     "mock": _build_mock,
     "anthropic": _build_anthropic,
+    "openai_compatible": _build_openai_compatible,
 }
 
 
