@@ -1,6 +1,8 @@
 # Global AI Missions — local stack (delivery-engineer).
 #
-#   docker compose up -d --wait db     # PostgreSQL 16, waits until the healthcheck passes
+#   cp .env.example .env
+#   docker compose up -d --build       # PostgreSQL + the app on http://localhost:8000
+#   docker compose up -d --wait db     # only PostgreSQL (development without the app container)
 #   docker compose down                # stop (data kept in the gam_pgdata volume)
 #   docker compose down -v             # stop and wipe the database
 #
@@ -8,8 +10,8 @@
 # PostgreSQL already installed on the machine. Override with POSTGRES_HOST_PORT in .env.
 # Credentials are dev-only and match DATABASE_URL in .env.example.
 #
-# The `api` service (multi-stage Dockerfile: build the SPA, then FastAPI serves it, running
-# migrations and the seed on start) is added at the delivery phase, once the Dockerfile exists.
+# `api` is the production image (Dockerfile): FastAPI serves the API and the built SPA on one
+# origin; on start it runs the migrations and the idempotent seed (docker/entrypoint.sh).
 
 name: global-ai-missions
 
@@ -33,6 +35,33 @@ services:
       timeout: 3s
       retries: 20
       start_period: 5s
+
+  api:
+    build: .
+    image: global-ai-missions-api:latest
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    # Everything else (JWT_SECRET, COACH_PROVIDER, the optional provider keys, DEMO_MODE,
+    # COOKIE_SECURE...) comes from .env; the values below win over it.
+    env_file: .env
+    environment:
+      # The compose network, not the host port 5433 used by development tools.
+      DATABASE_URL: postgresql+psycopg://gam:gam@db:5432/gam
+      PORT: "8000"
+    ports:
+      - "${API_HOST_PORT:-8000}:8000"
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=3)"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
 volumes:
   gam_pgdata:

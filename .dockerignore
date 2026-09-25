@@ -1,0 +1,26 @@
+# Global AI Missions — Docker build context (delivery-engineer).
+# Allowlist: only what the Dockerfile copies reaches the build context.
+*
+!backend/
+!frontend/
+!content/
+!docs/contracts/*.schema.json
+!docker/entrypoint.sh
+
+# Never in the image: secrets, local environments, dependencies, build and test outputs.
+**/.env
+**/.env.*
+**/.venv
+**/__pycache__
+**/*.py[cod]
+**/.pytest_cache
+**/.ruff_cache
+**/node_modules
+frontend/dist
+frontend/coverage
+frontend/test-results
+frontend/playwright-report
+frontend/blob-report
+frontend/e2e/.auth
+backend/tests
+**/.DS_Store
