@@ -263,6 +263,8 @@ export const TYPEWRITER_CPS = 30
 
 Never: shake, bounce, spring overshoot on outcomes, confetti, particle effects, parallax on scroll, autoplaying audio.
 
+> Built 2026-09-25 (frontend-engineer): Typewriter (`lib/useTypewriter.ts`; Continue is gated only on narrative/consequence nodes, Confirm never waits for it; the untyped rest of a line stays in the layout as `invisible` text, so nothing jumps), Clock flip (`FlipText` in `DepartureBoard`, time part only; the sub-label swaps instantly) and Maya idle (the scene portrait; paused for `motion-quick` while a new bubble enters). Keyboard E2E presses Enter twice on narrative nodes: the first completes the text, the second advances.
+
 ---
 
 ## 8. Accessibility
@@ -808,12 +810,21 @@ No ranks, no comparisons with other students, no chart library. A Chart is a Sho
 
 ### 9.7 Teacher landing (PD-019, Must if the stretch is not built)
 
+> Superseded 2026-09-25: the §9.8 Teacher view is built, so teachers and admins land on it. Kept for the record.
+
 - Shell without the English World/Progress nav.
 - `h1` "Hello, {display_name}."
 - Body: "The teacher view isn't part of this build. Your roles are shown through the API." + **Check out**.
 - A student opening a teacher URL is redirected to the English World with the info notice "That page is for teachers."
 
 ### 9.8 Stretch — Teacher view
+
+> Built 2026-09-25 (frontend-engineer, `frontend/src/features/teacher/TeacherPage.tsx`). Choices made in the build:
+> - `h1` "Hello, {display_name}."; each class is an `h2` with a quiet line "{teacher_name} · {n} student(s)" (useful for an admin, who sees every class).
+> - The small-screen Level chip is the part of `latest_label` before the first " · " (a layout-only split, like the story clock); `md+` shows the label verbatim.
+> - Missing values (no report, no profile, no activity) show "—"; the table has no links or buttons (PD-030).
+> - The picker keeps the selected class in `?class=`; a teacher with no classes sees "No classes yet."
+> - The table caption is "Students in {class name}"; the student name is the row header (`th scope="row"`).
 
 - Shell (teacher nav: "Classes").
 - A class picker (a `<select>` styled as `secondary`) when there are 2+ classes.
@@ -865,7 +876,7 @@ No ranks, no comparisons with other students, no chart library. A Chart is a Sho
 | Progress | "Progress" · "In progress — {mission}" · "Waiting to submit — {mission}" · "Your English today" · "Attempt history" · "Newest first" · "Attempt {n}" · "Maya's notes" · "Maya hasn't written in her notebook yet." · "Your story starts tonight. Play The Last Train and your progress will appear here." · **Go to the English World** · "We couldn't load your progress. Try again." |
 | Type names (report only) | "Multiple choice" · "Fill in the blank" · "Comprehension" · "Vocabulary" |
 | Skill names | "Grammar" · "Listening" · "Reading" · "Vocabulary" (abbr. "Gr", "Li", "Re", "Vo") |
-| Teacher | "Hello, {name}." · "The teacher view isn't part of this build. Your roles are shown through the API." · "That page is for teachers." · "Classes" · "No students in this class yet." · "We couldn't load your class." |
+| Teacher | "Hello, {name}." · "The teacher view isn't part of this build. Your roles are shown through the API." (superseded, §9.7) · "That page is for teachers." · "Classes" · "Class" (picker label) · "Students in {class}" (caption) · "Student" · "Missions played" · "Latest report" · "Level" · "Last activity" · "{teacher} · {n} student(s)" · "No classes yet." · "No students in this class yet." · "We couldn't load your class." |
 | Replay | "Simulated run" · **Run simulation** · "Running the simulation…" · **Play** · **Show all** · "The simulation couldn't run." |
 | Global | "One moment…" · "This platform doesn't exist." · "You're offline. We'll reconnect when the signal comes back." |
 
