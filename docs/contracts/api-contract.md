@@ -247,7 +247,7 @@ Response `200`:
 
 ### 5.11 `POST /api/attempts/{attempt_id}/submit` — student, owner — two-phase, idempotent
 
-No body.
+No body: **submit takes no body; any body is ignored** (never parsed, never a 422). A client-sent `score_pct` or `is_correct` therefore has no effect: the response carries the server's grade (BUG-005, CR-010; `test_the_client_can_never_send_a_score`).
 
 - `in_progress` → `409 MISSION_NOT_FINISHED` (with `details.state`).
 - **Phase 1 (one short transaction):** `SELECT … FOR UPDATE` the attempt. If already `submitted`, skip to phase 2's check. Otherwise grade and level (`services/grading.py`, `services/leveling.py`, exactly as ASSESSMENT_SPEC), save `attempt_skill_scores` and the attempt totals, set `status = submitted`, `submitted_at`; commit.
@@ -461,7 +461,7 @@ Field rules:
 - `attempt_record.story_minutes_used` = `minutes_available − minutes_left` at the ending (path cost). `hints_received` = checkpoints where the planner decided `hint`.
 - `interpretation` is the coach's (or fallback's) validated output. `strength` and `challenge` always equal the deterministic values; `memory_note` and `next_greeting` are stored in coach memory and are not part of the report.
 - `feedback_source`: `status = "ready"` when a real LLM produced valid output; `"fallback"` for the mock provider, a timeout, an invalid output or a missing feedback row. `provider_label` is supplied by the adapter that produced the text (e.g. `"Claude"`; the mock's own label otherwise). The UI chooses its footnote by `status` and never hard-codes a provider (PD-016).
-- `next_mission`: the catalog mission named by `next_mission_id` (validated against the candidates: the non-playable catalog missions, PD-010), with its current card state for this student (`locked` or `in_preparation`) and one deterministic sentence of why.
+- `next_mission`: the catalog mission named by `next_mission_id` (validated against the candidates: the non-playable catalog missions, PD-010), with its current card state for this student (`locked` or `in_preparation`) and one deterministic sentence of why. It is `null` only when the catalog has no candidate mission (never with the shipped catalog; the schema is `NextMission | null`, CR-010).
 - `diary`: every persisted step in order, rebuilt from the parent pointers; `text` is the node's `diary` line (variant-resolved) or its first scene line. Checkpoint entries carry type · skill · CEFR and a neutral `outcome` (`understood | missed`) — allowed here because the attempt is closed (PD-029). `maya_decision` marks hint and rescue moments ("Maya's shortcut").
 - `missed`: every incorrect checkpoint in mission order; `your_answer` is the chosen option's text or the typed text; `correct_answer` is the correct option's text or the **first** accepted answer; listening items include the transcript through `stimulus.audio_script`.
 
@@ -492,7 +492,7 @@ The server is authoritative for everything: node, clock, flags, correctness, sco
 
 **B. Everywhere except the Report of a submitted attempt**: no `is_correct`, `correct_option_id`, `answer_key`, `accepted`, `accepted_answers`, `correct_answer` or `explanation`. `/api/world`, `/api/me/progress` and the teacher endpoints contain aggregates only (labels, percentages, counts), never item content.
 
-**C. Requests**: every request model uses `extra="forbid"`; a client-sent `score`, `is_correct`, `minutes` or any unknown field → 422.
+**C. Requests**: every request **body** model (login, advance, answer) uses `extra="forbid"`; a client-sent `score`, `is_correct`, `minutes` or any unknown field in those bodies → 422. Endpoints without a body (start, submit, logout) do not read one: anything sent is ignored, so a client-sent score never reaches grading (§5.11).
 
 ---
 

@@ -134,3 +134,11 @@ Decisions taken while freezing that go **beyond or refine** SHARED_CONTEXT. F-01
 - Why: PD-033, the live proof that a new provider is one file in `app/ai` plus env vars (CR-007 made `COACH_PROVIDER` a free string).
 - Impact: delivery-engineer (`.env.example` block, README may point to it); no API contract change, no migration, no frontend change (the report already shows `feedback_source.provider_label` from the server). Stored feedback rows carry `provider=openai_compatible`, the model and `prompt_version=maya_feedback_v1`.
 - Decision: accepted by the human on 2026-09-25 and done.
+
+### CR-010 — Contract wording aligned with the implementation (BUG-005 and the closing review)
+- Requested by: tech-lead · Date: 2026-09-25 · Status: done
+- File(s): `docs/contracts/api-contract.md` §5.11, §7 (`next_mission`), §9.C.
+- Change: (1) §5.11: "submit takes no body; any body is ignored" (never parsed, never a 422); §9.C now says `extra="forbid"` applies to the request **body** models (login, advance, answer) and that bodyless endpoints (start, submit, logout) ignore anything sent. (2) §7: `next_mission` is `null` only when the catalog has no candidate mission (the schema already is `NextMission | None`).
+- Why: BUG-005 (QA): §9.C promised a 422 for a client-sent score on submit, while the router takes no body and returns 200 with the server's grade (`backend/tests/api/test_attempt_security.py::test_the_client_can_never_send_a_score` pins this). The invariant "the client never sends scores" holds either way; the wording was wrong, not the code. (2) was found comparing `backend/app/schemas/report.py` with §7.
+- Impact: documentation only. No code, test, OpenAPI or frontend change (`openapi.json` regenerated from the app is identical to the committed file). qa-engineer can close BUG-005 in `docs/qa/CHECKLIST.md`.
+- Decision (tech-lead): done. Remaining review notes, not contract changes (owner: backend-api-engineer, optional): `openapi.json` documents the 422 body as FastAPI's default `HTTPValidationError` and declares no 401/403/404/409/429 responses, while the server always returns the §2 envelope; `DiaryEntryView.kind` is typed `str` instead of the node-kind enum.
