@@ -2,7 +2,7 @@
 
 > Owner: `qa-engineer`. Internal working note (English). Sources: `docs/agents/SHARED_CONTEXT.md` §1, §4, §5, §9 · `docs/product/PRODUCT.md` §5, §12 · `docs/product/REQUIREMENTS_MAP.md` · `docs/contracts/api-contract.md`.
 > Manual checks, bugs and the delivery checklist live in [`CHECKLIST.md`](CHECKLIST.md); the evaluator walkthrough in [`DEMO_SCRIPT.md`](DEMO_SCRIPT.md).
-> State on 2026-09-25: backend **253 passed** (≈25 s), frontend Vitest **26 passed**, Playwright **6 passed + 1 expected failure (BUG-001)**, 1 skipped (a mobile-only test in the desktop project).
+> State on 2026-09-25 (after the stretch items): backend **322 passed** (≈30 s), frontend Vitest **45 passed**, Playwright **10 passed**, 1 skipped (a mobile-only test in the desktop project). BUG-001 is fixed, so its width check is a normal test.
 
 ## 1. How to run everything
 
@@ -173,5 +173,5 @@ All **DOC**, checked at G4 (delivery checklist in `CHECKLIST.md` §4). Automated
 | 4 | Owned attempts → 404, UUID ids | `api/test_attempt_security.py::test_another_students_attempt_is_404_everywhere`, `::test_malformed_and_unknown_ids_are_404_not_422`, `data/test_schema.py::test_attempt_ids_are_uuids` |
 | 5 | One open attempt per (student, mission) | `data/test_schema.py::test_one_open_attempt_per_student_and_mission`, `api/test_mission_flow.py::test_full_run_leaks_nothing_and_the_report_has_the_numbers` (PD-028) |
 | 6 | LLM only after grading, never affects score/level/unlocks | R-34 row |
-| 7 | `/simulate` never exposes answers | out of scope (stretch not built); `engine/test_simulator_and_diary.py::test_trace_shape_and_no_answer_content` covers the engine trace |
+| 7 | `/simulate` never exposes answers | `api/test_simulate.py` (access rules, determinism, recursive leak scan) + `engine/test_simulator_and_diary.py::test_trace_shape_and_no_answer_content` |
 | 8 | Secrets in env; JWT in httpOnly cookie | `api/test_auth.py::test_login_sets_an_httponly_lax_cookie_and_returns_the_user`; ESLint `no-restricted-globals` (localStorage/sessionStorage) in `make lint` |

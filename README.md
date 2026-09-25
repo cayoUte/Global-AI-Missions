@@ -21,7 +21,7 @@
 |---|---|---|
 | `new@globalai.test` | Ana, estudiante | Primer encuentro con Maya. English World vacío → jugar *The Last Train* completa (10 ítems) → Submit mission → Mission Report → Progress. |
 | `veteran@globalai.test` | Leo, estudiante | 4 intentos previos (generados con el estudiante simulado): saludo con memoria, "Maya's pick", tendencia 40 → 50 → 60 → 70 % en Progress, notas de Maya. |
-| `teacher@globalai.test` | Ms. Clarke, profesora | Roles: aterriza en una página que dice que la vista de profesor no forma parte de esta versión; los permisos se ven en la API (`/api/teacher/classes` 200 para ella, 403 para un estudiante, 404 para otra clase). |
+| `teacher@globalai.test` | Ms. Clarke, profesora | Vista de profesor de solo lectura: su clase "Evening B1" con Ana y Leo (último resultado, % por habilidad, misiones jugadas, última actividad). Los permisos también se ven en la API (`/api/teacher/classes` 200 para ella, 403 para un estudiante, 404 para otra clase). |
 
 **Documentos para leer** (en español):
 
@@ -127,9 +127,9 @@ Usa `127.0.0.1`, no `localhost`, en `DATABASE_URL`: en algunas máquinas Windows
 
 | Qué | Comando | Resultado al 2026-09-25 |
 |---|---|---|
-| Backend: unitarios, API, motor, datos, IA, contratos (pytest) | `make test-backend` (o `cd backend && uv run pytest`) | 297 passed |
-| Frontend (Vitest + Testing Library) | `make test-frontend` (o `cd frontend && npm test`) | 26 passed |
-| E2E con Playwright sobre la app real | `make e2e` | 6 passed, 1 skipped (un test solo de móvil) |
+| Backend: unitarios, API, motor, datos, IA, contratos (pytest) | `make test-backend` (o `cd backend && uv run pytest`) | 322 passed |
+| Frontend (Vitest + Testing Library) | `make test-frontend` (o `cd frontend && npm test`) | 45 passed |
+| E2E con Playwright sobre la app real | `make e2e` | 10 passed, 1 skipped (un test solo de móvil) |
 | Lint, formato y tipos (ruff, ESLint, Prettier, tsc) | `make lint` | limpio |
 
 - Los tests de backend que usan PostgreSQL necesitan `make up` (base `gam_test`, creada por el script de inicio de compose). Sin base de datos se **omiten** con el motivo impreso, y el resto pasa.
@@ -208,7 +208,7 @@ Detalle y alternativas descartadas en [docs/DECISIONS.md](docs/DECISIONS.md).
 - **Seguridad:** las claves nunca salen del servidor mientras el intento está abierto; el cliente nunca envía puntajes ni aciertos; cada checkpoint se bloquea al primer envío (un segundo envío da 409); los intentos de otro usuario dan 404; un solo intento abierto por estudiante y misión (recargar o perder la conexión retoma el mismo).
 - IA: [docs/ai/AI_ARCHITECTURE.md](docs/ai/AI_ARCHITECTURE.md) · decisiones: [docs/DECISIONS.md](docs/DECISIONS.md).
 
-API (Swagger en `/api/docs`): `GET /api/health`, `GET /api/config`, `POST /api/auth/login|logout`, `GET /api/auth/me`, `GET /api/world`, `POST /api/missions/{id}/attempts`, `GET /api/attempts/{id}`, `POST /api/attempts/{id}/advance|answer|submit`, `GET /api/attempts/{id}/report`, `GET /api/me/progress`, `GET /api/teacher/classes`, `GET /api/teacher/classes/{id}/progress`.
+API (Swagger en `/api/docs`): `GET /api/health`, `GET /api/config`, `POST /api/auth/login|logout`, `GET /api/auth/me`, `GET /api/world`, `POST /api/missions/{id}/attempts`, `GET /api/attempts/{id}`, `POST /api/attempts/{id}/advance|answer|submit`, `GET /api/attempts/{id}/report`, `GET /api/me/progress`, `GET /api/teacher/classes`, `GET /api/teacher/classes/{id}/progress`, `GET /api/missions/{id}/simulate` (solo modo demo).
 
 ---
 
@@ -272,7 +272,7 @@ Todas documentadas en [`.env.example`](.env.example); `backend/app/core/config.p
 │   ├── scripts/             validación de contenido, export de OpenAPI, smoke test del LLM
 │   └── tests/               pytest
 ├── frontend/                React 19 + TypeScript + Vite + Tailwind v4
-│   ├── src/features/        auth, world, mission (player), report, progress, teacher
+│   ├── src/features/        auth, world, mission (player), report, progress, teacher, replay
 │   └── e2e/                 Playwright
 ├── content/                 catálogo y misión: items.json (evaluación) y mission.json (historia)
 ├── docs/                    documentos para evaluadores (español) y notas internas de trabajo
@@ -288,8 +288,8 @@ Todas documentadas en [`.env.example`](.env.example); `backend/app/core/config.p
 - **El guion de escucha llega al navegador:** los ítems de listening usan `speechSynthesis`, así que el texto del anuncio viaja al cliente (sin la respuesta). En producción: audio pregenerado detrás de URLs firmadas. Si el dispositivo no tiene voz en inglés, el anuncio se muestra como texto para que la historia no se bloquee.
 - **Repetir la misma misión no es una reevaluación segura:** tras leer el reporte, el estudiante conoce los ítems. "Play again" es práctica; en producción haría falta un banco de ítems con variantes.
 - **El límite de intentos de login** (5 por minuto por IP y email) vive en memoria de cada proceso: con varias instancias cuenta por separado y se reinicia al redesplegar (en producción: Redis o el API gateway). En Render, mientras `FORWARDED_ALLOW_IPS` no incluya el proxy de Render, todas las peticiones llegan con la IP del proxy y el límite queda, en la práctica, por email.
-- **Vista de profesor:** no está construida. La cuenta `teacher@` aterriza en una página que lo dice; los endpoints `/api/teacher/...` y sus permisos sí existen y tienen tests.
-- **Replay simulado (`/api/missions/{id}/simulate`):** no está construido. El estudiante simulado existe en el motor (`uv run python -m app.engine.cli simulate --profile B1`) y generó el historial de Leo.
+- **Vista de profesor de solo lectura:** muestra sus clases y el progreso de cada alumno, sin entrar al reporte individual ni acciones (asignar, editar, exportar quedan para producción).
+- **Replay simulado solo en modo demo:** desde el English World, "Watch a simulated run" abre `/replay`, donde se elige un nivel (A1, A2, B1, B2, A2 weak listening) y una semilla. Muestra el camino, el reloj, understood/missed por checkpoint, las decisiones y el ánimo de Maya y el final; nunca preguntas ni respuestas (`GET /api/missions/{id}/simulate`, 404 con `DEMO_MODE=false`). El mismo estudiante simulado (`uv run python -m app.engine.cli simulate --profile B1`) generó el historial de Leo.
 - **Una sola misión jugable.** Las otras cuatro del catálogo muestran su regla de desbloqueo o "Maya is preparing this mission".
 - **Speaking** no se mide en esta misión.
 - **Fuentes desde Google Fonts** (CDN); sin conexión se ven las fuentes de respaldo. Autohospedarlas queda para producción.

@@ -12,7 +12,7 @@ Una misión narrativa (*The Last Train*) que por dentro es una evaluación de 10
 | Auth | JWT en cookie `httpOnly` `SameSite=Lax`, argon2id | JavaScript no puede leer el token. Un solo origen, sin CORS |
 | Entrega | Docker Compose; FastAPI sirve la SPA; GitHub Actions y Render | Un comando y una URL de demo |
 
-Tecnología aburrida a propósito: sin microservicios, colas ni Redis en el MVP. Pruebas: 297 pytest, 26 Vitest y 6 E2E con Playwright.
+Tecnología aburrida a propósito: sin microservicios, colas ni Redis en el MVP. Pruebas: 322 pytest, 45 Vitest y 10 E2E con Playwright.
 
 **Qué está simulado.** El coach usa por defecto un mock determinista (sin clave ni costo). Los adaptadores reales se probaron con clientes falsos; **aún no se verificó una llamada en vivo** (`backend/scripts/coach_smoke.py`). *Listening* usa `speechSynthesis` (sin voz, se muestra el texto, PD-014). Las fuentes vienen de Google Fonts (`frontend/index.html`); en producción, de nuestro origen o CDN (PD-032).
 
@@ -69,7 +69,7 @@ Diagrama ER en `docs/data/DATA_MODEL.md`.
 
 - `users.role` es `student`, `teacher` o `admin`, y se lee de la BD en cada petición, no del token (`services/auth.py::session_user`). Las guardas son dependencias (`require_role`, `Student`, `TeacherOrAdmin` en `backend/app/api/deps.py`); un rol no permitido recibe 403.
 - El docente solo ve las clases que enseña (`class_members`); otra clase da 404 (`services/world.py::_teacher_scope`). Un intento ajeno también da 404, para no revelar que existe.
-- El admin ve todas las clases; en producción publicaría versiones de contenido validadas. La vista docente no se construyó: el RBAC se demuestra por la API.
+- El admin ve todas las clases; en producción publicaría versiones de contenido validadas. La vista docente es de solo lectura (`features/teacher/TeacherPage.tsx`); el RBAC también se demuestra por la API.
 
 ## 7. IA sin depender de un proveedor
 

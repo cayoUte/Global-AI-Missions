@@ -76,7 +76,7 @@ Las 10 preguntas del enunciado (§11). Cada una tiene una respuesta para decir e
 ## 6. ¿Cómo separas los permisos de estudiante, docente y administrador?
 
 > El rol está en el usuario (`users.role`, con un CHECK). El JWT solo identifica: en cada petición cargo el usuario desde la base, así que un cambio de rol o un usuario borrado aplican de inmediato. Los permisos son **dependencias de FastAPI**: `Student` o `TeacherOrAdmin` en la firma del endpoint. Un rol equivocado recibe 403 `FORBIDDEN_ROLE`.
-> Dentro de un rol está el **alcance**. Un estudiante solo ve sus intentos: uno ajeno da 404, no 403, para no revelar que existe, y los ids son UUID. Un docente solo ve las clases que enseña (`classes.teacher_id` + `class_members`); otra clase también da 404. El admin ve todo, y en producción sería quien publica versiones de contenido. La vista docente del frontend quedó fuera, pero el RBAC se prueba por la API.
+> Dentro de un rol está el **alcance**. Un estudiante solo ve sus intentos: uno ajeno da 404, no 403, para no revelar que existe, y los ids son UUID. Un docente solo ve las clases que enseña (`classes.teacher_id` + `class_members`); otra clase también da 404. El admin ve todo, y en producción sería quien publica versiones de contenido. La vista docente del frontend es de solo lectura, y el RBAC se prueba por la API.
 
 **Dónde verlo**
 - `backend/app/api/deps.py::require_role` (`Student`, `TeacherOrAdmin`) y `backend/app/services/auth.py::session_user`.
@@ -125,7 +125,7 @@ Las 10 preguntas del enunciado (§11). Cada una tiene una respuesta para decir e
 > 8. **Fallback de IA**: timeout, clave inválida, JSON roto; el reporte siempre sale y la nota no cambia.
 > 9. **El camino del evaluador** en E2E, solo con teclado, a 1280 y 360 px.
 >
-> Hoy son 297 tests de pytest, 26 de Vitest y 6 E2E de Playwright (más 1 omitido).
+> Hoy son 322 tests de pytest, 45 de Vitest y 10 E2E de Playwright (más 1 omitido).
 
 **Dónde verlo**
 - `docs/qa/TEST_PLAN.md` §2 (estrategia por riesgo) y §5 (matriz de trazabilidad).
@@ -161,7 +161,7 @@ Las 10 preguntas del enunciado (§11). Cada una tiene una respuesta para decir e
 | El coach usa el mock por defecto; no se verificó una llamada LLM en vivo | Demo reproducible, sin clave ni costo | `backend/scripts/coach_smoke.py` con una clave real; conjunto de evaluación |
 | Fuentes desde Google Fonts (`frontend/index.html`, PD-032) | Rapidez del MVP | Fuentes autoalojadas en nuestro origen o CDN |
 | Sin refresh token: la sesión dura 60 min | Simplicidad | Refresh token con rotación; la misión ya está a salvo en el servidor |
-| Speaking no se puntúa; la vista docente y `/simulate` no se construyeron | Alcance de 8 horas (PD-017, PD-026) | Roadmap (§10) |
+| Speaking no se puntúa; la vista docente es solo lectura y `/simulate` existe solo en modo demo | Alcance de 8 horas (PD-017, PD-026) | Roadmap (§10) |
 
 ## Preguntas trampa probables
 

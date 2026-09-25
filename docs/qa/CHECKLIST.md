@@ -82,7 +82,7 @@ Status legend: **DONE** (verified here, how is stated) · **PENDING (human)** (c
 | Technical decisions document | **DONE** (tech-lead) | `docs/DECISIONS.md`, linked from the README's evaluator section. |
 | Test credentials | **DONE** | README table + the Check-in "Demo accounts" panel (`DEMO_MODE=true`); `new@`, `veteran@`, `teacher@` logins returned 200 against the container. |
 | Optional: Docker | **DONE** | Multi-stage `Dockerfile` (Node 22 → uv/Python 3.12 slim, non-root uid 10001, 348 MB image), `docker/entrypoint.sh` (URL scheme rewrite, `alembic upgrade head`, idempotent seed, uvicorn on `$PORT`), compose `api` service with a healthcheck. Verified: `postgresql://` and `postgres://` URLs are rewritten; a missing `DATABASE_URL` stops with a clear message; empty database → migrated, seeded (3 users, Leo's 4 attempts) and healthy. |
-| Optional: automated tests | **DONE** | `uv run pytest` → 297 passed, 0 skipped (PostgreSQL tests ran); `npm test` → 26 passed; `make e2e` → 6 passed, 1 skipped (mobile-only test in the desktop project); `make lint` pieces all clean (ruff check/format, ESLint, tsc, Prettier). |
+| Optional: automated tests | **DONE** | `uv run pytest` → 322 passed, 0 skipped (PostgreSQL tests ran); `npm test` → 45 passed; `make e2e` → 10 passed, 1 skipped (mobile-only test in the desktop project); `make lint` pieces all clean (ruff check/format, ESLint, tsc, Prettier). |
 | Optional: CI | **DONE, not run** | `.github/workflows/ci.yml`: backend (ruff + pytest on a postgres:16 service; fails if the DB tests skip), frontend (lint, typecheck, format, Vitest, build), E2E (Playwright + the built-SPA answer scan), Docker (build + boot with a `postgresql://` URL + login). YAML parsed and `actionlint` clean; GitHub Actions itself cannot run here — check the first run on GitHub. The Docker job's smoke test was reproduced locally against a throwaway database. |
 | Optional: deploy | **PENDING (human)** | See "Demo URL". |
 | Optional: real AI integration | **PARTIAL** | Anthropic and OpenAI-compatible (Groq, xAI) adapters with fake-client tests; the mock is the default and the fallback. No live LLM call was possible here (network policy): run `cd backend && uv run python scripts/coach_smoke.py` with a real key. |
@@ -92,9 +92,9 @@ Status legend: **DONE** (verified here, how is stated) · **PENDING (human)** (c
 
 - [x] Fresh clone following the README (Docker path) — M-08. 2026-09-25 · delivery-engineer. See 4.1 "Runs locally" for the deviations (project name, DB port, proxy CA).
 - [x] `make lint` green (ruff, ESLint, tsc, Prettier). 2026-09-25 · delivery-engineer.
-- [x] Tests green: backend 297 passed (PostgreSQL tests not skipped), Vitest 26 passed. 2026-09-25 · delivery-engineer.
-- [x] `make e2e` green: 6 passed, 1 skipped. 2026-09-25 · delivery-engineer.
-- [x] README (Spanish) states the run commands, demo credentials, env vars, how to run the tests, the 10-item blueprint and the known limitations (speech, retake, per-process rate limit, teacher view and `/simulate` not built). 2026-09-25 · delivery-engineer.
+- [x] Tests green: backend 322 passed (PostgreSQL tests not skipped), Vitest 45 passed. 2026-09-25 · orchestrator, after the stretch items.
+- [x] `make e2e` green: 10 passed, 1 skipped. 2026-09-25 · orchestrator, after the stretch items.
+- [x] README (Spanish) states the run commands, demo credentials, env vars, how to run the tests, the 10-item blueprint and the known limitations (speech, retake, per-process rate limit, teacher view read-only, `/simulate` demo-only). 2026-09-25 · delivery-engineer.
 - [x] `.env` not committed; `.env.example` has working local defaults; no build or test outputs in git. 2026-09-25 · delivery-engineer.
 - [x] Docker: `docker compose up -d --build` works (see 4.1). 2026-09-25 · delivery-engineer.
 - [ ] Deploy on Render from `render.yaml` and put the URL in the README — **human**.

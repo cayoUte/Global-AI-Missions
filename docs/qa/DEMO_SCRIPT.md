@@ -31,7 +31,7 @@ Ojo: el login tiene un límite de 5 intentos por minuto por email. Si se equivoc
 
 ## 2. 0:45–5:30 · La misión completa (10 ítems, un error deliberado, un checkpoint de escucha)
 
-**Hacer**: **Start mission**. Avanzar con **Continue** (o Enter) en las escenas. En cada checkpoint: elegir con clic o con la tecla 1–4 y pulsar **Confirm** (o Enter). En los huecos, escribir y Enter.
+**Hacer**: **Start mission**. Avanzar con **Continue** (o Enter) en las escenas; si el texto aún se está escribiendo, el primer Enter lo completa y el segundo avanza. En cada checkpoint: elegir con clic o con la tecla 1–4 y pulsar **Confirm** (o Enter). En los huecos, escribir y Enter.
 
 | # | Lugar (en pantalla) | Maya dice (inicio) | Elegir | Nota para el presentador |
 |---|---|---|---|---|
@@ -101,7 +101,7 @@ Final: **Made It**, "21:59 · 6 min to departure", Maya: *"We made it! And you g
 ## 6. 9:30–10:00 · Roles (teacher@ y API 403/404)
 
 **Hacer**
-- **Check out** → Check-in con `teacher@globalai.test` (Ms. Clarke): página "Hello, Ms. Clarke. The teacher view isn't part of this build. Your roles are shown through the API."
+- **Check out** → Check-in con `teacher@globalai.test` (Ms. Clarke): vista de profesor de solo lectura: clase "Evening B1" con Ana y Leo (último resultado, % por habilidad, misiones jugadas).
 - En la barra de direcciones:
   - `/api/teacher/classes` → **200**, su clase "Evening B1" con 2 alumnos.
   - `/api/teacher/classes/00000000-0000-4000-8000-000000000000/progress` → **404 NOT_FOUND** (una clase que no es suya no existe para ella).
@@ -112,7 +112,8 @@ Final: **Made It**, "21:59 · 6 min to departure", Maya: *"We made it! And you g
 
 ## 7. Si sobra tiempo
 
-- `make test` (≈ 40 s): 253 tests de backend y 26 de frontend; `make e2e` recorre la misión entera con teclado, a 1280 y 360 px, el rescate de Maya, dos pestañas y movimiento reducido.
+- Replay simulado: como `new@` o `veteran@`, en el English World "Watch a simulated run" → A2, seed 7 → **Run simulation** → **Show all**. Decir: "el estudiante simulado del motor recorre el grafo; la respuesta trae resultados y decisiones de Maya, nunca preguntas ni respuestas".
+- `make test` (≈ 45 s): 322 tests de backend y 45 de frontend; `make e2e` recorre la misión entera con teclado, a 1280 y 360 px, el rescate de Maya, dos pestañas y movimiento reducido.
 - Enseñar el rescate: miss en q01, q02, q03, q04 y q07 → "Maya's shortcut" y el final **Made It Together** (automatizado en `frontend/e2e/resilience.spec.ts`).
 
 ## 8. Plan B
