@@ -9,6 +9,7 @@ from sqlalchemy import create_engine, pool
 from alembic import context
 from app.core.config import get_settings
 from app.models import Base
+from app.repositories.db import CONNECT_TIMEOUT_SECONDS
 
 config = context.config
 target_metadata = Base.metadata
@@ -23,7 +24,11 @@ def database_url() -> str:
 
 
 def run_migrations_online() -> None:
-    engine = create_engine(database_url(), poolclass=pool.NullPool)
+    engine = create_engine(
+        database_url(),
+        poolclass=pool.NullPool,
+        connect_args={"connect_timeout": CONNECT_TIMEOUT_SECONDS},  # never hang forever
+    )
     with engine.connect() as connection:
         context.configure(connection=connection, target_metadata=target_metadata)
         with context.begin_transaction():
