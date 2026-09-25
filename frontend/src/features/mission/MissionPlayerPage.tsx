@@ -257,6 +257,11 @@ function SceneScreen({ state, view, slow, dispatch, onRetry }: SceneScreenProps)
   }
   if (busy && slow) bubbleKind = 'waiting'
   const rescue = view.maya.decision === 'rescue'
+  const bubbleKey = `${node.id}-${bubbleKind}`
+  // Maya idle (UI_SPEC §7, Should): a 2 px float, paused while her bubble enters; the global
+  // reduced-motion rule in tokens.css (and motion-reduce) turns it off.
+  const bubbleEntering = useEntering(bubbleKey, MOTION.quick * 1000)
+  const idle = `animate-maya-idle motion-reduce:animate-none ${bubbleEntering ? '[animation-play-state:paused]' : ''}`
 
   const announcement = [
     state.phase === 'reaction' && state.reaction ? `Maya: ${state.reaction}` : '',
@@ -294,15 +299,19 @@ function SceneScreen({ state, view, slow, dispatch, onRetry }: SceneScreenProps)
         </div>
 
         <div className="flex items-start gap-3 lg:sticky lg:top-20 lg:col-start-1 lg:row-span-2 lg:row-start-1 lg:flex-col lg:items-center lg:self-start">
-          <MayaPortrait mood={view.maya.mood} size={rescue ? 72 : 56} className="md:hidden" />
+          <MayaPortrait
+            mood={view.maya.mood}
+            size={rescue ? 72 : 56}
+            className={`md:hidden ${idle}`}
+          />
           <MayaPortrait
             mood={view.maya.mood}
             size={rescue ? 96 : 72}
-            className="hidden md:block lg:hidden"
+            className={`hidden md:block lg:hidden ${idle}`}
           />
-          <MayaPortrait mood={view.maya.mood} size={128} className="hidden lg:block" />
+          <MayaPortrait mood={view.maya.mood} size={128} className={`hidden lg:block ${idle}`} />
           <MayaBubble
-            key={`${node.id}-${bubbleKind}`}
+            key={bubbleKey}
             lines={bubbleLines}
             kind={bubbleKind}
             className="min-w-0 flex-1 lg:w-full"
@@ -398,6 +407,16 @@ function RetryNotice({ onRetry, className = '' }: { onRetry: () => void; classNa
       }
     />
   )
+}
+
+/** True for `ms` after `key` changes (and after mount): the bubble's entrance window. */
+function useEntering(key: string, ms: number): boolean {
+  const [settled, setSettled] = useState<string | null>(null)
+  useEffect(() => {
+    const timer = setTimeout(() => setSettled(key), ms)
+    return () => clearTimeout(timer)
+  }, [key, ms])
+  return settled !== key
 }
 
 /** True once `active` has lasted more than one second ("One moment…" rule). */
