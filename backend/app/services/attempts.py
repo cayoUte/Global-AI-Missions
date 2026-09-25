@@ -102,7 +102,9 @@ def build_state_view(
 
 
 def conflict(session: Session, code: ErrorCode, message: str, attempt: Any) -> DomainError:
-    """Every 409 on an attempt endpoint carries the server's truth in details.state (F-02)."""
+    """Every 409 on an attempt endpoint carries the server's truth in details.state (F-02).
+    The attempt is re-read first: a concurrent request may have just committed a move (BUG-002)."""
+    session.refresh(attempt)
     view = build_state_view(session, attempt)
     return DomainError(code, message, {"state": view.model_dump(mode="json")})
 

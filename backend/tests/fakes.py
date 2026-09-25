@@ -59,6 +59,9 @@ class FakeSession:
     def rollback(self) -> None:
         pass
 
+    def refresh(self, instance: object) -> None:
+        pass  # the fake store is shared in memory, so objects are always current
+
     def close(self) -> None:
         pass
 

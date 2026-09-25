@@ -80,15 +80,9 @@ def test_two_concurrent_answers_lock_the_checkpoint_once(pg_client):  # noqa: F8
     assert _count(AttemptAnswer, attempt_id=attempt) == before + 1  # one answer, not two
     winner = a if a.status_code == 200 else b
     assert pg_client.get(base).json() == winner.json()["state"]  # the server state is the winner's
-    # BUG-002 (docs/qa/CHECKLIST.md): in this race the loser's details.state may still show the
-    # checkpoint (built from the attempt read before the winner committed). It must be the same
-    # attempt either way; tighten to `== winner.json()["state"]` once the fix lands.
-    stale_or_fresh = loser.json()["error"]["details"]["state"]
-    assert stale_or_fresh["attempt_id"] == state["attempt_id"]
-    assert stale_or_fresh["node"]["id"] in {
-        state["node"]["id"],
-        winner.json()["state"]["node"]["id"],
-    }
+    # BUG-002 regression: the loser's 409 carries the state the winner committed, not the
+    # checkpoint it read before the race (services.attempts.conflict re-reads the attempt).
+    assert loser.json()["error"]["details"]["state"] == winner.json()["state"]
 
 
 def test_two_concurrent_submits_make_one_report_and_one_memory_update(pg_client):  # noqa: F811
