@@ -67,6 +67,20 @@ export async function pressAndWait(page: Page, keys: () => Promise<void>): Promi
   return (await response).status()
 }
 
+/**
+ * Continue on a narrative node with the keyboard; returns the advance call's status. The scene
+ * typewriter (UI_SPEC §7) makes the first Enter complete the text and the second advance. If the
+ * text had already finished, the first Enter advances and the second lands on the busy (disabled)
+ * Continue or on the next scene, where it only completes that scene's typewriter (Enter never
+ * confirms an empty choice or gap), so the result is the same one advance either way.
+ */
+export async function pressContinue(page: Page): Promise<number> {
+  return pressAndWait(page, async () => {
+    await page.keyboard.press('Enter')
+    await page.keyboard.press('Enter')
+  })
+}
+
 export type PlayLog = { checkpoints: number; rescue: boolean; missionTexts: string[] }
 
 /**
@@ -83,7 +97,7 @@ export async function playToEnding(page: Page, answers: Answer[]): Promise<PlayL
       log.rescue = true
     if (screen === 'ending') return log
     if (screen === 'continue') {
-      expect(await pressAndWait(page, () => page.keyboard.press('Enter'))).toBe(200)
+      expect(await pressContinue(page)).toBe(200)
       continue
     }
     const answer = answers[log.checkpoints]

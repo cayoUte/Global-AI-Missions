@@ -13,6 +13,12 @@ export function ownsEnter(target: EventTarget | null): boolean {
   return isTypingTarget(target) || target.closest('button, a[href], summary') !== null
 }
 
+/** True when Space on this target already has a meaning (controls, radios, inputs). */
+export function ownsSpace(target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement)) return false
+  return ownsEnter(target) || target.closest('[role="radio"], [role="radiogroup"]') !== null
+}
+
 /**
  * A window keydown listener for the Mission Player shortcuts (UI_SPEC §8). Ignores events with a
  * modifier key or while an IME is composing. The handler always sees the latest props.

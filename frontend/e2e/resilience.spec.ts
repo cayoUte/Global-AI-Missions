@@ -6,6 +6,7 @@ import {
   openTheLastTrain,
   playToEnding,
   pressAndWait,
+  pressContinue,
   tabTo,
   type Answer,
 } from './helpers'
@@ -76,9 +77,9 @@ test('two tabs, a reload and no speech: the server state wins, nothing breaks', 
   expect(await currentScreen(b)).toBe('continue')
 
   // A continues to the first checkpoint; B's stale Continue gets a 409 and silently resyncs.
-  expect(await pressAndWait(a, () => a.keyboard.press('Enter'))).toBe(200)
+  expect(await pressContinue(a)).toBe(200)
   expect(await currentScreen(a)).toBe('choice')
-  expect(await pressAndWait(b, () => b.keyboard.press('Enter'))).toBe(409)
+  expect(await pressContinue(b)).toBe(409)
   expect(await currentScreen(b)).toBe('choice')
   await expect(b.getByText('The signal dropped')).toHaveCount(0)
 
@@ -104,7 +105,7 @@ test('two tabs, a reload and no speech: the server state wins, nothing breaks', 
   await expect(a.getByLabel(server.clock.label)).toBeVisible()
 
   // On to the listening checkpoint (q02) without speech: the transcript replaces Listen.
-  expect(await pressAndWait(a, () => a.keyboard.press('Enter'))).toBe(200)
+  expect(await pressContinue(a)).toBe(200)
   expect(await currentScreen(a)).toBe('choice')
   await expect(a.getByText("Audio isn't available on this device")).toBeVisible()
   await expect(a.getByRole('button', { name: /^Listen/ })).toHaveCount(0)
@@ -130,6 +131,7 @@ test.describe('reduced motion', () => {
     expect(tokens).toEqual([0, 120, 120])
     await openTheLastTrain(page) // Continue your mission (left open by the previous test)
     expect(await currentScreen(page)).toBe('continue')
+    // No typewriter under reduced motion: the very first Enter advances.
     expect(await pressAndWait(page, () => page.keyboard.press('Enter'))).toBe(200)
     expect(await currentScreen(page)).toBe('choice')
   })

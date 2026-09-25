@@ -11,9 +11,10 @@ import { Button } from '../../components/Button'
 import { buttonClasses } from '../../components/buttonClasses'
 import { InlineNotice } from '../../components/InlineNotice'
 import { MayaBubble, MayaPortrait, type BubbleKind } from '../../components/Maya'
-import { ownsEnter, useHotkeys } from '../../lib/hotkeys'
+import { ownsEnter, ownsSpace, useHotkeys } from '../../lib/hotkeys'
 import { EASE, MOTION } from '../../lib/motion'
 import { useOnline } from '../../lib/useOnline'
+import { useTypewriter } from '../../lib/useTypewriter'
 import { ActionBar } from './ActionBar'
 import { ChoiceCheckpoint } from './checkpoints/ChoiceCheckpoint'
 import { FillBlankCheckpoint } from './checkpoints/FillBlankCheckpoint'
@@ -218,6 +219,17 @@ function SceneScreen({ state, view, slow, dispatch, onRetry }: SceneScreenProps)
   const kickerRef = useRef<HTMLParagraphElement>(null)
   // Reduced motion: opacity only, 120 ms (UI_SPEC §7). MotionConfig already drops the slide.
   const fadeSeconds = useReducedMotion() ? MOTION.reduced : 0.25
+  // Scene lines only; prompts, options, documents and Maya's lines never type (UI_SPEC §7).
+  const typewriter = useTypewriter(
+    node.id,
+    node.scene.lines.reduce((n, line) => n + line.text.length, 0),
+  )
+  useHotkeys((event) => {
+    if (event.key === ' ' && typewriter.typing && !ownsSpace(event.target)) {
+      event.preventDefault()
+      typewriter.complete()
+    }
+  })
 
   const onConfirm = (answer: CheckpointAnswer) =>
     dispatch({
@@ -274,7 +286,11 @@ function SceneScreen({ state, view, slow, dispatch, onRetry }: SceneScreenProps)
       >
         <div className="space-y-3 lg:col-start-2 lg:row-start-1">
           <SceneKicker ref={kickerRef} location={node.scene.location} />
-          <DialogueBox lines={node.scene.lines} />
+          <DialogueBox
+            lines={node.scene.lines}
+            shown={typewriter.shown}
+            onSkip={typewriter.complete}
+          />
         </div>
 
         <div className="flex items-start gap-3 lg:sticky lg:top-20 lg:col-start-1 lg:row-span-2 lg:row-start-1 lg:flex-col lg:items-center lg:self-start">
@@ -321,6 +337,8 @@ function SceneScreen({ state, view, slow, dispatch, onRetry }: SceneScreenProps)
               key={node.id}
               disabled={busy || state.problem === 'network'}
               slow={busy && slow}
+              typing={typewriter.typing}
+              onComplete={typewriter.complete}
               onContinue={onContinue}
             />
           )}
@@ -330,30 +348,36 @@ function SceneScreen({ state, view, slow, dispatch, onRetry }: SceneScreenProps)
   )
 }
 
-function ContinueAction({
+/** Continue: while the typewriter runs, the first press completes the text; the next advances. */
+export function ContinueAction({
   disabled,
   slow,
+  typing,
+  onComplete,
   onContinue,
 }: {
   disabled: boolean
   slow: boolean
+  typing: boolean
+  onComplete: () => void
   onContinue: () => void
 }) {
   const ref = useRef<HTMLButtonElement>(null)
   useEffect(() => {
     ref.current?.focus({ preventScroll: true })
   }, [])
+  const press = () => (typing ? onComplete() : onContinue())
   useHotkeys((event) => {
     if (event.key === 'Enter' && !ownsEnter(event.target) && !disabled) {
       event.preventDefault()
-      onContinue()
+      press()
     }
   })
   return (
     <ActionBar
       ref={ref}
       label="Continue"
-      onClick={onContinue}
+      onClick={press}
       disabled={disabled}
       loading={slow}
       loadingLabel="One moment…"
