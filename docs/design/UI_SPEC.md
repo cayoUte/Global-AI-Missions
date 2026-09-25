@@ -836,6 +836,13 @@ No ranks, no comparisons with other students, no chart library. A Chart is a Sho
 
 ### 9.9 Stretch — Simulated replay (demo mode only)
 
+> Built 2026-09-25 (frontend-engineer, `frontend/src/features/replay/ReplayPage.tsx`, route `/replay?mission={id}`, any role). Choices made in the build:
+> - The profile control is a `fieldset` of native radios styled as a segmented control (the fieldset/legend gives the group semantics; a filled dot + bold text mark the selection, not colour alone). A **Seed** input (0–1000000, checked before the call) was added at the orchestrator's request.
+> - A standing line says it is a simulated student, not a real one, and that questions and answers are never shown.
+> - The result card: "Simulated student · {profile} · seed {n}", `h2` "Ending reached: {title}" (focused), "Story-minutes used: N". The timeline is an `<ol aria-label="Simulated path">`: time in the left column, the rest of the clock label, "{Kind} · {node_id}" (Scene, Checkpoint, Consequence, Ending), the `OutcomeMarker`, Maya's hint / shortcut as in the Diary, and a 40 px mood portrait.
+> - It starts playing right after **Run simulation** (the click is the gesture); **Play/Pause** and **Show all** control it; reduced motion shows the whole path at once.
+> - Demo mode off, or no mission in the URL: an info notice ("The simulated run is only available in demo mode." / "Open the simulated run from a mission in the English World.") with a way back; nothing is fetched. The World link points at the first card that is neither locked nor in preparation.
+
 - Reached from "Watch a simulated run" (a ghost link at the bottom of the English World, only when `demo_mode`).
 - Page: `h1` "Simulated run". A profile segmented control (A1 · A2 · B1 · B2 · A2 weak listening; `role="radiogroup"`) + **Run simulation** (primary).
 - Result: the ending title, "Story-minutes used: N", then a `DiaryTimeline`-styled list from `steps`:
@@ -877,7 +884,7 @@ No ranks, no comparisons with other students, no chart library. A Chart is a Sho
 | Type names (report only) | "Multiple choice" · "Fill in the blank" · "Comprehension" · "Vocabulary" |
 | Skill names | "Grammar" · "Listening" · "Reading" · "Vocabulary" (abbr. "Gr", "Li", "Re", "Vo") |
 | Teacher | "Hello, {name}." · "The teacher view isn't part of this build. Your roles are shown through the API." (superseded, §9.7) · "That page is for teachers." · "Classes" · "Class" (picker label) · "Students in {class}" (caption) · "Student" · "Missions played" · "Latest report" · "Level" · "Last activity" · "{teacher} · {n} student(s)" · "No classes yet." · "No students in this class yet." · "We couldn't load your class." |
-| Replay | "Simulated run" · **Run simulation** · "Running the simulation…" · **Play** · **Show all** · "The simulation couldn't run." |
+| Replay | "Simulated run" · **Run simulation** · "Running the simulation…" · **Play** / **Pause** · **Show all** · "The simulation couldn't run." · "Simulated student's level" · "Seed" · "A whole number from 0 to 1000000. The same level and seed always replay the same run." · "Simulated student · {profile} · seed {n}" · "Ending reached: {title}" · "Story-minutes used: {n}" · "The simulated run is only available in demo mode." · "Open the simulated run from a mission in the English World." · "Back to Classes" |
 | Global | "One moment…" · "This platform doesn't exist." · "You're offline. We'll reconnect when the signal comes back." |
 
 Server-built strings are rendered **verbatim** and never rebuilt on the client (F-06): `clock.label`, report `label`, `suggested_level.reason`, `latest_label`, `greeting.text`, `unlock_hint`, `next_mission.reason`, and all scene and Maya lines.
