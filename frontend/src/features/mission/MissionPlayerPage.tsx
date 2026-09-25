@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query'
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router'
 
@@ -12,7 +12,7 @@ import { buttonClasses } from '../../components/buttonClasses'
 import { InlineNotice } from '../../components/InlineNotice'
 import { MayaBubble, MayaPortrait, type BubbleKind } from '../../components/Maya'
 import { ownsEnter, useHotkeys } from '../../lib/hotkeys'
-import { EASE } from '../../lib/motion'
+import { EASE, MOTION } from '../../lib/motion'
 import { useOnline } from '../../lib/useOnline'
 import { ActionBar } from './ActionBar'
 import { ChoiceCheckpoint } from './checkpoints/ChoiceCheckpoint'
@@ -216,6 +216,8 @@ function SceneScreen({ state, view, slow, dispatch, onRetry }: SceneScreenProps)
   const locked = isCheckpointLocked(state)
   const busy = state.phase === 'sending'
   const kickerRef = useRef<HTMLParagraphElement>(null)
+  // Reduced motion: opacity only, 120 ms (UI_SPEC §7). MotionConfig already drops the slide.
+  const fadeSeconds = useReducedMotion() ? MOTION.reduced : 0.25
 
   const onConfirm = (answer: CheckpointAnswer) =>
     dispatch({
@@ -261,12 +263,12 @@ function SceneScreen({ state, view, slow, dispatch, onRetry }: SceneScreenProps)
       <div role="log" aria-live="polite" aria-relevant="additions" className="sr-only">
         <p key={`${node.id}-${state.reaction ?? ''}`}>{announcement}</p>
       </div>
-      {/* Keyed by node: the new scene fades in (250 ms) while the backdrop crossfades behind it.
+      {/* Keyed by node: the new scene fades in (250 ms, 120 ms with reduced motion) while the backdrop crossfades behind it.
           No exit animation on purpose: stale content (and its buttons) never lingers on screen. */}
       <motion.div
         key={node.id}
         initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0, transition: { duration: 0.25, ease: EASE.enter } }}
+        animate={{ opacity: 1, y: 0, transition: { duration: fadeSeconds, ease: EASE.enter } }}
         aria-busy={busy || undefined}
         className="grid gap-4 lg:grid-cols-[15rem_1fr] lg:gap-x-8"
       >
