@@ -129,7 +129,7 @@ Core loop: `EXPERIENCE → DECISIONS → ASSESSMENT → PROFILE → AI FEEDBACK 
 
 - The Report carries `feedback_source: { status: "ready" | "fallback", provider_label }`; the active adapter supplies `provider_label` (e.g. "Claude"), so the UI never hard-codes a provider name.
 - `strength` and `challenge` must echo the deterministic values; `next_mission_id` must be one of the candidates. Anything else → fallback values.
-- A `CoachProvider` port with the adapters `anthropic` and `mock`, selected by `COACH_PROVIDER`. Prompts are versioned files; provider, model and prompt_version are stored with every feedback.
+- A `CoachProvider` port with the adapters `anthropic`, `openai_compatible` (Groq, xAI Grok or any OpenAI-compatible chat-completions API, CR-009) and `mock`, selected by `COACH_PROVIDER`. Prompts are versioned files; provider, model and prompt_version are stored with every feedback.
 - English adapted to the learner's level (short sentences for A1–A2). No personal data beyond the first name.
 
 ---
@@ -196,7 +196,7 @@ GET  /api/missions/{mission_id}/simulate?profile=A2    STRETCH (only with Simula
 - **Backend:** Python 3.12 · FastAPI · Pydantic v2 + pydantic-settings · SQLAlchemy 2.0 · Alembic · PostgreSQL 16 · PyJWT · argon2-cffi · httpx · anthropic SDK · pytest · ruff.
 - **Infra:** Docker Compose · FastAPI serves the built SPA in production mode (single origin, no CORS) · Vite proxies `/api` in development.
 - **Auth:** JWT (HS256, 60 minutes) in an httpOnly, SameSite=Lax cookie · roles `student`, `teacher`, `admin`.
-- **Environment variables:** `DATABASE_URL`, `JWT_SECRET`, `COACH_PROVIDER` (`mock` | `anthropic`, default `mock`), `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL`, `DEMO_MODE`. `.env.example` ships working local defaults: `DEMO_MODE=true`, `COACH_PROVIDER=mock`, a non-empty dev-only `JWT_SECRET`.
+- **Environment variables:** `DATABASE_URL`, `JWT_SECRET`, `COACH_PROVIDER` (`mock` | `anthropic` | `openai_compatible`, default `mock`; any other name → mock), `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL`, `OPENAI_COMPAT_BASE_URL`, `OPENAI_COMPAT_API_KEY`, `OPENAI_COMPAT_MODEL`, `OPENAI_COMPAT_LABEL` (optional), `DEMO_MODE`. `.env.example` ships working local defaults: `DEMO_MODE=true`, `COACH_PROVIDER=mock`, a non-empty dev-only `JWT_SECRET`.
 
 ---
 
