@@ -51,5 +51,7 @@ DEMO_CLASS_STUDENTS: tuple[DemoAccount, ...] = (NEW_STUDENT, VETERAN)
 # Veteran history (seed only): simulator profile, fixed seeds and how many days ago each
 # submitted attempt happened (spread over the last 14 days, oldest first).
 VETERAN_PROFILE = "A2_weak_listening"
-VETERAN_SEEDS: tuple[int, ...] = (3, 11, 19, 27)
+# Chosen on the real content: 4, 5, 6, 7 of 10 correct (A1 -> A2), listening the challenge each
+# time, endings night_bus, made_it_with_maya, made_it, made_it. Replayed oldest = lowest score.
+VETERAN_SEEDS: tuple[int, ...] = (6, 9, 1, 4)
 VETERAN_DAYS_AGO: tuple[int, ...] = (13, 9, 5, 2)

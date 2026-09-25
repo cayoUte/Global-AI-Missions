@@ -19,8 +19,9 @@ def main() -> int:
     parser = argparse.ArgumentParser(prog="python -m seed", description=__doc__.splitlines()[0])
     parser.add_argument("--content-dir", type=Path, default=CONTENT_DIR)
     parser.add_argument(
-        "--fixture", action="store_true", help="seed content/missions/_fixture even if real "
-        "content exists (walking skeleton)"
+        "--fixture",
+        action="store_true",
+        help="seed content/missions/_fixture even if real content exists (walking skeleton)",
     )
     parser.add_argument("--no-veteran", action="store_true", help="skip the veteran history")
     args = parser.parse_args()

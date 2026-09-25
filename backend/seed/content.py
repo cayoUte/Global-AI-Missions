@@ -168,8 +168,9 @@ def load_and_validate(source: ContentSource) -> tuple[dict[str, Any], dict[str, 
         report = validate_documents(items_doc, mission_doc)
         errors = list(report.errors)
     if errors:
+        hint = "" if source.is_fixture else "\n(`python -m seed --fixture` seeds the fixture)"
         raise SeedError(
-            f"content in {source.folder} failed validation:\n  " + "\n  ".join(errors)
+            f"content in {source.folder} failed validation:\n  " + "\n  ".join(errors) + hint
         )
     return items_doc, mission_doc
 

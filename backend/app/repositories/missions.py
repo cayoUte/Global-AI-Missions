@@ -61,7 +61,7 @@ def get_mission(session: Session, mission_id: str) -> Mission | None:
 
 
 def get_cefr_ranks(session: Session) -> dict[str, int]:
-    return dict(session.execute(select(CefrLevel.code, CefrLevel.rank)).tuples().all())
+    return {code: rank for code, rank in session.execute(select(CefrLevel.code, CefrLevel.rank))}
 
 
 # --- Versions and content --------------------------------------------------------------------

@@ -6,7 +6,8 @@ keys (repositories.missions.get_answer_key), each outcome becomes a concrete ans
     incorrect -> the first wrong option, or a fixed wrong text (fill_blank)
 and that answer is replayed through the engine's real RESULT(s, a), which must reproduce the
 trace's outcome. Steps, answers, skill scores, coach feedback and coach memory are then written
-with the same repository functions the API uses.
+with the same repositories and the same grading, leveling and deterministic-coach services the
+API uses (the seed never calls a real LLM: feedback is the mock, status "fallback").
 """
 
 from dataclasses import dataclass
@@ -24,7 +25,6 @@ from app.engine import (
     Action,
     MissionGraph,
     SimulatedStudent,
-    State,
     Trace,
     arrival_decision,
     build_graph,
@@ -39,12 +39,14 @@ from app.models import Attempt, CoachMemory, User
 from app.repositories import attempts as attempts_repo
 from app.repositories import coach as coach_repo
 from app.repositories import missions as missions_repo
-from seed.scoring import GradedItem, grade, mock_feedback
+from app.services import coach, feedback, grading, leveling
+from app.services.attempts import state_json
+from app.services.content import LoadedMission
 
 # Wrong texts for fill_blank items: the first one that is not an accepted answer is used.
 WRONG_TEXT_CANDIDATES = ("goes", "went", "to", "is", "the")
 STEP_SECONDS = 25  # story steps are spread over the evening for realistic timestamps
-SEED_PROMPT_VERSION = "seed-v1"
+MAX_NOTES = feedback.MAX_NOTES
 
 
 @dataclass(frozen=True)
@@ -53,16 +55,6 @@ class SeededAttempt:
     seed: int
     trace: Trace
     answers: list[tuple[str, bool, int | None, str | None]]  # item, outcome, option_id, text
-
-
-def state_json(s: State) -> dict[str, Any]:
-    """The persisted engine state (attempts.state / attempt_steps.state_after)."""
-    return {
-        "minutes_left": s.minutes_left,
-        "flags": sorted(s.flags),
-        "rescued": s.rescued,
-        "maya_mood": s.maya_mood,
-    }
 
 
 def _concrete_answer(
@@ -119,7 +111,7 @@ def replay_trace(
     )
     if attempt is None:
         raise RuntimeError("the veteran already has an open attempt on this mission")
-    graded: list[GradedItem] = []
+    graded: list[grading.GradedItem] = []
     answers = []
     for trace_step in trace.steps[:-1]:  # the last trace step is the ending (no action)
         if trace_step.node_id != s.node_id:
@@ -147,7 +139,9 @@ def replay_trace(
                 hint_shown=decision == HINT,
                 now=clock,
             )
-            graded.append(GradedItem(item["skill"], item["cefr"], wants_correct))
+            graded.append(
+                grading.GradedItem(item["id"], item["skill"], item["cefr"], wants_correct)
+            )
             answers.append((item["id"], wants_correct, option_id, text))
             action = {"kind": "answer", "item_id": item["id"]}
         decision = arrival_decision(graph, h, t.next_state, via_rescue=t.maya_decision == RESCUE)
@@ -169,35 +163,25 @@ def replay_trace(
         raise RuntimeError("the replay did not reach an ending")
 
     attempts_repo.mark_attempt_completed(session, attempt, ending_node_id=s.node_id, now=clock)
-    outcome = grade(graded)
+    graded_result = grading.grade_attempt(graded)
+    scores = graded_result.skills
+    level = leveling.suggest_level(graded_result.score_pct, graded_result.by_cefr)
     attempts_repo.save_skill_scores(
         session,
         attempt.id,
-        [
-            attempts_repo.SkillScoreIn(skill, right, total, value)
-            for skill, (right, total, value) in outcome.skills.items()
-        ],
+        [attempts_repo.SkillScoreIn(x.skill, x.correct, x.total, x.pct) for x in scores],
     )
     submitted_at = clock + timedelta(seconds=40)
     attempts_repo.finish_attempt(
         session,
         attempt,
-        score_pct=outcome.score_pct,
-        correct_count=outcome.correct,
-        incorrect_count=outcome.incorrect,
-        suggested_cefr=outcome.suggested_cefr,
+        score_pct=graded_result.score_pct,
+        correct_count=graded_result.correct,
+        incorrect_count=graded_result.incorrect,
+        suggested_cefr=level.cefr,
         now=submitted_at,
     )
-    coach_repo.save_coach_feedback(
-        session,
-        attempt_id=attempt.id,
-        provider="mock",
-        model=None,
-        prompt_version=SEED_PROMPT_VERSION,
-        status="fallback",
-        content=mock_feedback(outcome, user.display_name),
-        latency_ms=0,
-    )
+    _seed_feedback(session, user, attempt, LoadedMission(graph, h), submitted_at)
     return SeededAttempt(attempt.id, trace.seed, trace, answers)
 
 
@@ -249,27 +233,35 @@ def seed_veteran_history(
         for trace, days_ago in zip(traces, demo.VETERAN_DAYS_AGO, strict=True)
     ]
 
-    notes = []
-    last_feedback = None
-    for item in reversed(seeded):  # newest first
-        feedback = coach_repo.get_coach_feedback(session, item.attempt_id)
-        assert feedback is not None
-        last_feedback = last_feedback or feedback
-        notes.append(
-            {"text": feedback.content["memory_note"], "created_at": feedback_time(session, item)}
-        )
-    coach_repo.save_coach_memory(
-        session,
-        user.id,
-        sessions_count=len(seeded),
-        notes=notes[:5],
-        next_greeting=last_feedback.content["next_greeting"] if last_feedback else None,
-        now=now,
-    )
     return seeded
 
 
-def feedback_time(session: Session, item: SeededAttempt) -> str:
-    attempt = session.get(Attempt, item.attempt_id)
-    assert attempt is not None and attempt.submitted_at is not None
-    return attempt.submitted_at.isoformat().replace("+00:00", "Z")
+def _seed_feedback(
+    session: Session, user: User, attempt: Attempt, loaded: LoadedMission, submitted_at: datetime
+) -> None:
+    """Submit phase 2 as the API runs it with the mock coach: store the deterministic feedback
+    and grow coach memory once (sessions_count, last 5 notes, next greeting)."""
+    request = feedback.build_coach_request(session, user, attempt, loaded)
+    result = coach.fallback_result(request)
+    wrote = coach_repo.save_coach_feedback(
+        session,
+        attempt_id=attempt.id,
+        provider=result.provider,
+        model=result.model,
+        prompt_version=result.prompt_version,
+        status=result.status,
+        content=result.content,
+        latency_ms=result.latency_ms,
+    )
+    if not wrote:
+        return
+    memory = coach_repo.get_coach_memory(session, user.id)
+    note = {"text": result.content["memory_note"], "created_at": feedback.iso(submitted_at)}
+    coach_repo.save_coach_memory(
+        session,
+        user.id,
+        sessions_count=(memory.sessions_count if memory else 0) + 1,
+        notes=[note, *(memory.notes if memory else [])][:MAX_NOTES],
+        next_greeting=result.content["next_greeting"],
+        now=submitted_at,
+    )
