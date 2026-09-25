@@ -26,7 +26,7 @@
 **Documentos para leer** (en español):
 
 - [docs/DECISIONS.md](docs/DECISIONS.md) — decisiones técnicas (máx. 2 páginas): stack, arquitectura, modelo de datos, protección de respuestas, escala, roles, IA y los próximos tres meses.
-- [docs/INTERVIEW.md](docs/INTERVIEW.md) — respuestas preparadas a las 10 preguntas de la entrevista.
+- [docs/INTERVIEW.md](docs/INTERVIEW.md) — respuestas preparadas a las 10 preguntas de la entrevista (versión PDF: [docs/INTERVIEW.pdf](docs/INTERVIEW.pdf)).
 - [docs/ai/AI_ARCHITECTURE.md](docs/ai/AI_ARCHITECTURE.md) — Maya: feedback con LLM, proveedores intercambiables y hoja de ruta de IA.
 - [docs/AI_USAGE.md](docs/AI_USAGE.md) — qué herramientas de IA se usaron para construir esto y qué hizo personalmente el candidato.
 - [docs/qa/DEMO_SCRIPT.md](docs/qa/DEMO_SCRIPT.md) — guion de la demo de 10 minutos.
