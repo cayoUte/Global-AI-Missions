@@ -5,13 +5,17 @@ import { isApiError } from '../../api/http'
 import { CONFIG_KEY, ME_KEY } from '../../api/queryKeys'
 import type { UserView } from '../../api/types'
 
-/** The current user, or null when not checked in (401). Other failures surface as errors. */
+/**
+ * The current user, or null when not checked in. The server answers 200 null when no session
+ * cookie was sent (CR-008) and 401 when the cookie is bad or expired; both mean "no session".
+ * Other failures surface as errors.
+ */
 export function useMe() {
   return useQuery<UserView | null>({
     queryKey: ME_KEY,
     queryFn: async () => {
       try {
-        return await api.me()
+        return (await api.me()) ?? null
       } catch (error) {
         if (isApiError(error) && error.status === 401) return null
         throw error

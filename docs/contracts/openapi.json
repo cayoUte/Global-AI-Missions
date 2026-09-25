@@ -112,6 +112,7 @@
           "auth"
         ],
         "summary": "Me",
+        "description": "200 UserView, or 200 null without a session cookie (CR-008: an anonymous probe is not an\nerror, so the browser console stays clean). A bad or expired cookie is still 401.",
         "operationId": "me_api_auth_me_get",
         "parameters": [
           {
@@ -137,7 +138,15 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserView"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/UserView"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Response Me Api Auth Me Get"
                 }
               }
             }

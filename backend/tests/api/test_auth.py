@@ -52,8 +52,16 @@ def test_login_rate_limit_is_5_per_minute_per_ip_and_email(client):
     assert other.status_code == 200  # another email is another bucket
 
 
-def test_missing_tampered_forged_or_expired_cookie_is_401(client, store):
-    assert client.get("/api/auth/me").json()["error"]["code"] == "UNAUTHENTICATED"
+def test_me_without_a_cookie_is_200_null(client):
+    # CR-008: an anonymous probe is "not checked in", not an error.
+    r = client.get("/api/auth/me")
+    assert r.status_code == 200 and r.json() is None
+    assert client.get("/api/world").json()["error"]["code"] == "UNAUTHENTICATED"
+
+
+def test_tampered_forged_or_expired_cookie_is_401(client, store):
+    client.cookies.set("gam_session", "")
+    assert client.get("/api/auth/me").json() is None  # an empty cookie is no cookie
     client.cookies.set("gam_session", "not-a-jwt")
     assert client.get("/api/auth/me").status_code == 401
     past = datetime.now(UTC) - timedelta(hours=2)
@@ -83,7 +91,7 @@ def test_logout_is_204_and_clears_the_cookie(ana):
     r = ana.post("/api/auth/logout")
     assert r.status_code == 204
     assert "gam_session=" in r.headers["set-cookie"] and "Max-Age=0" in r.headers["set-cookie"]
-    assert ana.get("/api/auth/me").status_code == 401
+    assert ana.get("/api/auth/me").json() is None
 
 
 def test_config_lists_demo_accounts_only_in_demo_mode(client, monkeypatch):

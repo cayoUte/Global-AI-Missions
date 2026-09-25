@@ -34,6 +34,20 @@ def current_user(
 CurrentUser = Annotated[Any, Depends(current_user)]
 
 
+def optional_user(
+    session: SessionDep,
+    gam_session: Annotated[str | None, Cookie(alias=SESSION_COOKIE)] = None,
+) -> Any | None:
+    """None when no cookie was sent (an anonymous visitor, CR-008). A cookie that is present but
+    bad, tampered, expired or for a deleted user still raises UNAUTHENTICATED (401)."""
+    if not gam_session:
+        return None
+    return auth_service.session_user(session, gam_session)
+
+
+OptionalUser = Annotated[Any | None, Depends(optional_user)]
+
+
 def require_role(*roles: str) -> Callable[..., Any]:
     """Dependency factory: 403 FORBIDDEN_ROLE unless the session user has one of `roles`."""
 

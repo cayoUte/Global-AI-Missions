@@ -91,7 +91,11 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Me */
+        /**
+         * Me
+         * @description 200 UserView, or 200 null without a session cookie (CR-008: an anonymous probe is not an
+         *     error, so the browser console stays clean). A bad or expired cookie is still 401.
+         */
         get: operations["me_api_auth_me_get"];
         put?: never;
         post?: never;
@@ -1083,7 +1087,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["UserView"];
+                    "application/json": components["schemas"]["UserView"] | null;
                 };
             };
             /** @description Validation Error */

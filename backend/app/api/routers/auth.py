@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter, Request, Response, status
 
-from app.api.deps import CurrentUser, SessionDep
+from app.api.deps import OptionalUser, SessionDep
 from app.core.config import get_settings
 from app.core.security import SESSION_COOKIE
 from app.schemas.auth import ConfigResponse, LoginRequest
@@ -49,5 +49,7 @@ def logout(response: Response) -> Response:
 
 
 @router.get("/auth/me")
-def me(user: CurrentUser) -> UserView:
-    return auth_service.user_view(user)
+def me(user: OptionalUser) -> UserView | None:
+    """200 UserView, or 200 null without a session cookie (CR-008: an anonymous probe is not an
+    error, so the browser console stays clean). A bad or expired cookie is still 401."""
+    return auth_service.user_view(user) if user is not None else None

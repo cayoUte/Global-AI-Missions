@@ -70,7 +70,7 @@ Every non-2xx response has exactly this body:
 | Endpoint group | Public | student | teacher | admin |
 |---|---|---|---|---|
 | `GET /api/health`, `GET /api/config`, `POST /api/auth/login`, `POST /api/auth/logout` | yes | yes | yes | yes |
-| `GET /api/auth/me` | 401 | yes | yes | yes |
+| `GET /api/auth/me` | `200 null` without a cookie; 401 with a bad or expired one (CR-008) | yes | yes | yes |
 | `/api/world`, `/api/missions/{id}/attempts`, `/api/attempts/*`, `/api/me/progress` | 401 | own data only | 403 | 403 |
 | `/api/teacher/classes`, `/api/teacher/classes/{id}/progress` | 401 | 403 | own classes (other class → 404) | all classes |
 | `GET /api/missions/{id}/simulate` (stretch) | 401 | yes | yes | yes — only when `DEMO_MODE=true`, otherwise 404 |
@@ -144,7 +144,7 @@ No body. Always `204` and clears the cookie (`Max-Age=0`), whether or not a sess
 
 ### 5.5 `GET /api/auth/me` — any role
 
-`200 UserView` · `401 UNAUTHENTICATED`. The frontend's route guard and role-based landing use it.
+`200 UserView` · `200 null` when the request carries no `gam_session` cookie (an anonymous visitor is "not checked in", not an error; CR-008) · `401 UNAUTHENTICATED` when a cookie is present but invalid, tampered, forged, expired or belongs to a deleted user. The frontend's route guard and role-based landing use it and treat both `null` and 401 as "no session".
 
 ### 5.6 `GET /api/world` — student
 

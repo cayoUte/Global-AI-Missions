@@ -85,8 +85,7 @@ export const mockClient: ApiClient = {
   },
   async me() {
     await delay(50)
-    requireUser()
-    return user as UserView
+    return user // null when not checked in, like the server (CR-008)
   },
   async world() {
     await delay()

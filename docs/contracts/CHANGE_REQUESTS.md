@@ -120,9 +120,9 @@ Decisions taken while freezing that go **beyond or refine** SHARED_CONTEXT. F-01
 - Decision: (1) accepted by the human on 2026-09-25 and done: `Settings.coach_provider` is now `str` with default `"mock"`; test `test_real_settings_accept_any_provider_name_and_boot_with_the_mock` covers an unknown name booting with the mock. (2) and (3) are optional and not scheduled for the MVP (roadmap).
 
 ### CR-008 — Anonymous `GET /api/auth/me` 401 shows as a browser console error (informational)
-- Requested by: frontend-engineer · Date: 2026-09-25 · Status: open
+- Requested by: frontend-engineer · Date: 2026-09-25 · Status: done
 - File(s): `docs/contracts/api-contract.md` §5.5 (no change proposed unless the tech-lead wants a clean console).
 - Change: none required. Option if a completely clean DevTools console matters for the demo: `GET /api/auth/me` returns `200 null` (or `204`) for an anonymous visitor instead of `401 UNAUTHENTICATED`; the frontend already treats both as "not checked in".
 - Why: the route guard and the Check-in redirect ("already authenticated → home") must probe the httpOnly session, which the client cannot read. Chrome logs every 4xx fetch as "Failed to load resource … 401" even though no JavaScript error occurs. This is the only console error seen in the full browser run (both demo students).
 - Impact: backend-api (one endpoint) + one test; frontend needs no change either way (`features/auth/session.ts` maps 401 → null).
-- Decision (tech-lead): pending · Owners to act: backend-api-engineer (only if accepted)
+- Decision: accepted by the human on 2026-09-25 and done. `GET /api/auth/me` without a cookie → `200 null` (`app.api.deps.optional_user`); a present but bad, tampered, forged, expired or orphaned cookie is still `401 UNAUTHENTICATED` (`tests/api/test_auth.py::test_tampered_forged_or_expired_cookie_is_401`, `test_a_deleted_user_session_is_401`). api-contract §3 and §5.5 updated, openapi.json and `frontend/src/api/schema.d.ts` regenerated; `useMe` treats `null` and 401 as "no session" (`features/auth/session.test.tsx`). Every other endpoint keeps 401 for anonymous calls.

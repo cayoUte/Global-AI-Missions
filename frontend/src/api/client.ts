@@ -22,7 +22,8 @@ export interface ApiClient {
   config(): Promise<ConfigResponse>
   login(body: LoginRequest): Promise<UserView>
   logout(): Promise<void>
-  me(): Promise<UserView>
+  /** null when no session cookie was sent (200 null, CR-008). */
+  me(): Promise<UserView | null>
   world(): Promise<WorldResponse>
   progress(): Promise<ProgressResponse>
   startMission(missionId: string): Promise<StateView>

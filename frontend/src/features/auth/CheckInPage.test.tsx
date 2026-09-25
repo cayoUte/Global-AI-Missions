@@ -37,7 +37,7 @@ async function fillAndSubmit(user: ReturnType<typeof userEvent.setup>) {
 describe('CheckInPage', () => {
   beforeEach(() => {
     vi.resetAllMocks()
-    mocked.me.mockRejectedValue(new ApiError(401, 'UNAUTHENTICATED', 'no session', null))
+    mocked.me.mockResolvedValue(null) // anonymous visitor: 200 null (CR-008)
     mocked.config.mockResolvedValue({ demo_mode: false, demo_accounts: null, demo_password: null })
   })
 
