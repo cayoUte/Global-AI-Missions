@@ -1,7 +1,9 @@
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { Bus } from 'lucide-react'
 
 import type { Clock } from '../api/types'
 import { splitClockLabel } from '../lib/format'
+import { EASE, MOTION } from '../lib/motion'
 
 type Props = { clock: Clock | null; className?: string }
 
@@ -36,7 +38,7 @@ export function DepartureBoard({ clock, className = '' }: Props) {
         aria-hidden="true"
         className={rest ? 'block text-2xl tabular-nums lg:text-4xl' : 'block text-xs lg:text-sm'}
       >
-        {time}
+        {rest ? <FlipText text={time} /> : time}
       </span>
       {rest ? (
         <span
@@ -48,5 +50,41 @@ export function DepartureBoard({ clock, className = '' }: Props) {
         </span>
       ) : null}
     </div>
+  )
+}
+
+const HALF_FLIP = MOTION.flip / 2 // 120 ms out, then 120 ms in
+
+/**
+ * Clock flip (UI_SPEC §7, Should): each character sits in its own slot, keyed by the character,
+ * so only the characters that change flip (old 0→-90°, then new 90→0°). Nothing animates on the
+ * first render; reduced motion swaps the text instantly. The board's aria-label carries the time,
+ * so this is all aria-hidden.
+ */
+export function FlipText({ text }: { text: string }) {
+  const reduced = useReducedMotion() === true
+  if (reduced) return <>{text}</>
+  return (
+    <>
+      {Array.from(text).map((char, index) => (
+        <span
+          key={index}
+          data-flip-slot=""
+          className="inline-block whitespace-pre [perspective:400px]"
+        >
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.span
+              key={char}
+              className="inline-block"
+              initial={{ rotateX: 90 }}
+              animate={{ rotateX: 0, transition: { duration: HALF_FLIP, ease: EASE.enter } }}
+              exit={{ rotateX: -90, transition: { duration: HALF_FLIP, ease: EASE.exit } }}
+            >
+              {char}
+            </motion.span>
+          </AnimatePresence>
+        </span>
+      ))}
+    </>
   )
 }
