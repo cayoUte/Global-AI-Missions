@@ -4,7 +4,7 @@ import { defineConfig } from 'vitest/config'
 
 // Development: Vite serves the SPA and proxies /api to FastAPI (same origin for the cookie).
 // Production: FastAPI serves the built SPA from dist/ (single origin, no CORS).
-const API_TARGET = process.env.VITE_API_TARGET ?? 'http://localhost:8000'
+const API_TARGET = process.env.VITE_API_TARGET ?? 'http://127.0.0.1:8000' // 127.0.0.1, not localhost (CR-005)
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
