@@ -10,6 +10,7 @@ from app.core.errors import DomainError, ErrorCode
 from app.core.security import SESSION_COOKIE
 from app.repositories.db import get_sessionmaker
 from app.services import auth as auth_service
+from app.services import simulation as simulation_service
 
 
 def get_session() -> Iterator[Session]:
@@ -63,3 +64,12 @@ def require_role(*roles: str) -> Callable[..., Any]:
 
 Student = Annotated[Any, Depends(require_role("student"))]
 TeacherOrAdmin = Annotated[Any, Depends(require_role("teacher", "admin"))]
+
+
+def require_demo_mode() -> None:
+    """Declared before the user dependency on demo-only routes, so with DEMO_MODE off the route
+    is a 404 NOT_FOUND for everyone, authenticated or not (api-contract §5.16)."""
+    simulation_service.ensure_demo_mode()
+
+
+DemoMode = Annotated[None, Depends(require_demo_mode)]

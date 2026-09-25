@@ -4,7 +4,7 @@ from fastapi import FastAPI
 
 from app.api.error_handlers import register_error_handlers
 from app.api.middleware import register_middleware
-from app.api.routers import attempts, auth, health, world
+from app.api.routers import attempts, auth, health, simulation, world
 from app.api.spa import mount_spa
 from app.core.config import get_settings
 from app.core.logging import configure_logging
@@ -23,7 +23,7 @@ def create_app() -> FastAPI:
     )
     register_error_handlers(app)
     register_middleware(app)
-    for module in (health, auth, world, attempts):
+    for module in (health, auth, world, attempts, simulation):
         app.include_router(module.router)
     spa_dir = settings.resolved_spa_dir()
     if spa_dir is not None:  # production mode: one origin serves the API and the SPA
