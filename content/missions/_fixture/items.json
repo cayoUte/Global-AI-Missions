@@ -1,0 +1,306 @@
+{
+  "mission_id": "fixture",
+  "items": [
+    {
+      "id": "q01",
+      "type": "multiple_choice",
+      "skill": "listening",
+      "cefr": "A1",
+      "prompt": "Which platform does the announcer say?",
+      "stimulus": {
+        "kind": "audio",
+        "speaker": "Station announcer",
+        "audio_script": "The fixture train leaves from platform six.",
+        "rate": 0.85,
+        "text": null
+      },
+      "options": [
+        {
+          "id": "a",
+          "text": "Platform two"
+        },
+        {
+          "id": "b",
+          "text": "Platform six"
+        },
+        {
+          "id": "c",
+          "text": "Platform sixteen"
+        }
+      ],
+      "answer_key": {
+        "correct_option_id": "b"
+      },
+      "explanation": "Fixture explanation for item q01.",
+      "hint": "Listen for the number."
+    },
+    {
+      "id": "q02",
+      "type": "vocabulary",
+      "skill": "vocabulary",
+      "cefr": "A1",
+      "prompt": "What can you buy here?",
+      "stimulus": {
+        "kind": "sign",
+        "speaker": null,
+        "text": "TICKET OFFICE"
+      },
+      "options": [
+        {
+          "id": "a",
+          "text": "A ticket"
+        },
+        {
+          "id": "b",
+          "text": "A coffee"
+        },
+        {
+          "id": "c",
+          "text": "A newspaper"
+        }
+      ],
+      "answer_key": {
+        "correct_option_id": "a"
+      },
+      "explanation": "Fixture explanation for item q02.",
+      "hint": "Read the first word of the sign."
+    },
+    {
+      "id": "q03",
+      "type": "fill_blank",
+      "skill": "grammar",
+      "cefr": "A2",
+      "prompt": "Could I ___ a single ticket, please?",
+      "stimulus": {
+        "kind": "dialogue",
+        "speaker": "You",
+        "text": "You are at the ticket window."
+      },
+      "options": null,
+      "answer_key": {
+        "accepted": [
+          "have",
+          "get",
+          "buy"
+        ]
+      },
+      "explanation": "Fixture explanation for item q03.",
+      "hint": "Think of a polite request with a simple verb."
+    },
+    {
+      "id": "q04",
+      "type": "multiple_choice",
+      "skill": "grammar",
+      "cefr": "A2",
+      "prompt": "Which sentence is correct?",
+      "stimulus": null,
+      "options": [
+        {
+          "id": "a",
+          "text": "The train leave at ten."
+        },
+        {
+          "id": "b",
+          "text": "The train leaves at ten."
+        },
+        {
+          "id": "c",
+          "text": "The train leaving at ten."
+        }
+      ],
+      "answer_key": {
+        "correct_option_id": "b"
+      },
+      "explanation": "Fixture explanation for item q04.",
+      "hint": "He, she, it: the verb changes."
+    },
+    {
+      "id": "q05",
+      "type": "comprehension",
+      "skill": "reading",
+      "cefr": "A2",
+      "prompt": "Where will Sam meet you?",
+      "stimulus": {
+        "kind": "message",
+        "speaker": "From: Sam",
+        "text": "Running late. Meet me by the clock, not at the gate."
+      },
+      "options": [
+        {
+          "id": "a",
+          "text": "At the gate"
+        },
+        {
+          "id": "b",
+          "text": "By the clock"
+        },
+        {
+          "id": "c",
+          "text": "On the train"
+        }
+      ],
+      "answer_key": {
+        "correct_option_id": "b"
+      },
+      "explanation": "Fixture explanation for item q05.",
+      "hint": "Look for the word 'not'."
+    },
+    {
+      "id": "q06",
+      "type": "multiple_choice",
+      "skill": "listening",
+      "cefr": "B1",
+      "prompt": "What has changed?",
+      "stimulus": {
+        "kind": "audio",
+        "speaker": "Station announcer",
+        "audio_script": "Passengers for the fixture service, please note: the train will now depart from platform nine, not platform six.",
+        "rate": 1.0,
+        "text": null
+      },
+      "options": [
+        {
+          "id": "a",
+          "text": "The departure time"
+        },
+        {
+          "id": "b",
+          "text": "The platform"
+        },
+        {
+          "id": "c",
+          "text": "The destination"
+        },
+        {
+          "id": "d",
+          "text": "The train company"
+        }
+      ],
+      "answer_key": {
+        "correct_option_id": "b"
+      },
+      "explanation": "Fixture explanation for item q06.",
+      "hint": "Listen for what comes after 'now'."
+    },
+    {
+      "id": "q07",
+      "type": "vocabulary",
+      "skill": "vocabulary",
+      "cefr": "B1",
+      "prompt": "What does 'delayed' mean here?",
+      "stimulus": {
+        "kind": "sign",
+        "speaker": "Departures board",
+        "text": "22:05 FIXTURE SERVICE - DELAYED"
+      },
+      "options": [
+        {
+          "id": "a",
+          "text": "Later than planned"
+        },
+        {
+          "id": "b",
+          "text": "Cancelled"
+        },
+        {
+          "id": "c",
+          "text": "Already full"
+        }
+      ],
+      "answer_key": {
+        "correct_option_id": "a"
+      },
+      "explanation": "Fixture explanation for item q07.",
+      "hint": "The train still runs. What changed?"
+    },
+    {
+      "id": "q08",
+      "type": "fill_blank",
+      "skill": "grammar",
+      "cefr": "B1",
+      "prompt": "If we run now, we ___ catch it.",
+      "stimulus": {
+        "kind": "dialogue",
+        "speaker": "Maya",
+        "text": "Two minutes. It is close."
+      },
+      "options": null,
+      "answer_key": {
+        "accepted": [
+          "will",
+          "can",
+          "might",
+          "could"
+        ]
+      },
+      "explanation": "Fixture explanation for item q08.",
+      "hint": "A first conditional talks about a real future."
+    },
+    {
+      "id": "q09",
+      "type": "comprehension",
+      "skill": "reading",
+      "cefr": "B2",
+      "prompt": "Which statement is true?",
+      "stimulus": {
+        "kind": "timetable",
+        "speaker": "Departures",
+        "text": "22:05 Fixture service  Platform 9  Delayed 3 min\n22:12 Airport express  Platform 2  On time"
+      },
+      "options": [
+        {
+          "id": "a",
+          "text": "The airport train is delayed."
+        },
+        {
+          "id": "b",
+          "text": "The fixture service leaves from platform 2."
+        },
+        {
+          "id": "c",
+          "text": "The fixture service now leaves at about 22:08."
+        },
+        {
+          "id": "d",
+          "text": "Both trains are on time."
+        }
+      ],
+      "answer_key": {
+        "correct_option_id": "c"
+      },
+      "explanation": "Fixture explanation for item q09.",
+      "hint": "Add the delay to the time."
+    },
+    {
+      "id": "q10",
+      "type": "multiple_choice",
+      "skill": "grammar",
+      "cefr": "B2",
+      "prompt": "Which reply is correct?",
+      "stimulus": {
+        "kind": "dialogue",
+        "speaker": "Guard",
+        "text": "You were lucky tonight."
+      },
+      "options": [
+        {
+          "id": "a",
+          "text": "Had we left later, we would have missed it."
+        },
+        {
+          "id": "b",
+          "text": "Had we left later, we will miss it."
+        },
+        {
+          "id": "c",
+          "text": "Had we leave later, we missed it."
+        }
+      ],
+      "answer_key": {
+        "correct_option_id": "a"
+      },
+      "explanation": "Fixture explanation for item q10.",
+      "hint": "Past situation, imagined result: would have."
+    }
+  ]
+}

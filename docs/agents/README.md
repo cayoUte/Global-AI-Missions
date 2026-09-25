@@ -1,8 +1,8 @@
 # Equipo de agentes · Global AI Missions
 
-Este paquete define 12 agentes especializados para construir Global AI Missions en 10 horas. Cada agente tiene un brief con el formato **ROLE · MISSION · RESPONSIBILITIES · OUTPUT · CONSTRAINTS**, y todos comparten una única fuente de verdad: [`SHARED_CONTEXT.md`](SHARED_CONTEXT.md).
+Este paquete define 12 agentes especializados para construir Global AI Missions en 8 horas (el enunciado estima 6–8 horas en un día, sin trabajo nocturno). Cada agente tiene un brief con el formato **ROLE · MISSION · RESPONSIBILITIES · OUTPUT · CONSTRAINTS**, y todos comparten una única fuente de verdad: [`SHARED_CONTEXT.md`](SHARED_CONTEXT.md).
 
-Los briefs y el contexto están en inglés, porque el código y el contenido de la app también lo están. Los documentos para los evaluadores (README, DECISIONS, INTERVIEW y AI_USAGE) se escriben en español.
+Los briefs y el contexto están en inglés, porque el código y el contenido de la app también lo están. Los documentos para los evaluadores (README, DECISIONS, INTERVIEW, AI_USAGE y AI_ARCHITECTURE) se escriben en español. El resto de `docs/` son notas internas de trabajo.
 
 ---
 
@@ -18,35 +18,35 @@ Los briefs y el contexto están en inglés, porque el código y el contenido de 
 
 | # | Agente | Entrega principal | Tiempo | Necesita antes |
 |---|---|---|---|---|
-| 00 | `product-architect` | PRODUCT.md, REQUIREMENTS_MAP.md, MAYA.md, catalog.json | 30 min | — |
-| 01 | `tech-lead` | Esqueleto del repo, contratos (esquemas y API), DECISIONS.md, INTERVIEW.md | 60 + 45 min | — |
-| 02 | `assessment-designer` | items.json, ASSESSMENT_SPEC.md | 40 min | 00, 01 |
-| 03 | `narrative-designer` | mission.json, SCRIPT.md, BACKDROPS.md | 60 min | 02 |
-| 04 | `story-graph-engineer` | Motor de búsqueda, Maya planificadora, validador, simulador, calibración | 90 min | 01 (y 03 para el contenido real) |
-| 05 | `data-engineer` | Modelos, migración, repositorios, seed con usuarios demo | 60 + 15 min | 01 (y 04 para el historial del veterano) |
-| 06 | `backend-api-engineer` | API completa, calificación, nivel sugerido, reporte, roles | 105 min | 04, 05 |
-| 07 | `ai-coach-engineer` | Maya con LLM: puerto, Claude, mock, memoria | 60 min | 01 |
-| 08 | `ux-ui-designer` | UI_SPEC.md, tokens, avatar de Maya | 45 min | 00 |
-| 09 | `frontend-engineer` | Toda la app React | 150 min | 01, 08 (y 06 para integrar) |
-| 10 | `qa-engineer` | Plan de pruebas, tests de seguridad, E2E, guion de la demo | 60 min | 06, 09 |
-| 11 | `delivery-engineer` | Docker, CI, README, AI_USAGE.md, deploy opcional | 15 + 45 min | todos |
+| 00 | `product-architect` | PRODUCT.md, REQUIREMENTS_MAP.md, MAYA.md, catalog.json | 20 min (hecho) | — |
+| 01 | `tech-lead` | Esqueleto del repo, contratos (esquemas y API), DECISIONS.md, INTERVIEW.md | 45 + 40 min | — |
+| 02 | `assessment-designer` | items.json, ASSESSMENT_SPEC.md | 35 min | 00, 01 |
+| 03 | `narrative-designer` | mission.json, SCRIPT.md, BACKDROPS.md | 50 min | 02 |
+| 04 | `story-graph-engineer` | Grafo fixture, motor de búsqueda, Maya planificadora, validador, simulador | 75 min | 01 (y 03 para el contenido real) |
+| 05 | `data-engineer` | Modelos, migración, repositorios, seed con usuarios demo | 45 + 15 min | 01 (y 04 para el historial del veterano) |
+| 06 | `backend-api-engineer` | API, ciclo del intento, reporte, progreso, roles | 90 min | 04, 05 |
+| 07 | `ai-coach-engineer` | Maya con LLM: puerto, Claude, mock, memoria, AI_ARCHITECTURE.md | 45 min | 01 |
+| 08 | `ux-ui-designer` | UI_SPEC.md, tokens, avatar de Maya | 30 min | 00 |
+| 09 | `frontend-engineer` | Toda la app React | 135 min | 01, 08 (y 06 para integrar) |
+| 10 | `qa-engineer` | Plan de pruebas, tests de seguridad, E2E, guion de la demo | 45 min | 06, 09 |
+| 11 | `delivery-engineer` | Docker, CI, README, AI_USAGE.md, deploy | 15 + 40 min | todos |
 
-Los tiempos suman más de 10 horas porque varios agentes trabajan en paralelo.
+Los tiempos suman más de 8 horas porque varios agentes trabajan en paralelo.
 
 ---
 
-## Plan de 10 horas
+## Plan de 8 horas
 
 | Hora | Fase | Qué pasa | Control humano |
 |---|---|---|---|
-| 0:00–1:00 | 0 · Marco | `product-architect` ∥ `tech-lead` (esqueleto y contratos) ∥ `delivery-engineer` (docker-compose, .env.example, .gitignore, Makefile) | **G0** (1:00) — ¿Los contratos cubren todo el flujo? ¿Entiendes la estructura del repo? |
-| 1:00–3:00 | 1 · Contenido y cimientos | `assessment-designer` → `narrative-designer` · `story-graph-engineer` (con un grafo de prueba) · `data-engineer` · `ux-ui-designer` · `backend-api-engineer` (auth y world desde las 2:00) · `frontend-engineer` (desde 1:45, con datos simulados) | **G1** (2:40) — Lee SCRIPT.md completo. ¿Los ítems cumplen 4/2/2/2 y los niveles? ¿El validador pasa con el contenido real? |
-| 3:00–6:00 | 2 · Construcción | `backend-api-engineer` (intentos, calificación, reporte) · `ai-coach-engineer` · calibración con el simulador · nuevo seed con el veterano · `frontend-engineer` (integración) | **G2** (6:00) — Misión completa con `new@`. En DevTools, comprueba que no viajen respuestas. Recarga a mitad de misión. |
-| 6:00–8:00 | 3 · Calidad | `qa-engineer` · correcciones de cada dueño · pase responsive y de accesibilidad · extras solo si todo está verde | **G3** (8:00) — Tests en verde. Primer ensayo de la demo con `veteran@` y `new@`. |
-| 8:00–9:30 | 4 · Entrega | `delivery-engineer` (README, Docker, CI, deploy opcional) · `tech-lead` (DECISIONS.md, INTERVIEW.md) · AI_USAGE.md | — |
-| 9:30–10:00 | Margen | Clon limpio siguiendo el README, ensayo final, tag v1.0.0 | **G4** — ¿Puedes explicar cada módulo? ¿AI_USAGE.md es fiel a lo que pasó? |
+| 0:00–0:45 | 0 · Marco | `tech-lead` (esqueleto y contratos) ∥ `delivery-engineer` (docker-compose, .env.example, .gitignore, Makefile) ∥ `story-graph-engineer` (grafo fixture en `content/missions/_fixture/`) | **G0** (0:45) — ¿Los contratos cubren todo el flujo? ¿Entiendes la estructura del repo? |
+| 0:45–2:30 | 1 · Esqueleto que recorre el flujo | `data-engineer` (modelos, seed con el fixture) · `backend-api-engineer` (auth, world, intento, submit con coach mock) · `frontend-engineer` (pantallas y renderizadores sencillos) · en paralelo: `assessment-designer` → `narrative-designer`, `ux-ui-designer` | **G1** (2:30) — Con docker compose: check-in → English World → 10 checkpoints del fixture → Submit mission → números del reporte → fila en Progress. Lee SCRIPT.md: ¿ítems 4/2/2/2 y niveles? |
+| 2:30–5:00 | 2 · Contenido real e inmersión | validador con el contenido real · seed con la misión y el veterano · Maya planificadora · `ai-coach-engineer` · `frontend-engineer` (UI_SPEC, reporte completo, Progress) | **G2** (5:00) — Misión real completa con `new@`. En DevTools, comprueba que no viajen respuestas. Recarga a mitad de misión y en el final. |
+| 5:00–6:30 | 3 · Calidad | `qa-engineer` · correcciones de cada dueño · pase responsive (360 px) y de accesibilidad · deploy de la misma imagen · extras solo si todo está verde | **G3** (6:30) — Tests en verde. Ensayo de la demo con `new@` y `veteran@`. |
+| 6:30–7:30 | 4 · Entrega | `delivery-engineer` (README, Docker, CI, redeploy) · `tech-lead` (DECISIONS.md, INTERVIEW.md) · AI_USAGE.md | — |
+| 7:30–8:00 | Margen | Clon limpio siguiendo el README, ensayo final, tag v1.0.0 | **G4** — ¿Puedes explicar cada módulo? ¿AI_USAGE.md es fiel a lo que pasó, con las horas reales? |
 
-**Ruta crítica:** contratos → ítems → guion → validación del motor con el contenido real → intentos en el backend → integración del frontend → QA → entrega. Si algo se atrasa, se recortan los extras (vista de profesor, replay simulado, segundo proveedor de IA), nunca la ruta crítica.
+**Ruta crítica:** contratos → esqueleto que recorre el flujo §1 con el fixture → contenido real → Maya e inmersión → QA → entrega. El esqueleto de G1 es la entrega mínima de respaldo. Si algo se atrasa, se recorta el pulido (animaciones, typewriter) y los extras (vista de profesor, replay simulado, segundo proveedor de IA), nunca el flujo.
 
 ---
 
@@ -67,7 +67,8 @@ Eres el orquestador y el dueño de las decisiones. La prueba exige que puedas ex
 Lo que más te conviene leer a fondo tú mismo:
 
 - `backend/app/engine/` (el motor de búsqueda y la política de Maya).
-- `backend/app/services/attempts.py` y la función `to_state_view`: ahí están las respuestas a las preguntas 2, 7 y 8 de la entrevista.
+- `backend/app/services/grading.py`, `leveling.py` y `state_view.py` (`to_state_view`): responden las preguntas 2 y 8 de la entrevista. Los escribe el `backend-api-engineer`; tú los revisas línea por línea en G1.
+- `backend/app/services/attempts.py`: la pregunta 7 (reanudar tras perder la conexión).
 - `backend/app/ai/`: la respuesta a la pregunta 5.
 
 ---

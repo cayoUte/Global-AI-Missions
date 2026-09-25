@@ -1,0 +1,1299 @@
+{
+  "mission_id": "fixture",
+  "version": 1,
+  "title": "Fixture Mission",
+  "setting": {
+    "city": "Fixture City",
+    "start_clock": "21:47",
+    "minutes_available": 18
+  },
+  "companion": {
+    "id": "maya",
+    "name": "Maya",
+    "mood_lines": {
+      "curious": [
+        "What do you notice here?",
+        "Look around. Something is new."
+      ],
+      "encouraging": [
+        "We are doing fine. One step at a time."
+      ],
+      "worried": [
+        "Time is tight. Stay with me."
+      ],
+      "proud": [
+        "You are really good at this."
+      ]
+    }
+  },
+  "flags": [
+    {
+      "id": "lost_ticket",
+      "description": "Set when checkpoint 3 is missed."
+    },
+    {
+      "id": "wrong_platform",
+      "description": "Set when checkpoint 6 is missed."
+    }
+  ],
+  "start_node": "intro",
+  "nodes": [
+    {
+      "id": "intro",
+      "kind": "narrative",
+      "scene": {
+        "location": "Fixture concourse",
+        "backdrop": "fixture_scene",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "FIXTURE - 21:47. You have 18 minutes before the last train."
+          }
+        ]
+      },
+      "diary": "We started the fixture mission with eighteen minutes to spare.",
+      "maya": {
+        "line": "Fixture Maya here. Let us find that train."
+      }
+    },
+    {
+      "id": "c01",
+      "kind": "checkpoint",
+      "item_id": "q01",
+      "scene": {
+        "location": "Fixture stop 1",
+        "backdrop": "fixture_scene",
+        "lines": []
+      },
+      "diary": "We reached checkpoint 1.",
+      "maya": {
+        "intro": "Fixture intro for checkpoint 1: pay attention.",
+        "reaction_ok": "Checkpoint 1: you understood.",
+        "reaction_fail": "Checkpoint 1: not quite. We take the long way."
+      }
+    },
+    {
+      "id": "c01_ok",
+      "kind": "consequence",
+      "scene": {
+        "location": "Fixture stop 1",
+        "backdrop": "fixture_scene",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "Checkpoint 1 understood. The story moves on."
+          }
+        ]
+      },
+      "diary": "Checkpoint 1 understood. The story moves on."
+    },
+    {
+      "id": "c01_fail",
+      "kind": "consequence",
+      "scene": {
+        "location": "Fixture stop 1",
+        "backdrop": "fixture_scene",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "Checkpoint 1 missed. A short detour."
+          }
+        ]
+      },
+      "diary": "Checkpoint 1 missed. A short detour."
+    },
+    {
+      "id": "c02",
+      "kind": "checkpoint",
+      "item_id": "q02",
+      "scene": {
+        "location": "Fixture stop 2",
+        "backdrop": "fixture_scene",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "Placeholder scene for checkpoint 2."
+          }
+        ]
+      },
+      "diary": "We reached checkpoint 2.",
+      "maya": {
+        "intro": "Fixture intro for checkpoint 2: pay attention.",
+        "reaction_ok": "Checkpoint 2: you understood.",
+        "reaction_fail": "Checkpoint 2: not quite. We take the long way."
+      }
+    },
+    {
+      "id": "c02_ok",
+      "kind": "consequence",
+      "scene": {
+        "location": "Fixture stop 2",
+        "backdrop": "fixture_scene",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "Checkpoint 2 understood. The story moves on."
+          }
+        ]
+      },
+      "diary": "Checkpoint 2 understood. The story moves on."
+    },
+    {
+      "id": "c02_fail",
+      "kind": "consequence",
+      "scene": {
+        "location": "Fixture stop 2",
+        "backdrop": "fixture_scene",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "Checkpoint 2 missed. A short detour."
+          }
+        ]
+      },
+      "diary": "Checkpoint 2 missed. A short detour."
+    },
+    {
+      "id": "c03",
+      "kind": "checkpoint",
+      "item_id": "q03",
+      "scene": {
+        "location": "Fixture stop 3",
+        "backdrop": "fixture_scene",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "Placeholder scene for checkpoint 3."
+          }
+        ]
+      },
+      "diary": "We reached checkpoint 3.",
+      "maya": {
+        "intro": "Fixture intro for checkpoint 3: pay attention.",
+        "reaction_ok": "Checkpoint 3: you understood.",
+        "reaction_fail": "Checkpoint 3: not quite. We take the long way."
+      }
+    },
+    {
+      "id": "c03_ok",
+      "kind": "consequence",
+      "scene": {
+        "location": "Fixture stop 3",
+        "backdrop": "fixture_scene",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "Checkpoint 3 understood. The story moves on."
+          }
+        ]
+      },
+      "diary": "Checkpoint 3 understood. The story moves on."
+    },
+    {
+      "id": "c03_fail",
+      "kind": "consequence",
+      "scene": {
+        "location": "Fixture stop 3",
+        "backdrop": "fixture_scene",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "Checkpoint 3 missed. A short detour."
+          }
+        ]
+      },
+      "diary": "Checkpoint 3 missed. A short detour."
+    },
+    {
+      "id": "c04",
+      "kind": "checkpoint",
+      "item_id": "q04",
+      "scene": {
+        "location": "Fixture stop 4",
+        "backdrop": "fixture_scene",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "Placeholder scene for checkpoint 4."
+          }
+        ],
+        "variants": [
+          {
+            "when_flag": "lost_ticket",
+            "lines": [
+              {
+                "speaker": "narrator",
+                "text": "Flag lost_ticket is set at checkpoint 4."
+              }
+            ],
+            "maya_line": "Remember what happened before. Checkpoint 4."
+          }
+        ]
+      },
+      "diary": "We reached checkpoint 4.",
+      "maya": {
+        "intro": "Fixture intro for checkpoint 4: pay attention.",
+        "reaction_ok": "Checkpoint 4: you understood.",
+        "reaction_fail": "Checkpoint 4: not quite. We take the long way."
+      }
+    },
+    {
+      "id": "c04_ok",
+      "kind": "consequence",
+      "scene": {
+        "location": "Fixture stop 4",
+        "backdrop": "fixture_scene",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "Checkpoint 4 understood. The story moves on."
+          }
+        ]
+      },
+      "diary": "Checkpoint 4 understood. The story moves on."
+    },
+    {
+      "id": "c04_fail",
+      "kind": "consequence",
+      "scene": {
+        "location": "Fixture stop 4",
+        "backdrop": "fixture_scene",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "Checkpoint 4 missed. A short detour."
+          }
+        ]
+      },
+      "diary": "Checkpoint 4 missed. A short detour."
+    },
+    {
+      "id": "c05",
+      "kind": "checkpoint",
+      "item_id": "q05",
+      "scene": {
+        "location": "Fixture stop 5",
+        "backdrop": "fixture_scene",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "Placeholder scene for checkpoint 5."
+          }
+        ]
+      },
+      "diary": "We reached checkpoint 5.",
+      "maya": {
+        "intro": "Fixture intro for checkpoint 5: pay attention.",
+        "reaction_ok": "Checkpoint 5: you understood.",
+        "reaction_fail": "Checkpoint 5: not quite. We take the long way."
+      }
+    },
+    {
+      "id": "c05_ok",
+      "kind": "consequence",
+      "scene": {
+        "location": "Fixture stop 5",
+        "backdrop": "fixture_scene",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "Checkpoint 5 understood. The story moves on."
+          }
+        ]
+      },
+      "diary": "Checkpoint 5 understood. The story moves on."
+    },
+    {
+      "id": "c05_fail",
+      "kind": "consequence",
+      "scene": {
+        "location": "Fixture stop 5",
+        "backdrop": "fixture_scene",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "Checkpoint 5 missed. A short detour."
+          }
+        ]
+      },
+      "diary": "Checkpoint 5 missed. A short detour."
+    },
+    {
+      "id": "c06",
+      "kind": "checkpoint",
+      "item_id": "q06",
+      "scene": {
+        "location": "Fixture stop 6",
+        "backdrop": "fixture_scene",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "Placeholder scene for checkpoint 6."
+          }
+        ]
+      },
+      "diary": "We reached checkpoint 6.",
+      "maya": {
+        "intro": "Fixture intro for checkpoint 6: pay attention.",
+        "reaction_ok": "Checkpoint 6: you understood.",
+        "reaction_fail": "Checkpoint 6: not quite. We take the long way."
+      }
+    },
+    {
+      "id": "c06_ok",
+      "kind": "consequence",
+      "scene": {
+        "location": "Fixture stop 6",
+        "backdrop": "fixture_scene",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "Checkpoint 6 understood. The story moves on."
+          }
+        ]
+      },
+      "diary": "Checkpoint 6 understood. The story moves on."
+    },
+    {
+      "id": "c06_fail",
+      "kind": "consequence",
+      "scene": {
+        "location": "Fixture stop 6",
+        "backdrop": "fixture_scene",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "Checkpoint 6 missed. A short detour."
+          }
+        ]
+      },
+      "diary": "Checkpoint 6 missed. A short detour."
+    },
+    {
+      "id": "c07",
+      "kind": "checkpoint",
+      "item_id": "q07",
+      "scene": {
+        "location": "Fixture stop 7",
+        "backdrop": "fixture_scene",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "Placeholder scene for checkpoint 7."
+          }
+        ],
+        "variants": [
+          {
+            "when_flag": "wrong_platform",
+            "lines": [
+              {
+                "speaker": "narrator",
+                "text": "Flag wrong_platform is set at checkpoint 7."
+              }
+            ],
+            "maya_line": "Remember what happened before. Checkpoint 7."
+          }
+        ]
+      },
+      "diary": "We reached checkpoint 7.",
+      "maya": {
+        "intro": "Fixture intro for checkpoint 7: pay attention.",
+        "reaction_ok": "Checkpoint 7: you understood.",
+        "reaction_fail": "Checkpoint 7: not quite. We take the long way.",
+        "reaction_rescue": "Checkpoint 7: I know a shortcut. Follow me."
+      }
+    },
+    {
+      "id": "c07_ok",
+      "kind": "consequence",
+      "scene": {
+        "location": "Fixture stop 7",
+        "backdrop": "fixture_scene",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "Checkpoint 7 understood. The story moves on."
+          }
+        ],
+        "variants": [
+          {
+            "when_flag": "train_departed",
+            "backdrop": "fixture_night_bus",
+            "lines": [
+              {
+                "speaker": "narrator",
+                "text": "Plan B: the train is gone. After checkpoint 7."
+              }
+            ],
+            "maya_line": "The train left, but we still have the night bus. Keep going.",
+            "diary": "Plan B: we kept going after the train left (after checkpoint 7)."
+          }
+        ]
+      },
+      "diary": "Checkpoint 7 understood. The story moves on."
+    },
+    {
+      "id": "c07_fail",
+      "kind": "consequence",
+      "scene": {
+        "location": "Fixture stop 7",
+        "backdrop": "fixture_scene",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "Checkpoint 7 missed. A short detour."
+          }
+        ],
+        "variants": [
+          {
+            "when_flag": "train_departed",
+            "backdrop": "fixture_night_bus",
+            "lines": [
+              {
+                "speaker": "narrator",
+                "text": "Plan B: the train is gone. After checkpoint 7."
+              }
+            ],
+            "maya_line": "The train left, but we still have the night bus. Keep going.",
+            "diary": "Plan B: we kept going after the train left (after checkpoint 7)."
+          }
+        ]
+      },
+      "diary": "Checkpoint 7 missed. A short detour."
+    },
+    {
+      "id": "c07_rescue",
+      "kind": "consequence",
+      "scene": {
+        "location": "Fixture stop 7",
+        "backdrop": "fixture_scene",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "Checkpoint 7 missed, but Maya found a shortcut."
+          }
+        ],
+        "variants": [
+          {
+            "when_flag": "train_departed",
+            "backdrop": "fixture_night_bus",
+            "lines": [
+              {
+                "speaker": "narrator",
+                "text": "Plan B: the train is gone. After checkpoint 7."
+              }
+            ],
+            "maya_line": "The train left, but we still have the night bus. Keep going.",
+            "diary": "Plan B: we kept going after the train left (after checkpoint 7)."
+          }
+        ]
+      },
+      "diary": "Checkpoint 7 missed, but Maya found a shortcut.",
+      "maya": {
+        "line": "This way. Quick!"
+      }
+    },
+    {
+      "id": "c08",
+      "kind": "checkpoint",
+      "item_id": "q08",
+      "scene": {
+        "location": "Fixture stop 8",
+        "backdrop": "fixture_scene",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "Placeholder scene for checkpoint 8."
+          }
+        ],
+        "variants": [
+          {
+            "when_flag": "train_departed",
+            "backdrop": "fixture_night_bus",
+            "lines": [
+              {
+                "speaker": "narrator",
+                "text": "Plan B: the train is gone. Checkpoint 8."
+              }
+            ],
+            "maya_line": "The train left, but we still have the night bus. Keep going.",
+            "diary": "Plan B: we kept going after the train left (checkpoint 8)."
+          }
+        ]
+      },
+      "diary": "We reached checkpoint 8.",
+      "maya": {
+        "intro": "Fixture intro for checkpoint 8: pay attention.",
+        "reaction_ok": "Checkpoint 8: you understood.",
+        "reaction_fail": "Checkpoint 8: not quite. We take the long way.",
+        "reaction_rescue": "Checkpoint 8: I know a shortcut. Follow me."
+      }
+    },
+    {
+      "id": "c08_ok",
+      "kind": "consequence",
+      "scene": {
+        "location": "Fixture stop 8",
+        "backdrop": "fixture_scene",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "Checkpoint 8 understood. The story moves on."
+          }
+        ],
+        "variants": [
+          {
+            "when_flag": "train_departed",
+            "backdrop": "fixture_night_bus",
+            "lines": [
+              {
+                "speaker": "narrator",
+                "text": "Plan B: the train is gone. After checkpoint 8."
+              }
+            ],
+            "maya_line": "The train left, but we still have the night bus. Keep going.",
+            "diary": "Plan B: we kept going after the train left (after checkpoint 8)."
+          }
+        ]
+      },
+      "diary": "Checkpoint 8 understood. The story moves on."
+    },
+    {
+      "id": "c08_fail",
+      "kind": "consequence",
+      "scene": {
+        "location": "Fixture stop 8",
+        "backdrop": "fixture_scene",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "Checkpoint 8 missed. A short detour."
+          }
+        ],
+        "variants": [
+          {
+            "when_flag": "train_departed",
+            "backdrop": "fixture_night_bus",
+            "lines": [
+              {
+                "speaker": "narrator",
+                "text": "Plan B: the train is gone. After checkpoint 8."
+              }
+            ],
+            "maya_line": "The train left, but we still have the night bus. Keep going.",
+            "diary": "Plan B: we kept going after the train left (after checkpoint 8)."
+          }
+        ]
+      },
+      "diary": "Checkpoint 8 missed. A short detour."
+    },
+    {
+      "id": "c08_rescue",
+      "kind": "consequence",
+      "scene": {
+        "location": "Fixture stop 8",
+        "backdrop": "fixture_scene",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "Checkpoint 8 missed, but Maya found a shortcut."
+          }
+        ],
+        "variants": [
+          {
+            "when_flag": "train_departed",
+            "backdrop": "fixture_night_bus",
+            "lines": [
+              {
+                "speaker": "narrator",
+                "text": "Plan B: the train is gone. After checkpoint 8."
+              }
+            ],
+            "maya_line": "The train left, but we still have the night bus. Keep going.",
+            "diary": "Plan B: we kept going after the train left (after checkpoint 8)."
+          }
+        ]
+      },
+      "diary": "Checkpoint 8 missed, but Maya found a shortcut.",
+      "maya": {
+        "line": "This way. Quick!"
+      }
+    },
+    {
+      "id": "c09",
+      "kind": "checkpoint",
+      "item_id": "q09",
+      "scene": {
+        "location": "Fixture stop 9",
+        "backdrop": "fixture_scene",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "Placeholder scene for checkpoint 9."
+          }
+        ],
+        "variants": [
+          {
+            "when_flag": "train_departed",
+            "backdrop": "fixture_night_bus",
+            "lines": [
+              {
+                "speaker": "narrator",
+                "text": "Plan B: the train is gone. Checkpoint 9."
+              }
+            ],
+            "maya_line": "The train left, but we still have the night bus. Keep going.",
+            "diary": "Plan B: we kept going after the train left (checkpoint 9)."
+          }
+        ]
+      },
+      "diary": "We reached checkpoint 9.",
+      "maya": {
+        "intro": "Fixture intro for checkpoint 9: pay attention.",
+        "reaction_ok": "Checkpoint 9: you understood.",
+        "reaction_fail": "Checkpoint 9: not quite. We take the long way.",
+        "reaction_rescue": "Checkpoint 9: I know a shortcut. Follow me."
+      }
+    },
+    {
+      "id": "c09_ok",
+      "kind": "consequence",
+      "scene": {
+        "location": "Fixture stop 9",
+        "backdrop": "fixture_scene",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "Checkpoint 9 understood. The story moves on."
+          }
+        ],
+        "variants": [
+          {
+            "when_flag": "train_departed",
+            "backdrop": "fixture_night_bus",
+            "lines": [
+              {
+                "speaker": "narrator",
+                "text": "Plan B: the train is gone. After checkpoint 9."
+              }
+            ],
+            "maya_line": "The train left, but we still have the night bus. Keep going.",
+            "diary": "Plan B: we kept going after the train left (after checkpoint 9)."
+          }
+        ]
+      },
+      "diary": "Checkpoint 9 understood. The story moves on."
+    },
+    {
+      "id": "c09_fail",
+      "kind": "consequence",
+      "scene": {
+        "location": "Fixture stop 9",
+        "backdrop": "fixture_scene",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "Checkpoint 9 missed. A short detour."
+          }
+        ],
+        "variants": [
+          {
+            "when_flag": "train_departed",
+            "backdrop": "fixture_night_bus",
+            "lines": [
+              {
+                "speaker": "narrator",
+                "text": "Plan B: the train is gone. After checkpoint 9."
+              }
+            ],
+            "maya_line": "The train left, but we still have the night bus. Keep going.",
+            "diary": "Plan B: we kept going after the train left (after checkpoint 9)."
+          }
+        ]
+      },
+      "diary": "Checkpoint 9 missed. A short detour."
+    },
+    {
+      "id": "c09_rescue",
+      "kind": "consequence",
+      "scene": {
+        "location": "Fixture stop 9",
+        "backdrop": "fixture_scene",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "Checkpoint 9 missed, but Maya found a shortcut."
+          }
+        ],
+        "variants": [
+          {
+            "when_flag": "train_departed",
+            "backdrop": "fixture_night_bus",
+            "lines": [
+              {
+                "speaker": "narrator",
+                "text": "Plan B: the train is gone. After checkpoint 9."
+              }
+            ],
+            "maya_line": "The train left, but we still have the night bus. Keep going.",
+            "diary": "Plan B: we kept going after the train left (after checkpoint 9)."
+          }
+        ]
+      },
+      "diary": "Checkpoint 9 missed, but Maya found a shortcut.",
+      "maya": {
+        "line": "This way. Quick!"
+      }
+    },
+    {
+      "id": "c10",
+      "kind": "checkpoint",
+      "item_id": "q10",
+      "scene": {
+        "location": "Fixture stop 10",
+        "backdrop": "fixture_scene",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "Placeholder scene for checkpoint 10."
+          }
+        ],
+        "variants": [
+          {
+            "when_flag": "train_departed",
+            "backdrop": "fixture_night_bus",
+            "lines": [
+              {
+                "speaker": "narrator",
+                "text": "Plan B: the train is gone. Checkpoint 10."
+              }
+            ],
+            "maya_line": "The train left, but we still have the night bus. Keep going.",
+            "diary": "Plan B: we kept going after the train left (checkpoint 10)."
+          }
+        ]
+      },
+      "diary": "We reached checkpoint 10.",
+      "maya": {
+        "intro": "Fixture intro for checkpoint 10: pay attention.",
+        "reaction_ok": "Checkpoint 10: you understood.",
+        "reaction_fail": "Checkpoint 10: not quite. We take the long way.",
+        "reaction_rescue": "Checkpoint 10: I know a shortcut. Follow me."
+      }
+    },
+    {
+      "id": "c10_ok",
+      "kind": "consequence",
+      "scene": {
+        "location": "Fixture stop 10",
+        "backdrop": "fixture_scene",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "Checkpoint 10 understood. The story moves on."
+          }
+        ],
+        "variants": [
+          {
+            "when_flag": "train_departed",
+            "backdrop": "fixture_night_bus",
+            "lines": [
+              {
+                "speaker": "narrator",
+                "text": "Plan B: the train is gone. After checkpoint 10."
+              }
+            ],
+            "maya_line": "The train left, but we still have the night bus. Keep going.",
+            "diary": "Plan B: we kept going after the train left (after checkpoint 10)."
+          }
+        ]
+      },
+      "diary": "Checkpoint 10 understood. The story moves on."
+    },
+    {
+      "id": "c10_fail",
+      "kind": "consequence",
+      "scene": {
+        "location": "Fixture stop 10",
+        "backdrop": "fixture_scene",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "Checkpoint 10 missed. A short detour."
+          }
+        ],
+        "variants": [
+          {
+            "when_flag": "train_departed",
+            "backdrop": "fixture_night_bus",
+            "lines": [
+              {
+                "speaker": "narrator",
+                "text": "Plan B: the train is gone. After checkpoint 10."
+              }
+            ],
+            "maya_line": "The train left, but we still have the night bus. Keep going.",
+            "diary": "Plan B: we kept going after the train left (after checkpoint 10)."
+          }
+        ]
+      },
+      "diary": "Checkpoint 10 missed. A short detour."
+    },
+    {
+      "id": "c10_rescue",
+      "kind": "consequence",
+      "scene": {
+        "location": "Fixture stop 10",
+        "backdrop": "fixture_scene",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "Checkpoint 10 missed, but Maya found a shortcut."
+          }
+        ],
+        "variants": [
+          {
+            "when_flag": "train_departed",
+            "backdrop": "fixture_night_bus",
+            "lines": [
+              {
+                "speaker": "narrator",
+                "text": "Plan B: the train is gone. After checkpoint 10."
+              }
+            ],
+            "maya_line": "The train left, but we still have the night bus. Keep going.",
+            "diary": "Plan B: we kept going after the train left (after checkpoint 10)."
+          }
+        ]
+      },
+      "diary": "Checkpoint 10 missed, but Maya found a shortcut.",
+      "maya": {
+        "line": "This way. Quick!"
+      }
+    },
+    {
+      "id": "end_made_it",
+      "kind": "ending",
+      "scene": {
+        "location": "Fixture ending",
+        "backdrop": "fixture_scene",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "Ending: Made It."
+          }
+        ]
+      },
+      "diary": "The mission ended: Made It.",
+      "maya": {
+        "line": "You made it on your own. The doors close behind you."
+      },
+      "ending": {
+        "key": "made_it",
+        "title": "Made It",
+        "priority": 1,
+        "condition": {
+          "min_minutes_left": 0,
+          "rescued": false
+        }
+      }
+    },
+    {
+      "id": "end_made_it_with_maya",
+      "kind": "ending",
+      "scene": {
+        "location": "Fixture ending",
+        "backdrop": "fixture_scene",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "Ending: Made It With Maya."
+          }
+        ]
+      },
+      "diary": "The mission ended: Made It With Maya.",
+      "maya": {
+        "line": "We made it together. Good team."
+      },
+      "ending": {
+        "key": "made_it_with_maya",
+        "title": "Made It With Maya",
+        "priority": 2,
+        "condition": {
+          "min_minutes_left": 0,
+          "rescued": true
+        }
+      }
+    },
+    {
+      "id": "end_night_bus",
+      "kind": "ending",
+      "scene": {
+        "location": "Fixture ending",
+        "backdrop": "fixture_scene",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "Ending: The Night Bus."
+          }
+        ]
+      },
+      "diary": "The mission ended: The Night Bus.",
+      "maya": {
+        "line": "The train is gone, but the night bus is warm. We did this together."
+      },
+      "ending": {
+        "key": "night_bus",
+        "title": "The Night Bus",
+        "priority": 3,
+        "condition": {}
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "intro",
+      "to": "c01",
+      "on": "always",
+      "minutes": 0
+    },
+    {
+      "from": "c01",
+      "to": "c01_ok",
+      "on": "correct",
+      "minutes": 1
+    },
+    {
+      "from": "c01_ok",
+      "to": "c02",
+      "on": "always",
+      "minutes": 0
+    },
+    {
+      "from": "c01",
+      "to": "c01_fail",
+      "on": "incorrect",
+      "minutes": 3
+    },
+    {
+      "from": "c01_fail",
+      "to": "c02",
+      "on": "always",
+      "minutes": 0
+    },
+    {
+      "from": "c02",
+      "to": "c02_ok",
+      "on": "correct",
+      "minutes": 1
+    },
+    {
+      "from": "c02_ok",
+      "to": "c03",
+      "on": "always",
+      "minutes": 0
+    },
+    {
+      "from": "c02",
+      "to": "c02_fail",
+      "on": "incorrect",
+      "minutes": 3
+    },
+    {
+      "from": "c02_fail",
+      "to": "c03",
+      "on": "always",
+      "minutes": 0
+    },
+    {
+      "from": "c03",
+      "to": "c03_ok",
+      "on": "correct",
+      "minutes": 1
+    },
+    {
+      "from": "c03_ok",
+      "to": "c04",
+      "on": "always",
+      "minutes": 0
+    },
+    {
+      "from": "c03",
+      "to": "c03_fail",
+      "on": "incorrect",
+      "minutes": 3,
+      "effects": {
+        "set_flags": [
+          "lost_ticket"
+        ]
+      }
+    },
+    {
+      "from": "c03_fail",
+      "to": "c04",
+      "on": "always",
+      "minutes": 0
+    },
+    {
+      "from": "c04",
+      "to": "c04_ok",
+      "on": "correct",
+      "minutes": 1
+    },
+    {
+      "from": "c04_ok",
+      "to": "c05",
+      "on": "always",
+      "minutes": 0
+    },
+    {
+      "from": "c04",
+      "to": "c04_fail",
+      "on": "incorrect",
+      "minutes": 3
+    },
+    {
+      "from": "c04_fail",
+      "to": "c05",
+      "on": "always",
+      "minutes": 0
+    },
+    {
+      "from": "c05",
+      "to": "c05_ok",
+      "on": "correct",
+      "minutes": 1
+    },
+    {
+      "from": "c05_ok",
+      "to": "c06",
+      "on": "always",
+      "minutes": 0
+    },
+    {
+      "from": "c05",
+      "to": "c05_fail",
+      "on": "incorrect",
+      "minutes": 3
+    },
+    {
+      "from": "c05_fail",
+      "to": "c06",
+      "on": "always",
+      "minutes": 0
+    },
+    {
+      "from": "c06",
+      "to": "c06_ok",
+      "on": "correct",
+      "minutes": 1
+    },
+    {
+      "from": "c06_ok",
+      "to": "c07",
+      "on": "always",
+      "minutes": 0
+    },
+    {
+      "from": "c06",
+      "to": "c06_fail",
+      "on": "incorrect",
+      "minutes": 3,
+      "effects": {
+        "set_flags": [
+          "wrong_platform"
+        ]
+      }
+    },
+    {
+      "from": "c06_fail",
+      "to": "c07",
+      "on": "always",
+      "minutes": 0
+    },
+    {
+      "from": "c07",
+      "to": "c07_ok",
+      "on": "correct",
+      "minutes": 1
+    },
+    {
+      "from": "c07_ok",
+      "to": "c08",
+      "on": "always",
+      "minutes": 0
+    },
+    {
+      "from": "c07",
+      "to": "c07_fail",
+      "on": "incorrect",
+      "minutes": 3
+    },
+    {
+      "from": "c07_fail",
+      "to": "c08",
+      "on": "always",
+      "minutes": 0
+    },
+    {
+      "from": "c07",
+      "to": "c07_rescue",
+      "on": "incorrect",
+      "minutes": 1,
+      "rescue": true
+    },
+    {
+      "from": "c07_rescue",
+      "to": "c08",
+      "on": "always",
+      "minutes": 0
+    },
+    {
+      "from": "c08",
+      "to": "c08_ok",
+      "on": "correct",
+      "minutes": 1
+    },
+    {
+      "from": "c08_ok",
+      "to": "c09",
+      "on": "always",
+      "minutes": 0
+    },
+    {
+      "from": "c08",
+      "to": "c08_fail",
+      "on": "incorrect",
+      "minutes": 3
+    },
+    {
+      "from": "c08_fail",
+      "to": "c09",
+      "on": "always",
+      "minutes": 0
+    },
+    {
+      "from": "c08",
+      "to": "c08_rescue",
+      "on": "incorrect",
+      "minutes": 1,
+      "rescue": true
+    },
+    {
+      "from": "c08_rescue",
+      "to": "c09",
+      "on": "always",
+      "minutes": 0
+    },
+    {
+      "from": "c09",
+      "to": "c09_ok",
+      "on": "correct",
+      "minutes": 1
+    },
+    {
+      "from": "c09_ok",
+      "to": "c10",
+      "on": "always",
+      "minutes": 0
+    },
+    {
+      "from": "c09",
+      "to": "c09_fail",
+      "on": "incorrect",
+      "minutes": 3
+    },
+    {
+      "from": "c09_fail",
+      "to": "c10",
+      "on": "always",
+      "minutes": 0
+    },
+    {
+      "from": "c09",
+      "to": "c09_rescue",
+      "on": "incorrect",
+      "minutes": 1,
+      "rescue": true
+    },
+    {
+      "from": "c09_rescue",
+      "to": "c10",
+      "on": "always",
+      "minutes": 0
+    },
+    {
+      "from": "c10",
+      "to": "c10_ok",
+      "on": "correct",
+      "minutes": 1
+    },
+    {
+      "from": "c10_ok",
+      "to": "end_made_it",
+      "on": "ending",
+      "minutes": 0
+    },
+    {
+      "from": "c10_ok",
+      "to": "end_made_it_with_maya",
+      "on": "ending",
+      "minutes": 0
+    },
+    {
+      "from": "c10_ok",
+      "to": "end_night_bus",
+      "on": "ending",
+      "minutes": 0
+    },
+    {
+      "from": "c10",
+      "to": "c10_fail",
+      "on": "incorrect",
+      "minutes": 3
+    },
+    {
+      "from": "c10_fail",
+      "to": "end_made_it",
+      "on": "ending",
+      "minutes": 0
+    },
+    {
+      "from": "c10_fail",
+      "to": "end_made_it_with_maya",
+      "on": "ending",
+      "minutes": 0
+    },
+    {
+      "from": "c10_fail",
+      "to": "end_night_bus",
+      "on": "ending",
+      "minutes": 0
+    },
+    {
+      "from": "c10",
+      "to": "c10_rescue",
+      "on": "incorrect",
+      "minutes": 1,
+      "rescue": true
+    },
+    {
+      "from": "c10_rescue",
+      "to": "end_made_it",
+      "on": "ending",
+      "minutes": 0
+    },
+    {
+      "from": "c10_rescue",
+      "to": "end_made_it_with_maya",
+      "on": "ending",
+      "minutes": 0
+    },
+    {
+      "from": "c10_rescue",
+      "to": "end_night_bus",
+      "on": "ending",
+      "minutes": 0
+    }
+  ]
+}

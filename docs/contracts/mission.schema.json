@@ -1,0 +1,328 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://global-ai-missions.local/contracts/mission.schema.json",
+  "title": "Mission story graph (content/missions/<mission>/mission.json)",
+  "description": "A braided story graph whose checkpoints reference items.json. Frozen at G0 (tech-lead). Structure only: reachability, no cycles, no dead ends, 10 checkpoints on every path, Plan-B variants and item references are checked by the engine validator.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "mission_id",
+    "version",
+    "title",
+    "setting",
+    "companion",
+    "flags",
+    "start_node",
+    "nodes",
+    "edges"
+  ],
+  "properties": {
+    "mission_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "maxLength": 64
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Authored content version. Bump it when the content changes."
+    },
+    "title": { "$ref": "#/$defs/short_text" },
+    "setting": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["city", "start_clock", "minutes_available"],
+      "properties": {
+        "city": { "$ref": "#/$defs/short_text" },
+        "start_clock": {
+          "type": "string",
+          "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$",
+          "description": "Story clock at the start, HH:MM (24 h)."
+        },
+        "minutes_available": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 600,
+          "description": "Story-minutes before departure. Departure time = start_clock + minutes_available."
+        }
+      }
+    },
+    "companion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "mood_lines"],
+      "properties": {
+        "id": { "$ref": "#/$defs/key" },
+        "name": { "$ref": "#/$defs/short_text" },
+        "mood_lines": {
+          "description": "Generic lines per mood; the engine's fallback when a node has no specific Maya line.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["curious", "encouraging", "worried", "proud"],
+          "properties": {
+            "curious": { "$ref": "#/$defs/line_list" },
+            "encouraging": { "$ref": "#/$defs/line_list" },
+            "worried": { "$ref": "#/$defs/line_list" },
+            "proud": { "$ref": "#/$defs/line_list" }
+          }
+        }
+      }
+    },
+    "flags": {
+      "description": "Authored flags set by edge effects. train_departed is automatic (set by the engine when minutes_left < 0) and must not be declared here.",
+      "type": "array",
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "description"],
+        "properties": {
+          "id": {
+            "allOf": [{ "$ref": "#/$defs/key" }, { "not": { "const": "train_departed" } }]
+          },
+          "description": { "$ref": "#/$defs/long_text" }
+        }
+      }
+    },
+    "start_node": { "$ref": "#/$defs/node_id" },
+    "nodes": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 120,
+      "items": { "$ref": "#/$defs/node" }
+    },
+    "edges": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 400,
+      "items": { "$ref": "#/$defs/edge" }
+    }
+  },
+  "$defs": {
+    "key": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{0,31}$"
+    },
+    "node_id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{0,47}$"
+    },
+    "short_text": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80,
+      "pattern": "\\S"
+    },
+    "long_text": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 400,
+      "pattern": "\\S",
+      "description": "Plain text. No Markdown, no HTML."
+    },
+    "line_list": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 6,
+      "items": { "$ref": "#/$defs/long_text" }
+    },
+    "line": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["speaker", "text"],
+      "properties": {
+        "speaker": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40,
+          "description": "Reserved ids: narrator, maya, you. Any other value is a character's display name (e.g. \"Guard\")."
+        },
+        "text": { "$ref": "#/$defs/long_text" }
+      }
+    },
+    "variant": {
+      "description": "Checked in order; the FIRST variant whose flag is set replaces the scene lines and overrides the other fields it sets. Put train_departed variants first.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["when_flag", "lines"],
+      "properties": {
+        "when_flag": {
+          "$ref": "#/$defs/key",
+          "description": "An authored flag id or the automatic train_departed."
+        },
+        "lines": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 6,
+          "items": { "$ref": "#/$defs/line" }
+        },
+        "location": { "$ref": "#/$defs/short_text" },
+        "backdrop": { "$ref": "#/$defs/backdrop" },
+        "maya_line": {
+          "$ref": "#/$defs/long_text",
+          "description": "Overrides maya.line (or maya.intro on a checkpoint)."
+        },
+        "diary": { "$ref": "#/$defs/long_text" }
+      }
+    },
+    "backdrop": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{0,47}$",
+      "description": "Backdrop key listed in docs/design/BACKDROPS.md."
+    },
+    "scene": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["location", "backdrop", "lines"],
+      "properties": {
+        "location": { "$ref": "#/$defs/short_text" },
+        "backdrop": { "$ref": "#/$defs/backdrop" },
+        "lines": {
+          "description": "1-3 short lines on narrative and consequence nodes (PD-024). A checkpoint may have 0 lines: its item's stimulus is the scene.",
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 6,
+          "items": { "$ref": "#/$defs/line" }
+        },
+        "variants": {
+          "type": "array",
+          "maxItems": 6,
+          "items": { "$ref": "#/$defs/variant" }
+        }
+      }
+    },
+    "checkpoint_maya": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["intro", "reaction_ok", "reaction_fail"],
+      "properties": {
+        "intro": {
+          "$ref": "#/$defs/long_text",
+          "description": "What to pay attention to, never the answer. Shown when the planner decides QUIET."
+        },
+        "reaction_ok": { "$ref": "#/$defs/long_text" },
+        "reaction_fail": { "$ref": "#/$defs/long_text" },
+        "reaction_rescue": {
+          "$ref": "#/$defs/long_text",
+          "description": "Optional; used instead of reaction_fail when Maya takes the rescue edge."
+        }
+      }
+    },
+    "node_maya": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["line"],
+      "properties": {
+        "line": { "$ref": "#/$defs/long_text" }
+      }
+    },
+    "ending": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["key", "title", "priority", "condition"],
+      "properties": {
+        "key": {
+          "$ref": "#/$defs/key",
+          "description": "Stable ending id shown to the API, e.g. made_it, made_it_with_maya, night_bus."
+        },
+        "title": { "$ref": "#/$defs/short_text" },
+        "priority": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Lower wins among endings whose condition matches."
+        },
+        "condition": {
+          "description": "All present fields must hold. An empty object always matches (use it for the lowest-priority fallback ending).",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "min_minutes_left": { "type": "integer" },
+            "max_minutes_left": { "type": "integer" },
+            "rescued": { "type": "boolean" },
+            "train_departed": { "type": "boolean" }
+          }
+        }
+      }
+    },
+    "node": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "scene"],
+      "properties": {
+        "id": { "$ref": "#/$defs/node_id" },
+        "kind": { "enum": ["narrative", "checkpoint", "consequence", "ending"] },
+        "scene": { "$ref": "#/$defs/scene" },
+        "diary": {
+          "$ref": "#/$defs/long_text",
+          "description": "One past-tense journal line for the Diary. Fallback: the first scene line."
+        },
+        "item_id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]{0,31}$",
+          "description": "Checkpoint only: the item in items.json."
+        },
+        "maya": {
+          "description": "Checkpoint: intro + reactions. Other kinds: an optional line (required on endings: Maya's closing line)."
+        },
+        "ending": { "$ref": "#/$defs/ending" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "kind": { "const": "checkpoint" } } },
+          "then": {
+            "required": ["item_id", "maya"],
+            "properties": { "maya": { "$ref": "#/$defs/checkpoint_maya" } },
+            "not": { "required": ["ending"] }
+          },
+          "else": {
+            "not": { "required": ["item_id"] },
+            "properties": { "maya": { "$ref": "#/$defs/node_maya" } }
+          }
+        },
+        {
+          "if": { "properties": { "kind": { "const": "ending" } } },
+          "then": { "required": ["ending", "maya"] },
+          "else": { "not": { "required": ["ending"] } }
+        }
+      ]
+    },
+    "edge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["from", "to", "on", "minutes"],
+      "properties": {
+        "from": { "$ref": "#/$defs/node_id" },
+        "to": { "$ref": "#/$defs/node_id" },
+        "on": {
+          "enum": ["always", "correct", "incorrect", "ending"],
+          "description": "always: CONTINUE from a narrative/consequence node. correct/incorrect: out of a checkpoint. ending: candidate ending, resolved by priority and condition."
+        },
+        "minutes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 60,
+          "description": "Story-minutes (path cost). Defaults: correct 1, incorrect 3."
+        },
+        "rescue": {
+          "type": "boolean",
+          "default": false,
+          "description": "Maya's cheaper rescue edge, taken at most once per mission."
+        },
+        "effects": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "set_flags": {
+              "type": "array",
+              "maxItems": 3,
+              "uniqueItems": true,
+              "items": { "$ref": "#/$defs/key" }
+            }
+          }
+        }
+      },
+      "if": { "properties": { "rescue": { "const": true } }, "required": ["rescue"] },
+      "then": { "properties": { "on": { "const": "incorrect" } } }
+    }
+  }
+}

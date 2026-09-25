@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 480" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+<!-- Night bus (night_bus, layered over skyline). Original silhouette for Global AI Missions (ux-ui-designer). Colors: ink-950 #060a14, ink-800 #111a30, ink-600 #26345a, amber-400 #ffb547. -->
+<rect x="0" y="452" width="1440" height="28" fill="#060a14"/>
+<path fill="#060a14" d="M900 460 V250 Q900 226 924 226 H1276 Q1300 226 1300 250 V460 Z"/>
+<g fill="#ffb547" fill-opacity=".8"><rect x="920" y="246" width="60" height="60" rx="6"/><rect x="992" y="246" width="60" height="60" rx="6"/><rect x="1064" y="246" width="60" height="60" rx="6"/><rect x="1136" y="246" width="60" height="60" rx="6"/><rect x="1208" y="246" width="60" height="60" rx="6"/><rect x="992" y="340" width="60" height="56" rx="6"/><rect x="1064" y="340" width="60" height="56" rx="6"/><rect x="1136" y="340" width="60" height="56" rx="6"/><rect x="1208" y="340" width="60" height="56" rx="6"/></g>
+<rect x="920" y="340" width="56" height="112" rx="4" fill="#ffb547" fill-opacity=".35"/>
+<g fill="#111a30"><circle cx="980" cy="462" r="22"/><circle cx="1220" cy="462" r="22"/></g>
+<g fill="#060a14"><rect x="820" y="250" width="6" height="210"/><rect x="800" y="236" width="46" height="30" rx="4"/></g>
+</svg>

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 480" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+<!-- Station arches (concourse_night, ticket_hall, arcade_shortcut). Original silhouette for Global AI Missions (ux-ui-designer). Colors: ink-950 #060a14, ink-800 #111a30, ink-600 #26345a, amber-400 #ffb547. -->
+<defs><clipPath id="arches-roof"><rect width="1440" height="290"/></clipPath></defs>
+<g clip-path="url(#arches-roof)" fill="none" stroke="#26345a" stroke-opacity=".7" stroke-width="3">
+<path d="M-60 480 Q720 -160 1500 480"/>
+<path d="M90 480 Q720 -90 1350 480"/>
+<path d="M240 480 Q720 -20 1200 480"/>
+<path d="M390 480 Q720 50 1050 480"/>
+<path d="M540 480 Q720 120 900 480"/>
+</g>
+<g stroke="#26345a" stroke-opacity=".5" stroke-width="2">
+<line x1="120" y1="208" x2="120" y2="300"/>
+<line x1="240" y1="174.4" x2="240" y2="300"/>
+<line x1="360" y1="140.8" x2="360" y2="300"/>
+<line x1="480" y1="107.2" x2="480" y2="300"/>
+<line x1="600" y1="73.6" x2="600" y2="300"/>
+<line x1="720" y1="40" x2="720" y2="300"/>
+<line x1="840" y1="73.6" x2="840" y2="300"/>
+<line x1="960" y1="107.2" x2="960" y2="300"/>
+<line x1="1080" y1="140.8" x2="1080" y2="300"/>
+<line x1="1200" y1="174.4" x2="1200" y2="300"/>
+<line x1="1320" y1="208" x2="1320" y2="300"/>
+</g>
+<g fill="#ffb547" fill-opacity=".10"><path d="M20 480 V360 A60 60 0 0 1 140 360 V480 Z"/><path d="M185 480 V360 A60 60 0 0 1 305 360 V480 Z"/><path d="M350 480 V360 A60 60 0 0 1 470 360 V480 Z"/><path d="M515 480 V360 A60 60 0 0 1 635 360 V480 Z"/><path d="M680 480 V360 A60 60 0 0 1 800 360 V480 Z"/><path d="M845 480 V360 A60 60 0 0 1 965 360 V480 Z"/><path d="M1010 480 V360 A60 60 0 0 1 1130 360 V480 Z"/><path d="M1175 480 V360 A60 60 0 0 1 1295 360 V480 Z"/><path d="M1340 480 V360 A60 60 0 0 1 1460 360 V480 Z"/></g>
+<path fill="#060a14" fill-rule="evenodd" d="M0 290 H1440 V480 H0 Z M20 480 V360 A60 60 0 0 1 140 360 V480 Z M185 480 V360 A60 60 0 0 1 305 360 V480 Z M350 480 V360 A60 60 0 0 1 470 360 V480 Z M515 480 V360 A60 60 0 0 1 635 360 V480 Z M680 480 V360 A60 60 0 0 1 800 360 V480 Z M845 480 V360 A60 60 0 0 1 965 360 V480 Z M1010 480 V360 A60 60 0 0 1 1130 360 V480 Z M1175 480 V360 A60 60 0 0 1 1295 360 V480 Z M1340 480 V360 A60 60 0 0 1 1460 360 V480 Z"/>
+<rect x="0" y="286" width="1440" height="6" fill="#26345a"/>
+<g><line x1="720" y1="40" x2="720" y2="118" stroke="#26345a" stroke-width="3"/><circle cx="720" cy="150" r="32" fill="#060a14" stroke="#b87314" stroke-width="3"/><path d="M720 150 V128 M720 150 L736 158" stroke="#ffb547" stroke-width="3" stroke-linecap="round"/></g>
+</svg>

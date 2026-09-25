@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-labelledby="maya-curious-title">
+<title id="maya-curious-title">Maya, curious</title>
+<!-- Maya, curious: one eyebrow raised, eyes glancing up to the side, a small smile. Original character for Global AI Missions (ux-ui-designer); not based on any real person or existing character. -->
+<defs><radialGradient id="maya-curious-lamp" cx="50%" cy="42%" r="55%"><stop offset="0" stop-color="#f7b58c" stop-opacity=".55"/><stop offset=".6" stop-color="#ffb547" stop-opacity=".12"/><stop offset="1" stop-color="#111a30" stop-opacity="0"/></radialGradient>
+<clipPath id="maya-curious-clip"><circle cx="80" cy="80" r="78"/></clipPath></defs>
+<circle cx="80" cy="80" r="78" fill="#19243f"/>
+<circle cx="80" cy="80" r="78" fill="url(#maya-curious-lamp)"/>
+<g clip-path="url(#maya-curious-clip)">
+<path d="M22 164 Q26 124 58 116 H102 Q134 124 138 164 Z" fill="#24324f"/>
+<path d="M70 104 H90 V120 Q80 126 70 120 Z" fill="#b97a56"/>
+<path d="M50 118 Q80 136 110 118 L114 130 Q80 150 46 130 Z" fill="#e39b3a"/>
+<path d="M92 128 L104 160 H90 L86 132 Z" fill="#c9832c"/>
+<g transform="rotate(-5 80 80)">
+<path d="M46 80 Q42 40 80 36 Q118 40 114 80 Q116 104 108 112 Q104 92 104 78 H56 Q56 92 52 112 Q44 104 46 80 Z" fill="#2a1b17"/>
+<ellipse cx="80" cy="78" rx="26" ry="31" fill="#b97a56"/>
+<path d="M53 72 Q56 44 84 44 Q108 46 107 70 Q92 58 76 60 Q64 62 53 72 Z" fill="#2a1b17"/>
+<circle cx="54" cy="90" r="2.4" fill="#ffb547"/>
+
+<path d="M61 63 Q68 56 76 61 M85 66 Q92 64 99 66" fill="none" stroke="#2a1b17" stroke-width="2.8" stroke-linecap="round"/>
+<g fill="#3a2019"><ellipse cx="70.5" cy="76" rx="3.2" ry="3.8"/><ellipse cx="92.5" cy="76" rx="3.2" ry="3.8"/></g><g fill="#f4f1e8"><circle cx="71.5" cy="74.5" r="1.1"/><circle cx="93.5" cy="74.5" r="1.1"/></g>
+<path d="M80 80 Q78 86 81 87" fill="none" stroke="#3a2019" stroke-opacity=".45" stroke-width="1.6" stroke-linecap="round"/>
+<path d="M74 93 Q80 96 86 92" fill="none" stroke="#6b2f25" stroke-width="2.4" stroke-linecap="round"/>
+</g>
+</g>
+</svg>

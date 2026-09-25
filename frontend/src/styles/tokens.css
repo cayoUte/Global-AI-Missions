@@ -1,0 +1,211 @@
+/*
+ * Design tokens — "London after dark". Owner: ux-ui-designer. Spec: docs/design/UI_SPEC.md.
+ *
+ * Tailwind CSS v4: this file is the theme. Every variable inside @theme becomes a CSS variable
+ * AND generates utilities (bg-ink-900, text-amber-400, font-board, text-lg, rounded-card,
+ * shadow-lamp, ease-scene, max-w-player, animate-maya-idle, ...). There is no tailwind.config.
+ *
+ * Contrast (WCAG 2.2, checked numerically; full table in UI_SPEC §3.2):
+ *   fog-50 / ink-900 16.66 · fog-200 / ink-800 11.52 · fog-400 / ink-700 6.22 (lowest text pair)
+ *   amber-400 / ink-900 10.71 · ink-950 on amber-400 (button) 11.26 · paper-ink / paper-50 13.78
+ *   non-text: line-strong / ink-800 4.56 (input borders) · amber-400 focus ring / ink-900 10.71
+ */
+
+@import './backdrops.css';
+
+@theme static {
+  /* ---------------------------------------------------------------- colors
+   * The default Tailwind palette is removed on purpose: there is no green or red utility in
+   * this app, so correctness colors cannot leak into the Mission Player (UI_SPEC §1, §9).
+   * bg-transparent / text-current / *-inherit keep working (they are not theme colors). */
+  --color-*: initial;
+
+  /* Night: backgrounds and surfaces (darkest → lightest) */
+  --color-ink-950: #060a14; /* deepest: board panels, backdrop floor */
+  --color-ink-900: #0a1122; /* page background */
+  --color-ink-800: #111a30; /* cards, dialogue box */
+  --color-ink-700: #19243f; /* raised: selected rows, skeletons, bar tracks */
+  --color-ink-600: #26345a; /* decorative hairlines only (1.54:1, never a required boundary) */
+  --color-line-strong: #7483a6; /* input and card-edge borders that must be seen (>= 3:1) */
+
+  /* Text on night */
+  --color-fog-50: #f4f1e8; /* primary text, warm white */
+  --color-fog-200: #cdd3e0; /* secondary text, speaker names */
+  --color-fog-400: #9aa5bd; /* muted text: meta, footnotes (>= 6.2:1 on every ink surface) */
+
+  /* Sodium amber: the departure board, primary actions, focus */
+  --color-amber-200: #ffd699; /* hover / pressed on amber */
+  --color-amber-400: #ffb547; /* board digits, primary button, focus ring, skill bars */
+  --color-amber-600: #b87314; /* decorative only (board frame, dividers) */
+
+  /* Maya's warm light */
+  --color-maya-300: #f7b58c; /* Maya's name label, her bubble edge, lamp glow */
+
+  /* Diegetic surfaces */
+  --color-paper-50: #f5efe0; /* boarding pass, station notice, missed-checkpoint cards */
+  --color-paper-300: #d9ccab; /* paper edge, perforation */
+  --color-paper-ink: #1d2233; /* text and focus ring on paper */
+  --color-paper-muted: #5b5443; /* secondary text on paper */
+  --color-sign-700: #123a73; /* station sign enamel (generic, NOT a real operator's brand) */
+  --color-phone-700: #23304f; /* phone message bubble */
+
+  /* There is deliberately no error/success color: errors are text + icon (UI_SPEC §8). */
+
+  /* ---------------------------------------------------------------- fonts (Google Fonts) */
+  --font-sans: 'Atkinson Hyperlegible', ui-sans-serif, system-ui, sans-serif; /* dialogue + UI */
+  --font-display: 'Fraunces', ui-serif, Georgia, serif; /* titles, endings, report label */
+  --font-board: 'Share Tech Mono', ui-monospace, 'Cascadia Mono', monospace; /* story clock */
+
+  /* ---------------------------------------------------------------- type scale (mobile values;
+   * the spec says where a step goes up at md/lg). Body never below text-base in the mission. */
+  --text-xs: 0.8125rem; /* 13px — tags, footnote only */
+  --text-xs--line-height: 1.25rem;
+  --text-sm: 0.9375rem; /* 15px — meta, table cells */
+  --text-sm--line-height: 1.375rem;
+  --text-base: 1.0625rem; /* 17px — body, dialogue on mobile */
+  --text-base--line-height: 1.625rem;
+  --text-lg: 1.1875rem; /* 19px — dialogue >= md, decision cards */
+  --text-lg--line-height: 1.75rem;
+  --text-xl: 1.375rem; /* 22px — card titles, Maya's report voice on mobile */
+  --text-xl--line-height: 1.875rem;
+  --text-2xl: 1.75rem; /* 28px — screen headings, clock time on mobile */
+  --text-2xl--line-height: 2.125rem;
+  --text-3xl: 2.25rem; /* 36px — report label >= md, ending title */
+  --text-3xl--line-height: 2.625rem;
+  --text-4xl: 3rem; /* 48px — clock time >= lg, global score */
+  --text-4xl--line-height: 1;
+
+  --tracking-board: 0.08em; /* departure-board letter spacing (font-board only) */
+
+  /* ---------------------------------------------------------------- layout widths (max-w-*) */
+  --container-reading: 40rem; /* 640px — report column, dialogue */
+  --container-player: 48rem; /* 768px — Mission Player content column */
+  --container-world: 70rem; /* 1120px — English World, Progress */
+
+  /* spacing: Tailwind's 0.25rem base is kept (p-4 = 16px). Gutters: px-4 / md:px-6 / lg:px-8. */
+
+  /* ---------------------------------------------------------------- radii */
+  --radius-board: 0.25rem; /* departure board, tags */
+  --radius-control: 0.625rem; /* buttons, inputs */
+  --radius-card: 1rem; /* cards, dialogue box, decision cards */
+  --radius-sheet: 1.5rem; /* boarding pass, bottom sheet on mobile */
+
+  /* ---------------------------------------------------------------- shadows */
+  --shadow-card: 0 1px 0 0 rgb(255 255 255 / 0.04) inset, 0 8px 24px -8px rgb(0 0 0 / 0.55);
+  --shadow-raised: 0 1px 0 0 rgb(255 255 255 / 0.06) inset, 0 14px 32px -10px rgb(0 0 0 / 0.65);
+  --shadow-board: 0 0 0 1px #b87314 inset, 0 0 18px -4px rgb(255 181 71 / 0.35);
+  --shadow-lamp: 0 0 48px -6px rgb(247 181 140 / 0.45); /* warm light around Maya */
+  --shadow-selected: 0 0 0 2px #ffb547, 0 10px 28px -10px rgb(255 181 71 / 0.4);
+
+  /* ---------------------------------------------------------------- easing (ease-*) */
+  --ease-scene: cubic-bezier(0.4, 0, 0.2, 1); /* crossfades */
+  --ease-enter: cubic-bezier(0.16, 1, 0.3, 1); /* things arriving: Maya's bubble, cards */
+  --ease-exit: cubic-bezier(0.7, 0, 0.84, 0); /* things leaving */
+
+  /* ---------------------------------------------------------------- animations (Should, after G2,
+   * except skeleton which is Must). All are removed under prefers-reduced-motion (below). */
+  --animate-skeleton: skeleton 1.6s ease-in-out infinite;
+  --animate-maya-idle: maya-idle 6s ease-in-out infinite;
+  --animate-waveform: waveform 0.9s ease-in-out infinite;
+  --animate-lamp-flicker: lamp-flicker 7s steps(1, end) infinite;
+
+  @keyframes skeleton {
+    0%,
+    100% {
+      opacity: 0.55;
+    }
+    50% {
+      opacity: 0.9;
+    }
+  }
+  @keyframes maya-idle {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-2px);
+    }
+  }
+  @keyframes waveform {
+    0%,
+    100% {
+      transform: scaleY(0.35);
+    }
+    50% {
+      transform: scaleY(1);
+    }
+  }
+  @keyframes lamp-flicker {
+    0%,
+    96%,
+    100% {
+      opacity: 1;
+    }
+    97% {
+      opacity: 0.82;
+    }
+  }
+}
+
+/* ------------------------------------------------------------------ motion durations
+ * Not a Tailwind v4 theme namespace; use as duration-(--motion-scene) or read the same numbers
+ * from the Framer Motion constants in UI_SPEC §7. */
+:root {
+  --motion-instant: 100ms; /* focus, press */
+  --motion-quick: 180ms; /* hover, selection, bubble fade */
+  --motion-scene: 400ms; /* scene crossfade (Must, 300–500 ms) */
+  --motion-consequence: 500ms; /* reaction → consequence handoff */
+  --motion-flip: 240ms; /* clock digit flip (Should) */
+  --typewriter-cps: 30; /* characters per second (Should) */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-quick: 0ms;
+    --motion-scene: 120ms; /* opacity-only fade, no movement */
+    --motion-consequence: 120ms;
+    --motion-flip: 0ms;
+    --typewriter-cps: 0; /* 0 = render full text at once */
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ------------------------------------------------------------------ base */
+@layer base {
+  html {
+    color-scheme: dark;
+    background-color: var(--color-ink-900);
+    color: var(--color-fog-50);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    min-height: 100dvh;
+  }
+
+  /* One focus style everywhere: 2px amber ring, 2px offset, never removed. */
+  :focus-visible {
+    outline: 2px solid var(--color-amber-400);
+    outline-offset: 2px;
+    border-radius: inherit;
+  }
+
+  /* On paper surfaces (boarding pass, station notice) amber fails (1.53:1): use ink. */
+  .surface-paper :focus-visible {
+    outline-color: var(--color-paper-ink);
+  }
+
+  ::selection {
+    background-color: var(--color-amber-400);
+    color: var(--color-ink-950);
+  }
+}

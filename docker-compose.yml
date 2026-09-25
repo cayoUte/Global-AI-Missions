@@ -1,0 +1,38 @@
+# Global AI Missions — local stack (delivery-engineer).
+#
+#   docker compose up -d --wait db     # PostgreSQL 16, waits until the healthcheck passes
+#   docker compose down                # stop (data kept in the gam_pgdata volume)
+#   docker compose down -v             # stop and wipe the database
+#
+# The database is published on host port 5433 (not 5432) so it never clashes with a
+# PostgreSQL already installed on the machine. Override with POSTGRES_HOST_PORT in .env.
+# Credentials are dev-only and match DATABASE_URL in .env.example.
+#
+# The `api` service (multi-stage Dockerfile: build the SPA, then FastAPI serves it, running
+# migrations and the seed on start) is added at the delivery phase, once the Dockerfile exists.
+
+name: global-ai-missions
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: gam
+      POSTGRES_PASSWORD: gam
+      POSTGRES_DB: gam
+    ports:
+      - "${POSTGRES_HOST_PORT:-5433}:5432"
+    volumes:
+      - gam_pgdata:/var/lib/postgresql/data
+      # Runs once, on the first start of an empty volume: creates the gam_test database.
+      - ./docker/db-init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gam -d gam"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+      start_period: 5s
+
+volumes:
+  gam_pgdata:

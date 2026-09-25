@@ -1,0 +1,211 @@
+{
+  "mission_id": "the-last-train",
+  "items": [
+    {
+      "id": "q01",
+      "type": "multiple_choice",
+      "skill": "grammar",
+      "cefr": "A1",
+      "prompt": "Ask the assistant: '___ this the way to the platforms?'",
+      "stimulus": {
+        "kind": "dialogue",
+        "speaker": "Station assistant",
+        "text": "Good evening. Can I help you?"
+      },
+      "options": [
+        { "id": "a", "text": "Is" },
+        { "id": "b", "text": "Are" },
+        { "id": "c", "text": "Does" },
+        { "id": "d", "text": "Do" }
+      ],
+      "answer_key": { "correct_option_id": "a" },
+      "explanation": "With the verb 'be', we make a question by putting 'is' first: 'This is the way' becomes 'Is this the way?'. 'This' is one thing, so we say 'is', not 'are'.",
+      "hint": "Say it as a statement first: 'This ... the way.' Then turn it into a question."
+    },
+    {
+      "id": "q02",
+      "type": "multiple_choice",
+      "skill": "listening",
+      "cefr": "A1",
+      "prompt": "Which platform does the announcer say?",
+      "stimulus": {
+        "kind": "audio",
+        "speaker": "Station announcer",
+        "audio_script": "Good evening. The twenty-two oh five train to Oxford is now at platform seven. That's platform seven for the twenty-two oh five to Oxford.",
+        "rate": 0.85,
+        "text": null
+      },
+      "options": [
+        { "id": "a", "text": "Platform 5" },
+        { "id": "b", "text": "Platform 7" },
+        { "id": "c", "text": "Platform 11" },
+        { "id": "d", "text": "Platform 17" }
+      ],
+      "answer_key": { "correct_option_id": "b" },
+      "explanation": "The announcer says 'platform seven' two times. 'Twenty-two oh five' (22:05) is the time of the train, not the platform.",
+      "hint": "You will hear two numbers. Listen for the word 'platform' and the number right after it."
+    },
+    {
+      "id": "q03",
+      "type": "comprehension",
+      "skill": "reading",
+      "cefr": "A2",
+      "prompt": "It's after 21:30. Where should you try to buy your ticket first?",
+      "stimulus": {
+        "kind": "notice",
+        "speaker": "Station notice",
+        "text": "TICKET OFFICE\nThe ticket office closes at 21:30 tonight.\nAfter 21:30, please buy your ticket from the machines next to the main entrance. They take cards and cash.\nIf the machines are not working, you can buy a ticket from the guard on the train."
+      },
+      "options": [
+        { "id": "a", "text": "At the ticket office" },
+        { "id": "b", "text": "From the machines next to the main entrance" },
+        { "id": "c", "text": "From the guard on the train" },
+        { "id": "d", "text": "From the staff at the ticket barriers" }
+      ],
+      "answer_key": { "correct_option_id": "b" },
+      "explanation": "The ticket office closes at 21:30, so the notice sends you to the machines by the main entrance. The guard on the train is only for when the machines are not working.",
+      "hint": "Find the time in the notice first. Then read what it tells you to do after that time."
+    },
+    {
+      "id": "q04",
+      "type": "vocabulary",
+      "skill": "vocabulary",
+      "cefr": "A2",
+      "prompt": "Which ticket does the assistant mean?",
+      "stimulus": {
+        "kind": "dialogue",
+        "speaker": "Station assistant",
+        "text": "So you're going home to Oxford tonight, and you're not coming back to London? Then you need a ticket for one journey only."
+      },
+      "options": [
+        { "id": "a", "text": "A single" },
+        { "id": "b", "text": "A return" },
+        { "id": "c", "text": "A season ticket" },
+        { "id": "d", "text": "A railcard" }
+      ],
+      "answer_key": { "correct_option_id": "a" },
+      "explanation": "A single is a ticket for one journey in one direction. A return is for going somewhere and coming back again, even when you are going home.",
+      "hint": "Count the journeys. How many times will you travel, and in which direction?"
+    },
+    {
+      "id": "q05",
+      "type": "fill_blank",
+      "skill": "grammar",
+      "cefr": "A2",
+      "prompt": "Sorry, I ___ (not see) it when I came in.",
+      "stimulus": {
+        "kind": "dialogue",
+        "speaker": "Guard",
+        "text": "This gate is only for platforms one to four. The sign is right there."
+      },
+      "options": null,
+      "answer_key": { "accepted": ["didn't see", "did not see", "didnt see"] },
+      "explanation": "'When I came in' is finished past time, so we use the past simple. The negative is 'didn't' + the base verb: 'I didn't see it.'",
+      "hint": "Look at the time words at the end of the sentence. Is it now, or a finished time?"
+    },
+    {
+      "id": "q06",
+      "type": "fill_blank",
+      "skill": "grammar",
+      "cefr": "B1",
+      "prompt": "Yes, please. We ___ (look) for platform seven since we arrived.",
+      "stimulus": {
+        "kind": "dialogue",
+        "speaker": "Station assistant",
+        "text": "You two look lost. Can I help?"
+      },
+      "options": null,
+      "answer_key": {
+        "accepted": ["have been looking", "'ve been looking", "have looked", "'ve looked"]
+      },
+      "explanation": "'Since' connects a past moment to now, so we need the present perfect: 'We have been looking' (or 'We have looked'). 'We look' or 'We looked' doesn't work with 'since' here.",
+      "hint": "Notice the word 'since'. The search started in the past. Has it finished, or is it still going on?"
+    },
+    {
+      "id": "q07",
+      "type": "multiple_choice",
+      "skill": "listening",
+      "cefr": "B1",
+      "prompt": "What did the announcement say?",
+      "stimulus": {
+        "kind": "audio",
+        "speaker": "Station announcer",
+        "audio_script": "Passengers for the twenty-two oh five to Oxford: the barriers for platform seven are out of order. Please show your ticket to a member of staff at the side gate, next to the lift.",
+        "rate": 1.0,
+        "text": null
+      },
+      "options": [
+        { "id": "a", "text": "The barriers were out of order, so passengers should show their tickets to staff at the side gate." },
+        { "id": "b", "text": "The barriers were working again, so passengers could go straight through." },
+        { "id": "c", "text": "The side gate was closed, so passengers should take the lift to the platform." },
+        { "id": "d", "text": "Passengers should buy new tickets from a member of staff by the lift." }
+      ],
+      "answer_key": { "correct_option_id": "a" },
+      "explanation": "The announcer said the barriers were out of order and asked passengers to show their tickets to staff at the side gate. The lift is only there to tell you where the gate is.",
+      "hint": "Listen for the problem first, then for what passengers must do. Some words in the options are in the announcement too."
+    },
+    {
+      "id": "q08",
+      "type": "vocabulary",
+      "skill": "vocabulary",
+      "cefr": "B1",
+      "prompt": "What does the guard mean by 'Hold on a minute'?",
+      "stimulus": {
+        "kind": "dialogue",
+        "speaker": "Guard",
+        "text": "Hold on a minute. I'll just check your ticket."
+      },
+      "options": [
+        { "id": "a", "text": "Wait for a moment." },
+        { "id": "b", "text": "Hold your ticket up high." },
+        { "id": "c", "text": "Walk on quickly." },
+        { "id": "d", "text": "Keep your ticket safe for later." }
+      ],
+      "answer_key": { "correct_option_id": "a" },
+      "explanation": "'Hold on' is a phrasal verb that means 'wait'. 'Hold on a minute' is a friendly way to ask someone to wait for a short time.",
+      "hint": "A phrasal verb often means something different from its two words. Think about the whole phrase, not just 'hold'."
+    },
+    {
+      "id": "q09",
+      "type": "multiple_choice",
+      "skill": "grammar",
+      "cefr": "B2",
+      "prompt": "Answer the passenger: 'Yes! If we ___ earlier, we wouldn't have had to run.'",
+      "stimulus": {
+        "kind": "dialogue",
+        "speaker": "Passenger",
+        "text": "You're both out of breath! Did you run all the way here?"
+      },
+      "options": [
+        { "id": "a", "text": "had left" },
+        { "id": "b", "text": "would have left" },
+        { "id": "c", "text": "left" },
+        { "id": "d", "text": "have left" }
+      ],
+      "answer_key": { "correct_option_id": "a" },
+      "explanation": "This is the third conditional, for a past situation that didn't happen: 'If + had + past participle, ... would have + past participle'. 'Would have' belongs in the other half of the sentence, not after 'if'.",
+      "hint": "Read the second half of the sentence first. It tells you the time and the kind of 'if' sentence."
+    },
+    {
+      "id": "q10",
+      "type": "comprehension",
+      "skill": "reading",
+      "cefr": "B2",
+      "prompt": "What does Sam want you to do when you get to Oxford?",
+      "stimulus": {
+        "kind": "message",
+        "speaker": "From: Sam",
+        "text": "Change of plan, sorry! I've been held up at work and there's no way I'll be finished before midnight. Please don't wait around outside when you get to Oxford: it's freezing, and that part of town isn't exactly lively at night. The Night Owl café on George Street stays open late, and Rosa, who runs it, knows you're coming. I'll head over there the moment I'm done. Our flat's only a short walk from the café, so we can walk back together."
+      },
+      "options": [
+        { "id": "a", "text": "Wait outside until Sam finishes work." },
+        { "id": "b", "text": "Go to the café on George Street and wait for Sam there." },
+        { "id": "c", "text": "Walk to the flat and wait at the door." },
+        { "id": "d", "text": "Go to Sam's work and meet there." }
+      ],
+      "answer_key": { "correct_option_id": "b" },
+      "explanation": "Sam says not to wait outside, that Rosa at the café knows you're coming, and that Sam will go 'there' (to the café) after work. So Sam expects you to wait at the café, even though the message never says it in one sentence.",
+      "hint": "The plan is not in one sentence. Read to the end and put the pieces together."
+    }
+  ]
+}

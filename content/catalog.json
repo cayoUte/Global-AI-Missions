@@ -1,0 +1,79 @@
+{
+  "catalog_version": 1,
+  "missions": [
+    {
+      "id": "the-last-train",
+      "title": "The Last Train",
+      "world_zone": "the-station",
+      "skill_focus": ["grammar", "listening", "reading", "vocabulary"],
+      "cefr_range": { "min": "A1", "max": "B2" },
+      "playable": true,
+      "unlock_rule": {
+        "kind": "always",
+        "hint": "Open from your first night in London."
+      },
+      "teaser": "London, 21:47. Eighteen minutes to reach the last train home.",
+      "sort_order": 1
+    },
+    {
+      "id": "night-radio",
+      "title": "Night Radio",
+      "world_zone": "the-radio-tower",
+      "skill_focus": ["listening"],
+      "cefr_range": { "min": "A2", "max": "B2" },
+      "playable": false,
+      "unlock_rule": {
+        "kind": "mission_submitted",
+        "mission_id": "the-last-train",
+        "hint": "Opens after your first Mission Report on The Last Train."
+      },
+      "teaser": "A late-night radio show needs a caller who really listens.",
+      "sort_order": 2
+    },
+    {
+      "id": "dinner-for-two",
+      "title": "Dinner for Two",
+      "world_zone": "the-riverside",
+      "skill_focus": ["vocabulary"],
+      "cefr_range": { "min": "A2", "max": "B1" },
+      "playable": false,
+      "unlock_rule": {
+        "kind": "mission_submitted",
+        "mission_id": "the-last-train",
+        "hint": "Opens after your first Mission Report on The Last Train."
+      },
+      "teaser": "A table by the river, a menu full of surprises, and a guest to impress.",
+      "sort_order": 3
+    },
+    {
+      "id": "the-interview",
+      "title": "The Interview",
+      "world_zone": "the-office-tower",
+      "skill_focus": ["grammar"],
+      "cefr_range": { "min": "B1", "max": "B2" },
+      "playable": false,
+      "unlock_rule": {
+        "kind": "level_reached",
+        "min_level": "A2",
+        "hint": "Opens when a Mission Report suggests A2 or higher."
+      },
+      "teaser": "Nine o'clock, twelfth floor: one chance to tell your story well.",
+      "sort_order": 4
+    },
+    {
+      "id": "campus-day",
+      "title": "Campus Day",
+      "world_zone": "the-campus",
+      "skill_focus": ["reading"],
+      "cefr_range": { "min": "B1", "max": "C1" },
+      "playable": false,
+      "unlock_rule": {
+        "kind": "level_reached",
+        "min_level": "B1",
+        "hint": "Opens when a Mission Report suggests B1 or higher."
+      },
+      "teaser": "Your first day at a London university, and every notice board has a secret.",
+      "sort_order": 5
+    }
+  ]
+}

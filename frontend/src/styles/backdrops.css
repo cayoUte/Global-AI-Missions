@@ -1,0 +1,142 @@
+/*
+ * Backdrop layer — "London after dark". Owner: ux-ui-designer. Spec: docs/design/UI_SPEC.md §6.
+ * Imported by tokens.css. CSS gradients + one or two original SVG silhouettes per key. No photos.
+ *
+ * Usage (frontend-engineer):
+ *   <div className="backdrop" data-backdrop={state.node.scene.backdrop} aria-hidden="true" />
+ * inside a `relative` scene container. Crossfade two stacked backdrops with Framer Motion keyed
+ * by the backdrop key (UI_SPEC §7). An unknown key renders the default (concourse_night), so a
+ * content typo never produces a blank scene.
+ *
+ * Layers (bottom → top): sky + light gradients (.backdrop) → silhouette (::before, bottom 62%)
+ * → legibility scrim (::after, darkens the bottom where the dialogue box sits).
+ */
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  isolation: isolate;
+  background-color: var(--color-ink-900);
+  background-repeat: no-repeat;
+  /* default = concourse_night: departure-board glow high in the hall */
+  background-image:
+    radial-gradient(ellipse 55% 30% at 50% 16%, rgb(255 181 71 / 0.22), transparent 70%),
+    radial-gradient(ellipse 80% 50% at 50% 100%, rgb(247 181 140 / 0.1), transparent 70%),
+    linear-gradient(180deg, #16244a 0%, #0d1734 45%, #0a1122 100%);
+}
+
+.backdrop::before {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 62%;
+  background-image: url('../assets/backdrops/arches.svg');
+  background-repeat: no-repeat;
+  background-position: center bottom;
+  background-size: cover;
+  z-index: -1;
+}
+
+.backdrop::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    transparent 45%,
+    rgb(6 10 20 / 0.55) 75%,
+    rgb(6 10 20 / 0.85) 100%
+  );
+  z-index: 0;
+}
+
+/* ------------------------------------------------------------ station interiors (arches) */
+.backdrop[data-backdrop='ticket_hall'] {
+  background-image:
+    radial-gradient(ellipse 35% 40% at 18% 55%, rgb(154 180 255 / 0.16), transparent 70%),
+    radial-gradient(ellipse 40% 30% at 80% 30%, rgb(255 181 71 / 0.18), transparent 70%),
+    linear-gradient(180deg, #131f40 0%, #0c1530 50%, #0a1122 100%);
+}
+.backdrop[data-backdrop='ticket_hall']::before {
+  height: 48%;
+}
+
+.backdrop[data-backdrop='arcade_shortcut'] {
+  /* Maya's rescue: warmer, closer, her light */
+  background-image:
+    radial-gradient(ellipse 45% 40% at 30% 60%, rgb(247 181 140 / 0.24), transparent 70%),
+    radial-gradient(ellipse 40% 35% at 75% 55%, rgb(255 181 71 / 0.18), transparent 70%),
+    linear-gradient(180deg, #1a2446 0%, #111a30 55%, #0a1122 100%);
+}
+.backdrop[data-backdrop='arcade_shortcut']::before {
+  height: 80%;
+}
+
+/* ------------------------------------------------------------ platforms */
+.backdrop[data-backdrop='platform'] {
+  background-image:
+    radial-gradient(ellipse 45% 22% at 28% 44%, rgb(255 181 71 / 0.2), transparent 70%),
+    radial-gradient(ellipse 25% 20% at 52% 48%, rgb(154 180 255 / 0.14), transparent 70%),
+    linear-gradient(180deg, #121d3e 0%, #0c1530 50%, #0a1122 100%);
+}
+.backdrop[data-backdrop='platform']::before,
+.backdrop[data-backdrop='platform_empty']::before {
+  height: 72%;
+  background-image: url('../assets/backdrops/platform.svg');
+  /* portrait: keep the lamps and the platform edge in frame */
+  background-position: 38% bottom;
+}
+
+.backdrop[data-backdrop='platform_empty'] {
+  /* Plan B: the train is gone. Quieter, darker, one lamp — calm, not grim. */
+  background-image:
+    radial-gradient(ellipse 30% 18% at 22% 44%, rgb(255 181 71 / 0.12), transparent 70%),
+    linear-gradient(180deg, #0e1834 0%, #0a1224 55%, #080e1c 100%);
+}
+
+/* ------------------------------------------------------------ outside */
+.backdrop[data-backdrop='street_night'] {
+  background-image:
+    radial-gradient(circle at 82% 14%, rgb(244 241 232 / 0.16) 0 3%, transparent 18%),
+    radial-gradient(ellipse 60% 30% at 50% 78%, rgb(255 181 71 / 0.12), transparent 70%),
+    linear-gradient(180deg, #1b2a55 0%, #121d3e 45%, #0a1122 100%);
+}
+.backdrop[data-backdrop='street_night']::before {
+  height: 58%;
+  background-image: url('../assets/backdrops/skyline.svg');
+}
+
+.backdrop[data-backdrop='night_bus'] {
+  background-image:
+    radial-gradient(ellipse 40% 35% at 78% 70%, rgb(255 181 71 / 0.22), transparent 70%),
+    radial-gradient(circle at 18% 14%, rgb(244 241 232 / 0.14) 0 3%, transparent 18%),
+    linear-gradient(180deg, #1b2a55 0%, #121d3e 45%, #0a1122 100%);
+}
+.backdrop[data-backdrop='night_bus']::before {
+  height: 64%;
+  background-image: url('../assets/backdrops/bus.svg'), url('../assets/backdrops/skyline.svg');
+  /* portrait: keep the bus in frame */
+  background-position: 80% bottom;
+}
+
+/* ------------------------------------------------------------ made it */
+.backdrop[data-backdrop='train_carriage'] {
+  /* seen through the windows: city lights sliding past; warm light inside */
+  background-image:
+    linear-gradient(
+      90deg,
+      transparent 0 20%,
+      rgb(255 181 71 / 0.18) 30%,
+      transparent 40% 60%,
+      rgb(154 180 255 / 0.14) 72%,
+      transparent 82%
+    ),
+    radial-gradient(ellipse 70% 30% at 50% 0%, rgb(247 181 140 / 0.2), transparent 70%),
+    linear-gradient(180deg, #16244a 0%, #111a30 60%, #0a1122 100%);
+}
+.backdrop[data-backdrop='train_carriage']::before {
+  height: 100%;
+  background-image: url('../assets/backdrops/carriage.svg');
+}

@@ -9,7 +9,7 @@
 
 Technical assessment for a Full Stack Developer role at **Global AI**, an EdTech platform for learning English from Pre-A1 (Pre-Beginner) to C1 (CEFR). The official brief asks for a "Mini Global AI Assessment": a working prototype of an English assessment module that could later become part of a scalable product.
 
-**Budget: 10 hours in total**, one human orchestrating several AI agents. The human must be able to explain and modify every line in the technical interview. Readable, explainable code beats clever code.
+**Budget: 8 hours in total** (brief §10: at most one day, an estimated 6–8 hours, no overnight work, not a full platform), one human orchestrating several AI agents. When time runs short, cut scope, never the §1 flow. The human must be able to explain and modify every line in the technical interview. Readable, explainable code beats clever code.
 
 ### What the evaluators require (nothing in this list is optional)
 
@@ -20,7 +20,7 @@ Technical assessment for a Full Stack Developer role at **Global AI**, an EdTech
 - **AI:** brief educational feedback after the assessment (simulated or real LLM), plus an explanation of how Claude or another LLM would later power personalized feedback, student accompaniment, reminders and learning assistance.
 - **Technical decisions document (max. 2 pages):** stack and reasons · architecture · data model · how correct answers are protected · scaling from 100 to 50,000–100,000 students · student/teacher/admin roles · integrating AI without coupling the platform to a single provider · what would change with three months to turn the prototype into a product.
 - **Deliverables:** Git repository · runs locally (a demo URL is preferred) · README · decisions document · test credentials · optional: Docker, automated tests, deploy, real AI integration.
-- **Conditions:** declare which AI tools were used and which parts the candidate did personally.
+- **Conditions:** at most one day, an estimated 6–8 hours; they judge quality of reasoning, architecture, execution and imagination, not completeness. Declare which AI tools were used and which parts the candidate did personally.
 - **Interview questions to be ready for:** (1) 100 → 100,000 students: what changes and why; (2) how to stop a student from seeing correct answers in the browser; (3) where progress lives and how attempts are modeled; (4) adding Pre-A1, A1, A2, B1, B2 and C1 without redesigning; (5) what code changes if Claude is replaced by another model; (6) separating student, teacher and admin permissions; (7) what happens if the student loses connection mid-assessment; (8) how to guarantee a student cannot modify their score from the browser; (9) which automated tests first and why; (10) what to prioritize for production in three months.
 - **Selection criteria:** engineering judgment, ability to build product, security, architectural clarity, maintainability, imagination (a unique, immersive experience) and scalability vision. They are *not* looking for the fanciest stack or the flashiest UI.
 
@@ -61,7 +61,7 @@ Core loop: `EXPERIENCE → DECISIONS → ASSESSMENT → PROFILE → AI FEEDBACK 
 - Scored skills: grammar (4 items), listening (2), reading (2), vocabulary (2). `speaking` exists in the data model but is not scored in the MVP (roadmap).
 - CEFR spread, rising with the story clock: A1 ×2 → A2 ×3 → B1 ×3 → B2 ×2.
 - Every item stores: id, type, skill, cefr, prompt, stimulus, options (choice types), answer key, explanation and a strategic hint.
-- **Scoring** (deterministic, server-side only): global % = correct / 10 · per-skill % = correct / items of that skill · correct and incorrect counts · unanswered = incorrect · hints never change the score (they are recorded).
+- **Scoring** (deterministic, server-side only): global % = correct / 10 · per-skill % = correct / items of that skill · correct and incorrect counts (they always add up to 10: every checkpoint needs an answer to continue and there is no skip) · hints never change the score (they are recorded).
 - **Suggested level** (deterministic and explainable):
   1. Base level from the global %: 0–29 Pre-A1 · 30–49 A1 · 50–69 A2 · 70–84 B1 · 85–100 B2.
   2. Evidence cap: level L ∈ {A1, A2, B1, B2} requires at least ⌈n_L / 2⌉ correct answers among the n_L items tagged L; otherwise step down one level and check again. Pre-A1 needs no evidence.
@@ -91,7 +91,7 @@ Core loop: `EXPERIENCE → DECISIONS → ASSESSMENT → PROFILE → AI FEEDBACK 
 ```
 
 - Every path visits the same 10 checkpoints in the same order. Branches between checkpoints are narrative only and rejoin before the next checkpoint.
-- Flags set by branches (3–5 at most, e.g. `lost_ticket`) change later scene text through variants.
+- Flags set by branches (2–3 at most, e.g. `lost_ticket`) change later scene text through variants.
 - The engine sets the automatic flag `train_departed` when `minutes_left < 0` (with the default costs this can first happen right after checkpoint 7). Every node reachable in that state has a Plan-B variant (the night bus), so the remaining checkpoints stay meaningful.
 - 2¹⁰ = 1,024 outcome paths from roughly 30–35 authored nodes. No cycles; every reachable state reaches an ending.
 
@@ -105,13 +105,13 @@ Core loop: `EXPERIENCE → DECISIONS → ASSESSMENT → PROFILE → AI FEEDBACK 
 - The planner decides WHAT Maya does during the mission. The LLM decides HOW she speaks after the mission. The LLM never controls the flow and never sees answer keys of an open attempt.
 - Minimax / alpha-beta are deliberately not used: Maya and the student cooperate; nobody is an adversary.
 
-**Simulated student agent:** a policy `P(correct | skill, cefr)` per profile (`A1`, `A2`, `B1`, `B2`, `A2_weak_listening`). It is used for content validation in tests, calibration (endings over 1,000 runs), realistic seed history for the veteran demo user and a demo replay. Calibration targets for `made_it` + `made_it_with_maya`: B1 ≥ 85% · A2 50–80% · A1 ≤ 30%.
+**Simulated student agent:** a policy `P(correct | skill, cefr)` per profile (`A1`, `A2`, `B1`, `B2`, `A2_weak_listening`). MVP uses: content validation in tests and realistic seed history for the veteran demo user. Calibration (endings over 1,000 runs) is one informational run, not a gate; targets for `made_it` + `made_it_with_maya`: B1 ≥ 85% · A2 50–80% · A1 ≤ 30%. The demo replay is stretch.
 
 ---
 
 ## 6. AI companion contract (LLM)
 
-- Runs once, after grading, inside `submit`. Synchronous with an 8-second budget; any failure falls back to a deterministic mock (status `fallback`). The report always renders.
+- Runs once per attempt, inside `submit` but **after the grading transaction has committed** (never while holding a lock or a transaction). Synchronous with an 8-second budget; any failure falls back to a deterministic mock (status `fallback`). If no feedback row exists yet, the report renders the deterministic mock. The report always renders. At scale this exact seam becomes a queue.
 - Input (built by the backend): first name, suggested level, global %, per-skill scores, the deterministic strength and challenge, missed items with explanations (the attempt is already closed), a path summary (ending, rescue, hints), the coach memory (sessions count, last notes) and candidate next missions from the catalog.
 - Output: strict JSON validated with Pydantic:
 
@@ -127,6 +127,7 @@ Core loop: `EXPERIENCE → DECISIONS → ASSESSMENT → PROFILE → AI FEEDBACK 
 }
 ```
 
+- The Report carries `feedback_source: { status: "ready" | "fallback", provider_label }`; the active adapter supplies `provider_label` (e.g. "Claude"), so the UI never hard-codes a provider name.
 - `strength` and `challenge` must echo the deterministic values; `next_mission_id` must be one of the candidates. Anything else → fallback values.
 - A `CoachProvider` port with the adapters `anthropic` and `mock`, selected by `COACH_PROVIDER`. Prompts are versioned files; provider, model and prompt_version are stored with every feedback.
 - English adapted to the learner's level (short sentences for A1–A2). No personal data beyond the first name.
@@ -136,12 +137,14 @@ Core loop: `EXPERIENCE → DECISIONS → ASSESSMENT → PROFILE → AI FEEDBACK 
 ## 7. Product surface (MVP)
 
 - Screens: **Check-in** (login) · **English World** (the dashboard: missions board, Maya's greeting from memory, progress snapshot) · **Mission Player** · **Ending** · **Mission Report** (with the Diary) · **Progress**. Stretch goals, only when everything else is green: a read-only **Teacher view** and a **Simulated replay**.
+- English World card states (one per card): `available | in_progress | waiting_to_submit | completed | locked | in_preparation`, plus at most one `is_maya_pick` (the latest `next_mission_id`). A non-playable mission whose unlock rule is met is `in_preparation`; only The Last Train is playable in the MVP.
 - English World catalog: `the-last-train` (playable) plus four locked missions: `the-interview` (grammar), `dinner-for-two` (vocabulary), `campus-day` (reading), `night-radio` (listening).
-- Mission Report order: (1) Maya's interpretation (can-do statements) → (2) "Maya has prepared your next mission" → (3) the numbers on the same screen: global %, per-skill %, correct/incorrect, level label → (4) the Diary → (5) missed checkpoints with explanation and correct answer (only after submission).
+- Mission Report order: (1) the result, first and without clicks, in the brief's format: level label `A2 · The Last Train — 70%`, global %, per-skill %, correct/incorrect, suggested level with its reason, attempt record → (2) Maya's interpretation (can-do statements, the brief's "educational feedback") → (3) "Maya has prepared your next mission" → (4) the Diary → (5) missed checkpoints with explanation and correct answer (only after submission). Numbers never appear during the mission; on the report they come first.
 - Demo users (demo-only password for all: `LastTrain2026!`):
-  - `new@globalai.test` — first meeting with Maya.
-  - `veteran@globalai.test` — 4 previous submitted attempts generated with the simulator (`A2_weak_listening`), coach memory and a visible progress trend.
-  - `teacher@globalai.test` — teacher of a class that contains both students (RBAC demo).
+  - `new@globalai.test` — Ana; first meeting with Maya.
+  - `veteran@globalai.test` — Leo; 4 previous submitted attempts generated with the simulator (`A2_weak_listening`), coach memory and a visible progress trend.
+  - `teacher@globalai.test` — Ms. Clarke; teacher of a class that contains both students (RBAC demo). An `admin` user exists only as a test fixture.
+- Profile = per-skill % over the last 3 submitted attempts (all missions), computed by query (not stored) and shown with the number of attempts it is based on.
 
 ---
 
@@ -149,21 +152,24 @@ Core loop: `EXPERIENCE → DECISIONS → ASSESSMENT → PROFILE → AI FEEDBACK 
 
 ```
 GET  /api/health
+GET  /api/config                 public: {demo_mode, demo_accounts | null, demo_password | null}; lists only when DEMO_MODE=true
 POST /api/auth/login            POST /api/auth/logout            GET /api/auth/me
-GET  /api/world
-POST /api/missions/{mission_id}/attempts          start, or resume the in-progress attempt
+GET  /api/world                                  cards with state, is_maya_pick, open attempt id/clock, latest label; greeting; snapshot
+POST /api/missions/{mission_id}/attempts          start, or return the OPEN attempt (in_progress, or completed and not yet submitted)
 GET  /api/attempts/{attempt_id}                   current StateView (resume after a lost connection)
 POST /api/attempts/{attempt_id}/advance           {node_id}                  → StateView
-POST /api/attempts/{attempt_id}/answer            {node_id, option_id|text}  → {outcome, maya_line, state}
+POST /api/attempts/{attempt_id}/answer            {node_id, option_id|text}  → {maya_line, state}  (no outcome field: it would reveal correctness; validation below)
 POST /api/attempts/{attempt_id}/submit            grade + coach → Report (idempotent)
 GET  /api/attempts/{attempt_id}/report
-GET  /api/me/progress
+GET  /api/me/progress                            profile, attempt history, level history, Maya's notes (≤ 5), open attempt | null
 GET  /api/teacher/classes                         teacher/admin only
-GET  /api/teacher/classes/{class_id}/progress     teacher/admin only
-GET  /api/missions/{mission_id}/simulate?profile=A2    DEMO_MODE only; outcomes, never options
+GET  /api/teacher/classes/{class_id}/progress     that class's teacher or admin; another class → 404
+GET  /api/missions/{mission_id}/simulate?profile=A2    STRETCH (only with Simulated replay); DEMO_MODE only; outcomes, never options
 ```
 
 **StateView** is the only shape the client sees during a mission: attempt id and status, clock label, minutes_left, the current node (kind, scene lines with variants already resolved and, for checkpoints, the item's id, type, prompt, stimulus and options *without* correctness) and Maya (mood, decision, line).
+
+**AnswerRequest validation** runs before any lock or write, so a rejected request never locks the checkpoint: exactly one of `option_id` / `text`; `option_id` is required for choice types and must be one of the current item's option ids; `text` is required for `fill_blank` and must be 1–80 characters after normalization. Anything else → 422 `VALIDATION_ERROR`.
 
 **Forbidden** in every response while an attempt is open: `is_correct`, answer keys, accepted answers, explanations, edges and future nodes.
 
@@ -175,9 +181,9 @@ GET  /api/missions/{mission_id}/simulate?profile=A2    DEMO_MODE only; outcomes,
 2. The client never sends scores or correctness; request models use `extra="forbid"`.
 3. A checkpoint answer is locked on first submission; a second answer returns 409.
 4. Attempts are owned: another user's attempt returns 404 (not 403) to avoid enumeration. User-facing ids are UUIDs.
-5. One in-progress attempt per (student, mission); starting again resumes it.
+5. One open attempt (`in_progress` or `completed`) per (student, mission); starting again returns it, so a finished run can always be submitted.
 6. The LLM runs only after grading and never influences score, level or unlocks.
-7. Simulation output contains outcomes, nodes and Maya's decisions — never chosen options or answer content.
+7. When `/simulate` exists (stretch), its output contains outcomes, nodes and Maya's decisions — never chosen options or answer content.
 8. Secrets only in environment variables; `.env` is never committed. The JWT lives in an httpOnly cookie, never in localStorage.
 
 **Known, documented trade-offs:** the listening script reaches the browser because the MVP uses `speechSynthesis` (production: pre-generated audio behind signed URLs); retaking the same mission after reading its report is not a secure re-assessment (production: an item bank with variants).
@@ -190,7 +196,7 @@ GET  /api/missions/{mission_id}/simulate?profile=A2    DEMO_MODE only; outcomes,
 - **Backend:** Python 3.12 · FastAPI · Pydantic v2 + pydantic-settings · SQLAlchemy 2.0 · Alembic · PostgreSQL 16 · PyJWT · argon2-cffi · httpx · anthropic SDK · pytest · ruff.
 - **Infra:** Docker Compose · FastAPI serves the built SPA in production mode (single origin, no CORS) · Vite proxies `/api` in development.
 - **Auth:** JWT (HS256, 60 minutes) in an httpOnly, SameSite=Lax cookie · roles `student`, `teacher`, `admin`.
-- **Environment variables:** `DATABASE_URL`, `JWT_SECRET`, `COACH_PROVIDER` (`mock` | `anthropic`, default `mock`), `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL`, `DEMO_MODE`.
+- **Environment variables:** `DATABASE_URL`, `JWT_SECRET`, `COACH_PROVIDER` (`mock` | `anthropic`, default `mock`), `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL`, `DEMO_MODE`. `.env.example` ships working local defaults: `DEMO_MODE=true`, `COACH_PROVIDER=mock`, a non-empty dev-only `JWT_SECRET`.
 
 ---
 
@@ -203,14 +209,16 @@ global-ai-missions/
 │   ├── app/engine/            pure-Python story graph engine      story-graph-engineer
 │   ├── app/models/            SQLAlchemy models                   data-engineer
 │   ├── app/repositories/      data access                         data-engineer
-│   ├── app/services/          attempts, grading, leveling, report backend-api-engineer
+│   ├── app/services/          attempts, grading, leveling, state_view, report, world, progress   backend-api-engineer
 │   ├── app/ai/                coach port, adapters, prompts       ai-coach-engineer
 │   ├── app/api/routers/       HTTP layer                          backend-api-engineer
 │   ├── app/schemas/           Pydantic DTOs                       backend-api-engineer
+│   ├── app/core/demo.py       demo users constants (seed + /api/config) data-engineer
 │   ├── alembic/, seed/                                            data-engineer
 │   └── tests/                 each owner writes its own; gaps → qa-engineer
 ├── content/
 │   ├── catalog.json                                               product-architect
+│   ├── missions/_fixture/     tiny 10-checkpoint graph for the walking skeleton  story-graph-engineer
 │   └── missions/the-last-train/
 │       ├── items.json                                             assessment-designer
 │       └── mission.json, SCRIPT.md                                narrative-designer
@@ -218,14 +226,15 @@ global-ai-missions/
 │   └── styles/tokens.css                                          ux-ui-designer
 ├── docs/
 │   ├── agents/                this file and the README            the human
+│   ├── ai/AI_ARCHITECTURE.md  AI vision, Spanish, evaluator-facing   ai-coach-engineer
 │   ├── product/               PRODUCT, REQUIREMENTS_MAP, MAYA     product-architect
 │   ├── contracts/             schemas, API contract, conventions  tech-lead
 │   ├── assessment/            ASSESSMENT_SPEC                     assessment-designer
 │   ├── design/UI_SPEC.md                                          ux-ui-designer
 │   ├── design/BACKDROPS.md                                        narrative-designer
-│   ├── engine/  data/  ai/  qa/                                   their respective owners
+│   ├── engine/  data/  qa/                                        their respective owners
 │   ├── DECISIONS.md, INTERVIEW.md, AI_USAGE_LOG.md                tech-lead
-│   └── AI_USAGE.md, DELIVERY_CHECKLIST.md                         delivery-engineer
+│   └── AI_USAGE.md                                                delivery-engineer
 └── README.md, Dockerfile, docker-compose.yml, .env.example,
     .gitignore, Makefile, .github/                                 delivery-engineer
 ```
@@ -245,7 +254,7 @@ Rule: edit only what you own. If you need a change elsewhere, add an entry to `d
     {
       "id": "q02", "type": "multiple_choice", "skill": "listening", "cefr": "A1",
       "prompt": "Which platform does the announcer say?",
-      "stimulus": { "kind": "audio", "speaker": "Station announcer", "audio_script": "…", "text": null },
+      "stimulus": { "kind": "audio", "speaker": "Station announcer", "audio_script": "…", "rate": 0.85, "text": null },
       "options": [ { "id": "a", "text": "…" }, { "id": "b", "text": "…" }, { "id": "c", "text": "…" } ],
       "answer_key": { "correct_option_id": "b" },
       "explanation": "…",
@@ -263,6 +272,11 @@ Rule: edit only what you own. If you need a change elsewhere, add an entry to `d
   ]
 }
 ```
+
+- `stimulus.rate` (audio only): the `speechSynthesis` rate, 0.8–1.0 (about 0.85 for A1–A2, 1.0 for B1–B2). The client uses it and never needs the item's CEFR.
+- Content integrity (checked by the engine validator, and the seed aborts on failure): choice items have 3–4 options with unique ids and `correct_option_id` among them; `fill_blank` has `options: null` and at least one accepted answer, stored normalized and de-duplicated; the first accepted answer is the one the report displays.
+
+`content/catalog.json` (product-architect): `{ "catalog_version", "missions": [ { "id", "title", "world_zone", "skill_focus": [skill], "cefr_range": { "min", "max" }, "playable", "unlock_rule": { "kind": "always" | "mission_submitted" | "level_reached", "mission_id"?, "min_level"?, "hint" }, "teaser", "sort_order" } ] }`.
 
 `content/missions/the-last-train/mission.json` (narrative-designer):
 
@@ -310,7 +324,7 @@ Rule: edit only what you own. If you need a change elsewhere, add an entry to `d
 ## 13. Language
 
 Code, comments, commit messages and all in-app content: **English**.
-README, DECISIONS, INTERVIEW and AI_USAGE: **Spanish** (the evaluators' language).
+README, DECISIONS, INTERVIEW, AI_USAGE and docs/ai/AI_ARCHITECTURE.md: **Spanish** (the evaluators' language). Everything else in docs/ is an internal working note; the README's "Para evaluadores" section links only the Spanish documents.
 
 ---
 
@@ -336,7 +350,7 @@ README, DECISIONS, INTERVIEW and AI_USAGE: **Spanish** (the evaluators' language
 
 ## 15. Project definition of done
 
-- The full required flow works locally with one command, with seeded demo users.
+- The full required flow works locally with one command, with seeded demo users, within the 8-hour budget.
 - Every assessment invariant and security invariant is covered by an automated test.
 - A stranger can run the project from the README in under 5 minutes.
 - DECISIONS.md fits in 2 pages and covers the 8 required points.

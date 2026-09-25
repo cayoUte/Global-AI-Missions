@@ -1,0 +1,1573 @@
+{
+  "mission_id": "the-last-train",
+  "version": 1,
+  "title": "The Last Train",
+  "setting": {
+    "city": "London",
+    "start_clock": "21:47",
+    "minutes_available": 18
+  },
+  "companion": {
+    "id": "maya",
+    "name": "Maya",
+    "mood_lines": {
+      "curious": [
+        "Look around. What do you notice first?",
+        "Hm. Which way do you think?",
+        "Listen. The station is talking to us."
+      ],
+      "encouraging": [
+        "That's fine. We can fix this on the way.",
+        "Take a breath. You understood most of it.",
+        "One step at a time. We still have time."
+      ],
+      "worried": [
+        "The clock is moving. Let's think carefully.",
+        "Okay. Focus with me for a second.",
+        "We're a little late. One thing at a time."
+      ],
+      "proud": [
+        "You did that on your own.",
+        "Look at you, reading London like a local.",
+        "Nice. You didn't even need me there."
+      ]
+    }
+  },
+  "flags": [
+    {
+      "id": "wrong_platform",
+      "description": "Set when checkpoint 2 (platform announcement) is missed: we went to an empty platform first. Changes the scenes at checkpoints 6 and 7."
+    },
+    {
+      "id": "wrong_ticket",
+      "description": "Set when checkpoint 4 (which ticket) is missed: we bought a ticket that is not the one for one journey home. The first barrier rejects us (it is the wrong gate), the guard says the ticket is fine (checkpoint 5 consequences) and the side-gate guard accepts it (checkpoint 8)."
+    },
+    {
+      "id": "befriended_guard",
+      "description": "Set when checkpoint 5 or 8 (the guard) goes well: the guard remembers us. He reappears at the side gate (checkpoint 8) and waves from the platform in the made_it endings."
+    }
+  ],
+  "start_node": "intro",
+  "nodes": [
+    {
+      "id": "intro",
+      "kind": "narrative",
+      "scene": {
+        "location": "Station concourse",
+        "backdrop": "concourse_night",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "LONDON — 21:47. You have 18 minutes before the last train leaves."
+          },
+          {
+            "speaker": "narrator",
+            "text": "It's the 22:05 to Oxford, the last train home tonight. Your flatmate Sam is waiting there."
+          },
+          {
+            "speaker": "narrator",
+            "text": "Under the big station clock, a woman in a long scarf waves at you."
+          }
+        ]
+      },
+      "diary": "At 21:47 we met under the station clock, eighteen minutes before the last train to Oxford.",
+      "maya": {
+        "line": "Hi, I'm Maya. I'm on the same train. Let's not run. Let's listen and read."
+      }
+    },
+    {
+      "id": "c01",
+      "kind": "checkpoint",
+      "item_id": "q01",
+      "scene": {
+        "location": "Station concourse",
+        "backdrop": "concourse_night",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "The concourse is huge and full of people. Which way are the platforms?"
+          },
+          {
+            "speaker": "narrator",
+            "text": "A station assistant is standing by the information point."
+          }
+        ]
+      },
+      "diary": "We asked a station assistant the way to the platforms.",
+      "maya": {
+        "intro": "Let's ask her. A short, polite question is all we need.",
+        "reaction_ok": "Nice question. Short and clear.",
+        "reaction_fail": "She got the idea, I think. The start of the question sounded a bit unusual."
+      }
+    },
+    {
+      "id": "c01_ok",
+      "kind": "consequence",
+      "scene": {
+        "location": "Station concourse",
+        "backdrop": "concourse_night",
+        "lines": [
+          {
+            "speaker": "Station assistant",
+            "text": "Yes, it is. Straight on, then left. They'll announce your platform soon."
+          }
+        ]
+      },
+      "diary": "The assistant understood us at once and sent us straight on.",
+      "maya": {
+        "line": "Good. Now we just need a platform number."
+      }
+    },
+    {
+      "id": "c01_fail",
+      "kind": "consequence",
+      "scene": {
+        "location": "Station concourse",
+        "backdrop": "concourse_night",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "She needs a moment to understand. You try again, and she points the way."
+          },
+          {
+            "speaker": "narrator",
+            "text": "You go the long way round the shops first."
+          }
+        ]
+      },
+      "diary": "The assistant needed a second try, and we took the long way round the shops.",
+      "maya": {
+        "line": "The scenic route. We still have time."
+      }
+    },
+    {
+      "id": "c02",
+      "kind": "checkpoint",
+      "item_id": "q02",
+      "scene": {
+        "location": "Station concourse",
+        "backdrop": "concourse_night",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "A soft bell rings. The whole concourse goes quiet to listen."
+          }
+        ]
+      },
+      "diary": "We listened to the announcement for our train.",
+      "maya": {
+        "intro": "That's the announcer. Let's catch every word about our train.",
+        "reaction_ok": "Good ears. You caught it first time.",
+        "reaction_fail": "Hm. There were two numbers in that. Let's make sure we have ours."
+      }
+    },
+    {
+      "id": "c02_ok",
+      "kind": "consequence",
+      "scene": {
+        "location": "Station concourse",
+        "backdrop": "concourse_night",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "Platform seven. You and Maya turn towards the gates."
+          }
+        ]
+      },
+      "diary": "We caught the platform number: seven.",
+      "maya": {
+        "line": "Wait. Tickets. We haven't got tickets yet."
+      }
+    },
+    {
+      "id": "c02_fail",
+      "kind": "consequence",
+      "scene": {
+        "location": "The far platform",
+        "backdrop": "platform_empty",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "You hurry to a platform at the far end. It's empty and cold."
+          },
+          {
+            "speaker": "Cleaner",
+            "text": "Oxford? That's platform seven, love. And you'll need tickets."
+          }
+        ]
+      },
+      "diary": "We went to an empty platform first. A cleaner told us: platform seven.",
+      "maya": {
+        "line": "Platform seven. Thank you! First, tickets."
+      }
+    },
+    {
+      "id": "c03",
+      "kind": "checkpoint",
+      "item_id": "q03",
+      "scene": {
+        "location": "Ticket hall",
+        "backdrop": "ticket_hall",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "The ticket office window is dark. A notice is taped to the glass."
+          }
+        ]
+      },
+      "diary": "We read the notice on the closed ticket office.",
+      "maya": {
+        "intro": "The office is closed. Let's see what the notice says about tonight.",
+        "reaction_ok": "Good reading. The notice had a plan for us.",
+        "reaction_fail": "Hm. I think the time on that notice matters."
+      }
+    },
+    {
+      "id": "c03_ok",
+      "kind": "consequence",
+      "scene": {
+        "location": "Ticket hall",
+        "backdrop": "ticket_hall",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "The machines next to the main entrance glow blue. There's no queue."
+          }
+        ]
+      },
+      "diary": "We went straight to the ticket machines by the main entrance.",
+      "maya": {
+        "line": "Lucky us. Let's go."
+      }
+    },
+    {
+      "id": "c03_fail",
+      "kind": "consequence",
+      "scene": {
+        "location": "Ticket hall",
+        "backdrop": "ticket_hall",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "You look for someone to sell you a ticket, but nobody can."
+          },
+          {
+            "speaker": "Man by the window",
+            "text": "Machines, mate. Next to the main entrance."
+          }
+        ]
+      },
+      "diary": "We looked in the wrong place first, then found the machines by the main entrance.",
+      "maya": {
+        "line": "Back to the entrance. Now we know."
+      }
+    },
+    {
+      "id": "c04",
+      "kind": "checkpoint",
+      "item_id": "q04",
+      "scene": {
+        "location": "Ticket machines",
+        "backdrop": "ticket_hall",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "The machine shows a long list of tickets. A station assistant comes over to help."
+          }
+        ]
+      },
+      "diary": "We chose our tickets at the machines.",
+      "maya": {
+        "intro": "So many buttons. Let's think about our trip tonight.",
+        "reaction_ok": "That's the one for tonight. Let's pay.",
+        "reaction_fail": "Hm. I'm not sure that's the ticket she meant. Let's see."
+      }
+    },
+    {
+      "id": "c04_ok",
+      "kind": "consequence",
+      "scene": {
+        "location": "Ticket machines",
+        "backdrop": "ticket_hall",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "The machine prints two singles to Oxford."
+          }
+        ]
+      },
+      "diary": "We bought single tickets to Oxford.",
+      "maya": {
+        "line": "One journey, one ticket. Now, the gates."
+      }
+    },
+    {
+      "id": "c04_fail",
+      "kind": "consequence",
+      "scene": {
+        "location": "Ticket machines",
+        "backdrop": "ticket_hall",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "The machine asks more questions. You press back, then next, then back again."
+          },
+          {
+            "speaker": "narrator",
+            "text": "At last it prints your ticket. The assistant raises an eyebrow, but the queue is waiting."
+          }
+        ]
+      },
+      "diary": "We bought a ticket, but not the one the assistant meant.",
+      "maya": {
+        "line": "Let's keep it and see what happens."
+      }
+    },
+    {
+      "id": "c05",
+      "kind": "checkpoint",
+      "item_id": "q05",
+      "scene": {
+        "location": "Ticket barriers",
+        "backdrop": "concourse_night",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "You go to the first barriers you see and put your ticket in. Red light."
+          },
+          {
+            "speaker": "narrator",
+            "text": "A guard walks over. He doesn't look happy."
+          }
+        ],
+        "variants": [
+          {
+            "when_flag": "wrong_ticket",
+            "lines": [
+              {
+                "speaker": "narrator",
+                "text": "You push your new ticket into the first barrier. Red light. Again. Red light."
+              },
+              {
+                "speaker": "narrator",
+                "text": "A guard walks over. You look at your ticket and start to worry."
+              }
+            ],
+            "maya_line": "Maybe it's the ticket. Maybe not. Let's listen first.",
+            "diary": "Our ticket didn't open the first barrier, and a guard came over."
+          }
+        ]
+      },
+      "diary": "At the first barriers we found, a guard stopped us.",
+      "maya": {
+        "intro": "He's pointing at a sign. Let's say sorry, nice and clearly.",
+        "reaction_ok": "Nice apology. Look, he's smiling now.",
+        "reaction_fail": "He heard the 'sorry', I think. The rest got a bit lost."
+      }
+    },
+    {
+      "id": "c05_ok",
+      "kind": "consequence",
+      "scene": {
+        "location": "Ticket barriers",
+        "backdrop": "concourse_night",
+        "lines": [
+          {
+            "speaker": "Guard",
+            "text": "No harm done. Platform seven's through the far gates."
+          },
+          {
+            "speaker": "narrator",
+            "text": "He nods at you both and taps his radio. He'll remember you."
+          }
+        ],
+        "variants": [
+          {
+            "when_flag": "wrong_ticket",
+            "lines": [
+              {
+                "speaker": "Guard",
+                "text": "No harm done. Your ticket's fine. It was just the wrong gate."
+              },
+              {
+                "speaker": "narrator",
+                "text": "He points to the far gates and gives you a friendly nod."
+              }
+            ],
+            "maya_line": "So it was the gate, not the ticket. Good.",
+            "diary": "We apologised, and the guard told us our ticket was fine: wrong gate, not wrong ticket."
+          }
+        ]
+      },
+      "diary": "We apologised to the guard, and he sent us to the far gates with a smile.",
+      "maya": {
+        "line": "A friend in the station. That helps."
+      }
+    },
+    {
+      "id": "c05_fail",
+      "kind": "consequence",
+      "scene": {
+        "location": "Ticket barriers",
+        "backdrop": "concourse_night",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "The guard explains again, more slowly. A queue grows behind you."
+          },
+          {
+            "speaker": "narrator",
+            "text": "At last he points to the far gates, and you squeeze out of the line."
+          }
+        ],
+        "variants": [
+          {
+            "when_flag": "wrong_ticket",
+            "lines": [
+              {
+                "speaker": "narrator",
+                "text": "The guard checks your ticket and explains again, slowly: wrong gate, not wrong ticket."
+              },
+              {
+                "speaker": "narrator",
+                "text": "A queue grows behind you. You squeeze out towards the far gates."
+              }
+            ],
+            "diary": "The guard explained twice: our ticket was okay, but we were at the wrong gate."
+          }
+        ]
+      },
+      "diary": "The guard had to explain twice, and we left the queue for the far gates.",
+      "maya": {
+        "line": "Far gates. We're getting closer."
+      }
+    },
+    {
+      "id": "c06",
+      "kind": "checkpoint",
+      "item_id": "q06",
+      "scene": {
+        "location": "The far gates",
+        "backdrop": "concourse_night",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "More gates, more signs, more people. Which one is yours?"
+          },
+          {
+            "speaker": "narrator",
+            "text": "A station assistant sees your faces and comes over."
+          }
+        ],
+        "variants": [
+          {
+            "when_flag": "wrong_platform",
+            "lines": [
+              {
+                "speaker": "narrator",
+                "text": "First an empty platform, now a wall of gates. You still can't see a seven."
+              },
+              {
+                "speaker": "narrator",
+                "text": "A station assistant sees your faces and comes over."
+              }
+            ],
+            "maya_line": "This station really likes hiding our platform."
+          }
+        ]
+      },
+      "diary": "A station assistant saw that we were lost.",
+      "maya": {
+        "intro": "She wants to help. Let's tell her our problem.",
+        "reaction_ok": "That told her the whole story in one sentence.",
+        "reaction_fail": "She got the idea. The time part came out a bit mixed up."
+      }
+    },
+    {
+      "id": "c06_ok",
+      "kind": "consequence",
+      "scene": {
+        "location": "The far gates",
+        "backdrop": "concourse_night",
+        "lines": [
+          {
+            "speaker": "Station assistant",
+            "text": "Since you arrived? You poor things. Platform seven is down that passage."
+          }
+        ]
+      },
+      "diary": "The assistant understood we'd been searching for ages and sent us down the passage.",
+      "maya": {
+        "line": "Down the passage. Let's move."
+      }
+    },
+    {
+      "id": "c06_fail",
+      "kind": "consequence",
+      "scene": {
+        "location": "The far gates",
+        "backdrop": "concourse_night",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "The assistant thinks you've just arrived. She starts from the beginning: the map, the shops, the toilets."
+          },
+          {
+            "speaker": "narrator",
+            "text": "Maya thanks her politely. Then you both walk fast."
+          }
+        ]
+      },
+      "diary": "The assistant thought we'd just arrived and gave us the full tour.",
+      "maya": {
+        "line": "Kind woman. Very long map."
+      }
+    },
+    {
+      "id": "c07",
+      "kind": "checkpoint",
+      "item_id": "q07",
+      "scene": {
+        "location": "Passage to the platforms",
+        "backdrop": "platform",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "The passage under the tracks is long and loud. The speakers crackle again."
+          }
+        ],
+        "variants": [
+          {
+            "when_flag": "wrong_platform",
+            "lines": [
+              {
+                "speaker": "narrator",
+                "text": "The passage under the tracks is long and loud. This time you check every sign."
+              },
+              {
+                "speaker": "narrator",
+                "text": "The speakers crackle again."
+              }
+            ]
+          }
+        ]
+      },
+      "diary": "In the passage, we heard an announcement about our train.",
+      "maya": {
+        "intro": "It's about our train again. Let's hear the whole message.",
+        "reaction_ok": "Good ears. That was fast, and you got all of it.",
+        "reaction_fail": "We heard our train, I think. What to do was less clear.",
+        "reaction_rescue": "Don't worry. I know this station. Stay close."
+      }
+    },
+    {
+      "id": "c07_ok",
+      "kind": "consequence",
+      "scene": {
+        "location": "Side gate, platform 7",
+        "backdrop": "platform",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "At the end of the passage, the platform seven barriers are dark."
+          },
+          {
+            "speaker": "narrator",
+            "text": "Next to the lift, a small side gate is open. A guard stands there."
+          }
+        ],
+        "variants": [
+          {
+            "when_flag": "train_departed",
+            "lines": [
+              {
+                "speaker": "narrator",
+                "text": "Through the side gate, you see red lights. The last train is pulling away."
+              }
+            ],
+            "backdrop": "platform_empty",
+            "maya_line": "It's gone. But there's a night bus to Oxford at 22:20, just outside.",
+            "diary": "We reached the side gate just as the last train pulled away. Plan B: the night bus."
+          }
+        ]
+      },
+      "diary": "We went straight to the side gate by the lift.",
+      "maya": {
+        "line": "Side gate. Just like the announcement said."
+      }
+    },
+    {
+      "id": "c07_fail",
+      "kind": "consequence",
+      "scene": {
+        "location": "Side gate, platform 7",
+        "backdrop": "platform",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "You wait at the dark barriers and push your ticket in. Nothing. Again. Nothing."
+          },
+          {
+            "speaker": "Man behind you",
+            "text": "Side gate, mate. Next to the lift."
+          }
+        ],
+        "variants": [
+          {
+            "when_flag": "train_departed",
+            "lines": [
+              {
+                "speaker": "Man behind you",
+                "text": "Side gate, mate. Next to the lift."
+              },
+              {
+                "speaker": "narrator",
+                "text": "Through the side gate, you see red lights. The last train is pulling away."
+              }
+            ],
+            "backdrop": "platform_empty",
+            "maya_line": "It's gone. But there's a night bus to Oxford at 22:20, just outside.",
+            "diary": "We tried the dark barriers too long, and the last train pulled away. Plan B: the night bus."
+          }
+        ]
+      },
+      "diary": "We tried the dark barriers until a man sent us to the side gate by the lift.",
+      "maya": {
+        "line": "The side gate. Let's go."
+      }
+    },
+    {
+      "id": "c07_rescue",
+      "kind": "consequence",
+      "scene": {
+        "location": "Maya's shortcut",
+        "backdrop": "arcade_shortcut",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "Maya pulls you past the dark barriers, straight to a small gate by the lift."
+          },
+          {
+            "speaker": "narrator",
+            "text": "Ten seconds later, you're at the front of the line."
+          }
+        ]
+      },
+      "diary": "Maya knew a quick way to the side gate by the lift.",
+      "maya": {
+        "line": "Old station trick. Side gate, by the lift."
+      }
+    },
+    {
+      "id": "c08",
+      "kind": "checkpoint",
+      "item_id": "q08",
+      "scene": {
+        "location": "Side gate, platform 7",
+        "backdrop": "platform",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "A guard stands at the side gate. You walk up with your ticket in your hand."
+          }
+        ],
+        "variants": [
+          {
+            "when_flag": "train_departed",
+            "lines": [
+              {
+                "speaker": "narrator",
+                "text": "Outside, it's raining. A guard in a bright jacket is helping people from the last train."
+              },
+              {
+                "speaker": "narrator",
+                "text": "You show him your train ticket."
+              }
+            ],
+            "location": "Outside the station",
+            "backdrop": "street_night",
+            "maya_line": "Sometimes train tickets work on the night bus. Let's ask him.",
+            "diary": "Outside the station, a guard helped people who had missed the last train."
+          },
+          {
+            "when_flag": "befriended_guard",
+            "lines": [
+              {
+                "speaker": "narrator",
+                "text": "At the side gate, a familiar face: the guard from the first barriers. He came down in the lift."
+              }
+            ],
+            "maya_line": "Look who it is. Our friend from the barriers.",
+            "diary": "At the side gate, we met the friendly guard again."
+          },
+          {
+            "when_flag": "wrong_ticket",
+            "lines": [
+              {
+                "speaker": "narrator",
+                "text": "A guard stands at the side gate. You hold out the ticket from the machine."
+              }
+            ],
+            "maya_line": "Let's show him our tickets and see."
+          }
+        ]
+      },
+      "diary": "At the side gate, a guard stopped us to check our tickets.",
+      "maya": {
+        "intro": "He's friendly, but he wants something from us. What is it?",
+        "reaction_ok": "Nice. You read him perfectly.",
+        "reaction_fail": "Hm, I think 'hold' tricked us a little.",
+        "reaction_rescue": "Leave this to me. I'll talk to him."
+      }
+    },
+    {
+      "id": "c08_ok",
+      "kind": "consequence",
+      "scene": {
+        "location": "Side gate, platform 7",
+        "backdrop": "platform",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "You wait. He checks your ticket, smiles and opens the gate."
+          },
+          {
+            "speaker": "Guard",
+            "text": "Platform seven. Go on, quickly."
+          }
+        ],
+        "variants": [
+          {
+            "when_flag": "train_departed",
+            "lines": [
+              {
+                "speaker": "narrator",
+                "text": "You wait while he checks your ticket."
+              },
+              {
+                "speaker": "Guard",
+                "text": "This works on the night bus to Oxford. Stop B, 22:20."
+              }
+            ],
+            "location": "Outside the station",
+            "backdrop": "street_night",
+            "maya_line": "No train for us tonight, but we have a plan: the 22:20 night bus to Oxford.",
+            "diary": "The guard checked our tickets: they worked on the night bus to Oxford."
+          },
+          {
+            "when_flag": "wrong_ticket",
+            "lines": [
+              {
+                "speaker": "narrator",
+                "text": "You wait. He looks at your ticket for a long second."
+              },
+              {
+                "speaker": "Guard",
+                "text": "Not the ticket I'd buy for one trip home. But it's valid. Go on."
+              }
+            ],
+            "maya_line": "Phew. It works. Let's go.",
+            "diary": "The guard checked our ticket: not the best one for tonight, but valid."
+          }
+        ]
+      },
+      "diary": "We waited while the guard checked our tickets, and he let us through.",
+      "maya": {
+        "line": "He likes you. I can tell."
+      }
+    },
+    {
+      "id": "c08_fail",
+      "kind": "consequence",
+      "scene": {
+        "location": "Side gate, platform 7",
+        "backdrop": "platform",
+        "lines": [
+          {
+            "speaker": "Guard",
+            "text": "Just wait there for me, please."
+          },
+          {
+            "speaker": "narrator",
+            "text": "He checks two other tickets before yours. Then he waves you through."
+          }
+        ],
+        "variants": [
+          {
+            "when_flag": "train_departed",
+            "lines": [
+              {
+                "speaker": "Guard",
+                "text": "Just wait there for me, please."
+              },
+              {
+                "speaker": "narrator",
+                "text": "He checks the whole queue first. Then: 'Fine on the night bus. Stop B, 22:20.'"
+              }
+            ],
+            "location": "Outside the station",
+            "backdrop": "street_night",
+            "maya_line": "No train for us tonight, but we have a plan: the 22:20 night bus to Oxford.",
+            "diary": "The guard asked us twice to wait, then told us our tickets worked on the night bus."
+          }
+        ]
+      },
+      "diary": "The guard had to ask us twice to wait while he checked the tickets.",
+      "maya": {
+        "line": "Slow and steady. We're nearly there."
+      }
+    },
+    {
+      "id": "c08_rescue",
+      "kind": "consequence",
+      "scene": {
+        "location": "Maya's shortcut",
+        "backdrop": "arcade_shortcut",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "Maya chats with the guard. He laughs, checks both tickets at once and opens the gate."
+          }
+        ]
+      },
+      "diary": "Maya chatted with the guard, and he let us through quickly.",
+      "maya": {
+        "line": "He's from Oxford too. Small world. Come on."
+      }
+    },
+    {
+      "id": "c09",
+      "kind": "checkpoint",
+      "item_id": "q09",
+      "scene": {
+        "location": "Platform 7",
+        "backdrop": "platform",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "Platform seven. The train is here, doors open, lights on."
+          },
+          {
+            "speaker": "narrator",
+            "text": "A woman with a bike looks at you both and laughs."
+          }
+        ],
+        "variants": [
+          {
+            "when_flag": "train_departed",
+            "lines": [
+              {
+                "speaker": "narrator",
+                "text": "At stop B, the sign says: Oxford, 22:20. You're both breathing hard."
+              },
+              {
+                "speaker": "narrator",
+                "text": "A woman in the queue looks at you and laughs."
+              }
+            ],
+            "location": "Night bus stop",
+            "backdrop": "night_bus",
+            "diary": "At the night bus stop, a woman noticed we were out of breath."
+          }
+        ]
+      },
+      "diary": "On the platform, a passenger noticed we were out of breath.",
+      "maya": {
+        "intro": "Catch your breath first. Then answer her.",
+        "reaction_ok": "Lovely sentence. And very true.",
+        "reaction_fail": "She got the idea. That 'if' sentence got a little tangled."
+      }
+    },
+    {
+      "id": "c09_ok",
+      "kind": "consequence",
+      "scene": {
+        "location": "Platform 7",
+        "backdrop": "platform",
+        "lines": [
+          {
+            "speaker": "Passenger",
+            "text": "Story of my life. The front carriages are quieter."
+          },
+          {
+            "speaker": "narrator",
+            "text": "You walk to the front of the train together."
+          }
+        ],
+        "variants": [
+          {
+            "when_flag": "train_departed",
+            "lines": [
+              {
+                "speaker": "Passenger",
+                "text": "Story of my life. Are you on the night bus to Oxford too? Sit upstairs, at the front."
+              }
+            ],
+            "location": "Night bus stop",
+            "backdrop": "night_bus",
+            "maya_line": "No train for us, but the top deck sounds good.",
+            "diary": "We joked with a passenger about leaving too late. She told us to sit upstairs."
+          }
+        ]
+      },
+      "diary": "We joked with a passenger about leaving too late.",
+      "maya": {
+        "line": "Front carriage. Nearly home."
+      }
+    },
+    {
+      "id": "c09_fail",
+      "kind": "consequence",
+      "scene": {
+        "location": "Platform 7",
+        "backdrop": "platform",
+        "lines": [
+          {
+            "speaker": "Passenger",
+            "text": "Sorry? Oh, I know the feeling!"
+          },
+          {
+            "speaker": "narrator",
+            "text": "She tells you a long story about her own last train. You listen politely as the minutes go."
+          }
+        ],
+        "variants": [
+          {
+            "when_flag": "train_departed",
+            "lines": [
+              {
+                "speaker": "Passenger",
+                "text": "Sorry? Oh, I know the feeling!"
+              },
+              {
+                "speaker": "narrator",
+                "text": "She tells you a long story about the night she missed her last train. You listen politely."
+              }
+            ],
+            "location": "Night bus stop",
+            "backdrop": "night_bus",
+            "maya_line": "No train for us tonight, but we have a plan: the 22:20 night bus to Oxford.",
+            "diary": "A passenger told us a long story about the night she missed her last train."
+          }
+        ]
+      },
+      "diary": "A passenger told us a long story about her own last train.",
+      "maya": {
+        "line": "Nice woman. Long story."
+      }
+    },
+    {
+      "id": "c10",
+      "kind": "checkpoint",
+      "item_id": "q10",
+      "scene": {
+        "location": "At the train door",
+        "backdrop": "platform",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "Your phone buzzes. It's a long message from Sam, your flatmate in Oxford."
+          }
+        ],
+        "variants": [
+          {
+            "when_flag": "train_departed",
+            "lines": [
+              {
+                "speaker": "narrator",
+                "text": "While you wait for the bus, your phone buzzes. It's a long message from Sam."
+              }
+            ],
+            "location": "Night bus stop",
+            "backdrop": "night_bus",
+            "diary": "At the bus stop, Sam sent us a long message about the plan in Oxford."
+          }
+        ]
+      },
+      "diary": "At the train door, Sam sent us a long message about the plan in Oxford.",
+      "maya": {
+        "intro": "Sam writes a lot. Let's read the whole thing, calmly.",
+        "reaction_ok": "Nice reading. Sam's plan is a good one.",
+        "reaction_fail": "Hm. I don't think that's Sam's plan. Let's read the end again.",
+        "reaction_rescue": "Reply later. Get on, the doors are closing!"
+      }
+    },
+    {
+      "id": "c10_ok",
+      "kind": "consequence",
+      "scene": {
+        "location": "At the train door",
+        "backdrop": "platform",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "You text back: 'See you at the Night Owl. Say hi to Rosa.'"
+          },
+          {
+            "speaker": "narrator",
+            "text": "Maya holds the door, and you step on."
+          }
+        ],
+        "variants": [
+          {
+            "when_flag": "train_departed",
+            "lines": [
+              {
+                "speaker": "narrator",
+                "text": "You text back: 'See you at the Night Owl. A bit later than planned!'"
+              }
+            ],
+            "location": "Night bus stop",
+            "backdrop": "night_bus",
+            "maya_line": "Same café, just later. Sam won't mind.",
+            "diary": "We understood Sam's plan and texted that we'd be a bit late."
+          }
+        ]
+      },
+      "diary": "We understood Sam's plan: wait at the Night Owl café with Rosa.",
+      "maya": {
+        "line": "The Night Owl? I love that place."
+      }
+    },
+    {
+      "id": "c10_fail",
+      "kind": "consequence",
+      "scene": {
+        "location": "At the train door",
+        "backdrop": "platform",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "You start to reply. Maya reads over your shoulder and points at the last lines."
+          },
+          {
+            "speaker": "narrator",
+            "text": "You read it again, slowly: George Street, the café, Rosa. Now the plan makes sense."
+          },
+          {
+            "speaker": "narrator",
+            "text": "Behind you, the doors start to beep."
+          }
+        ],
+        "variants": [
+          {
+            "when_flag": "train_departed",
+            "lines": [
+              {
+                "speaker": "narrator",
+                "text": "You start to reply. Maya reads over your shoulder and points at the last lines."
+              },
+              {
+                "speaker": "narrator",
+                "text": "You read it again, slowly: George Street, the café, Rosa. Now the plan makes sense."
+              }
+            ],
+            "location": "Night bus stop",
+            "backdrop": "night_bus",
+            "maya_line": "Same café, just later. Sam won't mind.",
+            "diary": "We read Sam's message twice before the plan made sense: the café on George Street."
+          }
+        ]
+      },
+      "diary": "We read Sam's message twice before the plan made sense: the café on George Street.",
+      "maya": {
+        "line": "Got it now? Quick, let's get on."
+      }
+    },
+    {
+      "id": "c10_rescue",
+      "kind": "consequence",
+      "scene": {
+        "location": "At the train door",
+        "backdrop": "platform",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "Maya holds the door open with one hand."
+          },
+          {
+            "speaker": "narrator",
+            "text": "You look once more: the café on George Street, Rosa, Sam. Now it makes sense."
+          }
+        ]
+      },
+      "diary": "Maya held the train door while we read Sam's message again.",
+      "maya": {
+        "line": "Read it again on the train. In you get."
+      }
+    },
+    {
+      "id": "end_made_it",
+      "kind": "ending",
+      "scene": {
+        "location": "On the 22:05 to Oxford",
+        "backdrop": "train_carriage",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "You find two seats by the window. At 22:05 exactly, the doors close."
+          },
+          {
+            "speaker": "narrator",
+            "text": "London slides past, one light at a time."
+          }
+        ],
+        "variants": [
+          {
+            "when_flag": "befriended_guard",
+            "lines": [
+              {
+                "speaker": "narrator",
+                "text": "You find two seats by the window. At 22:05 exactly, the doors close."
+              },
+              {
+                "speaker": "narrator",
+                "text": "On the platform, the guard lifts his hand. You wave back."
+              },
+              {
+                "speaker": "narrator",
+                "text": "London slides past, one light at a time."
+              }
+            ],
+            "diary": "We caught the last train to Oxford, and the guard waved us off."
+          }
+        ]
+      },
+      "diary": "We caught the last train to Oxford.",
+      "maya": {
+        "line": "We made it! And you got us here."
+      },
+      "ending": {
+        "key": "made_it",
+        "title": "Made It",
+        "priority": 1,
+        "condition": {
+          "min_minutes_left": 0,
+          "rescued": false
+        }
+      }
+    },
+    {
+      "id": "end_made_it_with_maya",
+      "kind": "ending",
+      "scene": {
+        "location": "On the 22:05 to Oxford",
+        "backdrop": "train_carriage",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "You jump on. The doors close right behind you."
+          },
+          {
+            "speaker": "narrator",
+            "text": "Maya drops into a seat, laughing and out of breath."
+          }
+        ],
+        "variants": [
+          {
+            "when_flag": "befriended_guard",
+            "lines": [
+              {
+                "speaker": "narrator",
+                "text": "You jump on. The doors close right behind you."
+              },
+              {
+                "speaker": "narrator",
+                "text": "On the platform, the guard lifts his hand. You wave back."
+              },
+              {
+                "speaker": "narrator",
+                "text": "Maya drops into a seat, laughing and out of breath."
+              }
+            ],
+            "diary": "We caught the last train together, thanks to Maya's shortcut, and the guard waved us off."
+          }
+        ]
+      },
+      "diary": "We caught the last train together, thanks to Maya's shortcut.",
+      "maya": {
+        "line": "Good team. Next time, you show me a shortcut."
+      },
+      "ending": {
+        "key": "made_it_with_maya",
+        "title": "Made It Together",
+        "priority": 2,
+        "condition": {
+          "min_minutes_left": 0,
+          "rescued": true
+        }
+      }
+    },
+    {
+      "id": "end_night_bus",
+      "kind": "ending",
+      "scene": {
+        "location": "The night bus to Oxford",
+        "backdrop": "night_bus",
+        "lines": [
+          {
+            "speaker": "narrator",
+            "text": "At 22:20, the night bus to Oxford comes out of the rain."
+          },
+          {
+            "speaker": "narrator",
+            "text": "You take the front seats on the top deck. London is all lights."
+          }
+        ]
+      },
+      "diary": "The last train left without us, so we took the night bus to Oxford together.",
+      "maya": {
+        "line": "The train's gone, but this bus goes to the same place. Honestly? The top deck has the better view."
+      },
+      "ending": {
+        "key": "night_bus",
+        "title": "The Night Bus",
+        "priority": 3,
+        "condition": {}
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "intro",
+      "to": "c01",
+      "on": "always",
+      "minutes": 0
+    },
+    {
+      "from": "c01",
+      "to": "c01_ok",
+      "on": "correct",
+      "minutes": 1
+    },
+    {
+      "from": "c01_ok",
+      "to": "c02",
+      "on": "always",
+      "minutes": 0
+    },
+    {
+      "from": "c01",
+      "to": "c01_fail",
+      "on": "incorrect",
+      "minutes": 3
+    },
+    {
+      "from": "c01_fail",
+      "to": "c02",
+      "on": "always",
+      "minutes": 0
+    },
+    {
+      "from": "c02",
+      "to": "c02_ok",
+      "on": "correct",
+      "minutes": 1
+    },
+    {
+      "from": "c02_ok",
+      "to": "c03",
+      "on": "always",
+      "minutes": 0
+    },
+    {
+      "from": "c02",
+      "to": "c02_fail",
+      "on": "incorrect",
+      "minutes": 3,
+      "effects": {
+        "set_flags": [
+          "wrong_platform"
+        ]
+      }
+    },
+    {
+      "from": "c02_fail",
+      "to": "c03",
+      "on": "always",
+      "minutes": 0
+    },
+    {
+      "from": "c03",
+      "to": "c03_ok",
+      "on": "correct",
+      "minutes": 1
+    },
+    {
+      "from": "c03_ok",
+      "to": "c04",
+      "on": "always",
+      "minutes": 0
+    },
+    {
+      "from": "c03",
+      "to": "c03_fail",
+      "on": "incorrect",
+      "minutes": 3
+    },
+    {
+      "from": "c03_fail",
+      "to": "c04",
+      "on": "always",
+      "minutes": 0
+    },
+    {
+      "from": "c04",
+      "to": "c04_ok",
+      "on": "correct",
+      "minutes": 1
+    },
+    {
+      "from": "c04_ok",
+      "to": "c05",
+      "on": "always",
+      "minutes": 0
+    },
+    {
+      "from": "c04",
+      "to": "c04_fail",
+      "on": "incorrect",
+      "minutes": 3,
+      "effects": {
+        "set_flags": [
+          "wrong_ticket"
+        ]
+      }
+    },
+    {
+      "from": "c04_fail",
+      "to": "c05",
+      "on": "always",
+      "minutes": 0
+    },
+    {
+      "from": "c05",
+      "to": "c05_ok",
+      "on": "correct",
+      "minutes": 1,
+      "effects": {
+        "set_flags": [
+          "befriended_guard"
+        ]
+      }
+    },
+    {
+      "from": "c05_ok",
+      "to": "c06",
+      "on": "always",
+      "minutes": 0
+    },
+    {
+      "from": "c05",
+      "to": "c05_fail",
+      "on": "incorrect",
+      "minutes": 3
+    },
+    {
+      "from": "c05_fail",
+      "to": "c06",
+      "on": "always",
+      "minutes": 0
+    },
+    {
+      "from": "c06",
+      "to": "c06_ok",
+      "on": "correct",
+      "minutes": 1
+    },
+    {
+      "from": "c06_ok",
+      "to": "c07",
+      "on": "always",
+      "minutes": 0
+    },
+    {
+      "from": "c06",
+      "to": "c06_fail",
+      "on": "incorrect",
+      "minutes": 3
+    },
+    {
+      "from": "c06_fail",
+      "to": "c07",
+      "on": "always",
+      "minutes": 0
+    },
+    {
+      "from": "c07",
+      "to": "c07_ok",
+      "on": "correct",
+      "minutes": 1
+    },
+    {
+      "from": "c07_ok",
+      "to": "c08",
+      "on": "always",
+      "minutes": 0
+    },
+    {
+      "from": "c07",
+      "to": "c07_fail",
+      "on": "incorrect",
+      "minutes": 3
+    },
+    {
+      "from": "c07_fail",
+      "to": "c08",
+      "on": "always",
+      "minutes": 0
+    },
+    {
+      "from": "c07",
+      "to": "c07_rescue",
+      "on": "incorrect",
+      "minutes": 1,
+      "rescue": true
+    },
+    {
+      "from": "c07_rescue",
+      "to": "c08",
+      "on": "always",
+      "minutes": 0
+    },
+    {
+      "from": "c08",
+      "to": "c08_ok",
+      "on": "correct",
+      "minutes": 1,
+      "effects": {
+        "set_flags": [
+          "befriended_guard"
+        ]
+      }
+    },
+    {
+      "from": "c08_ok",
+      "to": "c09",
+      "on": "always",
+      "minutes": 0
+    },
+    {
+      "from": "c08",
+      "to": "c08_fail",
+      "on": "incorrect",
+      "minutes": 3
+    },
+    {
+      "from": "c08_fail",
+      "to": "c09",
+      "on": "always",
+      "minutes": 0
+    },
+    {
+      "from": "c08",
+      "to": "c08_rescue",
+      "on": "incorrect",
+      "minutes": 1,
+      "rescue": true
+    },
+    {
+      "from": "c08_rescue",
+      "to": "c09",
+      "on": "always",
+      "minutes": 0
+    },
+    {
+      "from": "c09",
+      "to": "c09_ok",
+      "on": "correct",
+      "minutes": 1
+    },
+    {
+      "from": "c09_ok",
+      "to": "c10",
+      "on": "always",
+      "minutes": 0
+    },
+    {
+      "from": "c09",
+      "to": "c09_fail",
+      "on": "incorrect",
+      "minutes": 3
+    },
+    {
+      "from": "c09_fail",
+      "to": "c10",
+      "on": "always",
+      "minutes": 0
+    },
+    {
+      "from": "c10",
+      "to": "c10_ok",
+      "on": "correct",
+      "minutes": 1
+    },
+    {
+      "from": "c10_ok",
+      "to": "end_made_it",
+      "on": "ending",
+      "minutes": 0
+    },
+    {
+      "from": "c10_ok",
+      "to": "end_made_it_with_maya",
+      "on": "ending",
+      "minutes": 0
+    },
+    {
+      "from": "c10_ok",
+      "to": "end_night_bus",
+      "on": "ending",
+      "minutes": 0
+    },
+    {
+      "from": "c10",
+      "to": "c10_fail",
+      "on": "incorrect",
+      "minutes": 3
+    },
+    {
+      "from": "c10_fail",
+      "to": "end_made_it",
+      "on": "ending",
+      "minutes": 0
+    },
+    {
+      "from": "c10_fail",
+      "to": "end_made_it_with_maya",
+      "on": "ending",
+      "minutes": 0
+    },
+    {
+      "from": "c10_fail",
+      "to": "end_night_bus",
+      "on": "ending",
+      "minutes": 0
+    },
+    {
+      "from": "c10",
+      "to": "c10_rescue",
+      "on": "incorrect",
+      "minutes": 1,
+      "rescue": true
+    },
+    {
+      "from": "c10_rescue",
+      "to": "end_made_it",
+      "on": "ending",
+      "minutes": 0
+    },
+    {
+      "from": "c10_rescue",
+      "to": "end_made_it_with_maya",
+      "on": "ending",
+      "minutes": 0
+    },
+    {
+      "from": "c10_rescue",
+      "to": "end_night_bus",
+      "on": "ending",
+      "minutes": 0
+    }
+  ]
+}
