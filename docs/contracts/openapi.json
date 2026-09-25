@@ -754,6 +754,93 @@
           }
         }
       }
+    },
+    "/api/missions/{mission_id}/simulate": {
+      "get": {
+        "tags": [
+          "demo"
+        ],
+        "summary": "Simulate",
+        "description": "One seeded run of the simulated student: outcomes, nodes, clock and Maya's decisions,\nnever options or answer content. Deterministic; nothing is persisted.",
+        "operationId": "simulate_api_missions__mission_id__simulate_get",
+        "parameters": [
+          {
+            "name": "mission_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Mission Id"
+            }
+          },
+          {
+            "name": "profile",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "enum": [
+                "A1",
+                "A2",
+                "B1",
+                "B2",
+                "A2_weak_listening"
+              ],
+              "type": "string",
+              "title": "Profile"
+            }
+          },
+          {
+            "name": "seed",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 1000000,
+              "minimum": 0,
+              "default": 1,
+              "title": "Seed"
+            }
+          },
+          {
+            "name": "gam_session",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gam Session"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SimulationResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2392,6 +2479,123 @@
           "lines"
         ],
         "title": "SceneView"
+      },
+      "SimulationResponse": {
+        "properties": {
+          "mission_id": {
+            "type": "string",
+            "title": "Mission Id"
+          },
+          "profile": {
+            "type": "string",
+            "enum": [
+              "A1",
+              "A2",
+              "B1",
+              "B2",
+              "A2_weak_listening"
+            ],
+            "title": "Profile"
+          },
+          "seed": {
+            "type": "integer",
+            "title": "Seed"
+          },
+          "steps": {
+            "items": {
+              "$ref": "#/components/schemas/SimulationStep"
+            },
+            "type": "array",
+            "title": "Steps"
+          },
+          "ending": {
+            "$ref": "#/components/schemas/EndingRef"
+          },
+          "story_minutes_used": {
+            "type": "integer",
+            "title": "Story Minutes Used"
+          }
+        },
+        "type": "object",
+        "required": [
+          "mission_id",
+          "profile",
+          "seed",
+          "steps",
+          "ending",
+          "story_minutes_used"
+        ],
+        "title": "SimulationResponse"
+      },
+      "SimulationStep": {
+        "properties": {
+          "seq": {
+            "type": "integer",
+            "title": "Seq"
+          },
+          "node_id": {
+            "type": "string",
+            "title": "Node Id"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "narrative",
+              "checkpoint",
+              "consequence",
+              "ending"
+            ],
+            "title": "Kind"
+          },
+          "clock": {
+            "$ref": "#/components/schemas/Clock"
+          },
+          "outcome": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "understood",
+                  "missed"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Outcome"
+          },
+          "maya_decision": {
+            "type": "string",
+            "enum": [
+              "quiet",
+              "hint",
+              "rescue"
+            ],
+            "title": "Maya Decision"
+          },
+          "maya_mood": {
+            "type": "string",
+            "enum": [
+              "curious",
+              "encouraging",
+              "worried",
+              "proud"
+            ],
+            "title": "Maya Mood"
+          }
+        },
+        "type": "object",
+        "required": [
+          "seq",
+          "node_id",
+          "kind",
+          "clock",
+          "outcome",
+          "maya_decision",
+          "maya_mood"
+        ],
+        "title": "SimulationStep"
       },
       "SkillPct": {
         "properties": {

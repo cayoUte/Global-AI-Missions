@@ -313,6 +313,12 @@ Built only with the Simulated replay (PRODUCT §5.8). `DEMO_MODE=false` → `404
 
 Never options, chosen answers, prompts or answer content (SHARED_CONTEXT §9.7).
 
+Implementation notes (CR-011, 2026-09-25; the shape above is unchanged):
+- Order of checks: `DEMO_MODE=false` → `404 NOT_FOUND` for everyone, before authentication and query validation (the route behaves as unknown); then no or bad cookie → 401 `UNAUTHENTICATED`; then the query → 422 `VALIDATION_ERROR`; then an unknown or non-playable mission (or no active version) → 404 `NOT_FOUND`. Unlock rules do not apply (any role, a demo tool).
+- `profile` is required. `seed` is an integer in `0..1000000` (default 1); anything else → 422.
+- The run is the engine's simulated student (`app.engine.run`) over the mission's **active version**; same `mission_id` + `profile` + `seed` + version → identical output. Nothing is persisted and the coach is never called.
+- `steps` is the whole path, start node to ending, `seq` from 1. `clock` and `maya_mood` are on arrival at the node; `maya_decision` is the decision the StateView would show there (`rescue` on the node a rescue edge led to). `outcome` is `understood` (correct) or `missed` (incorrect) on checkpoints, `null` elsewhere. No `item_id`, scene lines or Maya lines are included (safer reading of §9.7). `story_minutes_used` = `minutes_available − minutes_left` at the ending.
+
 ---
 
 ## 6. StateView — the only shape the client sees during a mission

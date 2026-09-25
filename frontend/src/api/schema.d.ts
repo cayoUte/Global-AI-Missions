@@ -293,6 +293,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/missions/{mission_id}/simulate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Simulate
+         * @description One seeded run of the simulated student: outcomes, nodes, clock and Maya's decisions,
+         *     never options or answer content. Deterministic; nothing is persisted.
+         */
+        get: operations["simulate_api_missions__mission_id__simulate_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -851,6 +872,48 @@ export interface components {
             backdrop: string;
             /** Lines */
             lines: components["schemas"]["SceneLine"][];
+        };
+        /** SimulationResponse */
+        SimulationResponse: {
+            /** Mission Id */
+            mission_id: string;
+            /**
+             * Profile
+             * @enum {string}
+             */
+            profile: "A1" | "A2" | "B1" | "B2" | "A2_weak_listening";
+            /** Seed */
+            seed: number;
+            /** Steps */
+            steps: components["schemas"]["SimulationStep"][];
+            ending: components["schemas"]["EndingRef"];
+            /** Story Minutes Used */
+            story_minutes_used: number;
+        };
+        /** SimulationStep */
+        SimulationStep: {
+            /** Seq */
+            seq: number;
+            /** Node Id */
+            node_id: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "narrative" | "checkpoint" | "consequence" | "ending";
+            clock: components["schemas"]["Clock"];
+            /** Outcome */
+            outcome: ("understood" | "missed") | null;
+            /**
+             * Maya Decision
+             * @enum {string}
+             */
+            maya_decision: "quiet" | "hint" | "rescue";
+            /**
+             * Maya Mood
+             * @enum {string}
+             */
+            maya_mood: "curious" | "encouraging" | "worried" | "proud";
         };
         /** SkillPct */
         SkillPct: {
@@ -1429,6 +1492,42 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Report"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    simulate_api_missions__mission_id__simulate_get: {
+        parameters: {
+            query: {
+                profile: "A1" | "A2" | "B1" | "B2" | "A2_weak_listening";
+                seed?: number;
+            };
+            header?: never;
+            path: {
+                mission_id: string;
+            };
+            cookie?: {
+                gam_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SimulationResponse"];
                 };
             };
             /** @description Validation Error */
