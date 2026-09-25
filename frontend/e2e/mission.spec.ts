@@ -94,15 +94,13 @@ test('new student: check-in → full mission by keyboard → report → progress
   await expect(newest.getByRole('link', { name: `Attempt ${attemptNumber}` })).toBeVisible()
   await expect(newest).toContainText(mobile ? '80%' : LABEL)
   await expect(page.getByRole('heading', { name: "Maya's notes" })).toBeVisible()
-  // The Progress width at 360 px is checked by the next test (known bug BUG-001).
+  // The Progress width at 360 and 768 px is checked by the next test (BUG-001 regression).
 })
 
 test('Progress has no horizontal page scroll at 360 and 768 px', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'mobile-360', 'a small-screen check')
-  // BUG-001 (docs/qa/CHECKLIST.md): the Attempt history table is wider than the page at 360 px
-  // (+25 px) and at 768 px (+217 px). Expected to fail until the fix lands; Playwright then
-  // reports an unexpected pass, and this line must be removed.
-  test.fail(true, 'BUG-001: Attempt history table overflows the page')
+  // Regression check for BUG-001 (docs/qa/CHECKLIST.md): the Attempt history table scrolls inside
+  // its card instead of widening the page.
   const login = await page.request.post('/api/auth/login', {
     data: { email: 'veteran@globalai.test', password: DEMO_PASSWORD },
   })

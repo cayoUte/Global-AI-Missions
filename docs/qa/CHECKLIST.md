@@ -19,8 +19,8 @@
 
 | # | Check | Status | Notes |
 |---|---|---|---|
-| M-01 | 360 px: every screen, no horizontal scroll | **FAIL (BUG-001)** | Measured (`scrollWidth − clientWidth`): Check-in 0, English World 0, Mission Player 0, Mission Report 0, **Progress +25 px** (the Attempt history table). Automated: `e2e mission.spec.ts` [mobile-360]. |
-| M-02 | 768 px | **FAIL (BUG-001)** | Check-in 0, World 0, Player 0, Report 0, **Progress +217 px**: at `md` all 11 history columns appear and the table spills out of its card. |
+| M-01 | 360 px: every screen, no horizontal scroll | **PASS after the BUG-001 fix** (was FAIL) | Measured (`scrollWidth − clientWidth`): Check-in 0, English World 0, Mission Player 0, Mission Report 0, **Progress +25 px** (the Attempt history table). Automated: `e2e mission.spec.ts` [mobile-360]. |
+| M-02 | 768 px | **PASS after the BUG-001 fix** (was FAIL) | Check-in 0, World 0, Player 0, Report 0, **Progress +217 px**: at `md` all 11 history columns appear and the table spills out of its card. |
 | M-03 | 1440 px (and 1024, 1280) | **PASS** | All screens 0 px overflow; screenshots reviewed. |
 | M-04 | Reduced motion | **PASS (note BUG-003)** | See L-5. Should also be eyeballed once on a real OS setting (macOS "Reduce motion"). |
 | M-05 | Keyboard-only run | **PASS** | See L-4. Visible focus ring: check by eye at G3. |
@@ -40,10 +40,10 @@ Severity: **S1** blocker (data/security/integrity or the demo cannot run) · **S
 
 | ID | Sev | Summary | Owner | Status |
 |---|---|---|---|---|
-| BUG-001 | **S2** | Progress: the Attempt history table overflows the page at 360 px (+25 px) and 768 px (+217 px) — horizontal page scroll, the last columns are cut off; violates PRODUCT §5 ("usable at 360 px without horizontal scroll") and R-28 | frontend-engineer | **Open** — fix proposed below, verified by injecting the same CSS: overflow 0 px at 360, 414, 768, 1024, 1280. E2E `Progress has no horizontal page scroll at 360 and 768 px` is marked `test.fail` and will flag the fix (remove the mark then). |
+| BUG-001 | **S2** | Progress: the Attempt history table overflows the page at 360 px (+25 px) and 768 px (+217 px) — horizontal page scroll, the last columns are cut off; violates PRODUCT §5 ("usable at 360 px without horizontal scroll") and R-28 | frontend-engineer | **Fixed** (orchestrator, 2026-09-25: `overflow-x-auto` on the HistoryTable card; `test.fail` removed and the E2E passes at 360 and 768 px). Original note: fix proposed below, verified by injecting the same CSS: overflow 0 px at 360, 414, 768, 1024, 1280. E2E `Progress has no horizontal page scroll at 360 and 768 px` is marked `test.fail` and will flag the fix (remove the mark then). |
 | BUG-002 | S3 | Concurrent Confirm race: the losing request's `409 CHECKPOINT_LOCKED` may carry a **stale** `details.state` (the checkpoint again, built from the attempt read before the winner committed). Integrity is intact (one answer, one 409); the client resyncs to the checkpoint and self-heals on its next action. Seen twice in 31 races on PostgreSQL (once on the first run of the new test, once in a 30-race loop) | backend-api-engineer | **Open** — fix proposed below; with it, 0 stale in 30 races. `test_two_concurrent_answers_lock_the_checkpoint_once` accepts either state until then (comment in the test says how to tighten it). |
 | BUG-003 | S3 | Reduced motion: the scene content fade keeps its 250 ms duration (UI_SPEC §3.5/§7: 120 ms, opacity only); the slide is correctly removed | frontend-engineer | **Open** — e.g. `useReducedMotion()` in `MissionPlayerPage` → `duration: MOTION.reduced`. |
-| BUG-004 | S3 | Listen button accessible name is "Listen L" on desktop (the `<kbd>L</kbd>` inside the button is not `aria-hidden`, unlike the Enter hint in `ActionBar`) | frontend-engineer | **Open** — add `aria-hidden="true"` to that `kbd` in `Announcement.tsx`; `aria-keyshortcuts="L"` already announces the shortcut. |
+| BUG-004 | S3 | Listen button accessible name is "Listen L" on desktop (the `<kbd>L</kbd>` inside the button is not `aria-hidden`, unlike the Enter hint in `ActionBar`) | frontend-engineer | **Fixed** (orchestrator, 2026-09-25: `aria-hidden="true"` on the `kbd`). Original note: add `aria-hidden="true"` to that `kbd` in `Announcement.tsx`; `aria-keyshortcuts="L"` already announces the shortcut. |
 | BUG-005 | S3 | Contract wording: api-contract §9.C says a client-sent score → 422, but `submit` has no body and **ignores** one (`200`, server grade; `test_the_client_can_never_send_a_score` pins this). The invariant "the client never sends scores" holds either way | tech-lead | **Open (doc)** — recommend adding "submit takes no body; any body is ignored" to §5.11 instead of changing code. |
 
 ### Proposed fix — BUG-001 (`frontend/src/features/progress/ProgressPage.tsx`, `HistoryTable`)
@@ -74,7 +74,7 @@ Before handing in:
 - [ ] `make install && make up && make migrate && make seed` on a **fresh clone** following only the README, timed (< 5 min) — M-08.
 - [ ] `make lint` green (ruff, ESLint, tsc, Prettier).
 - [ ] `make test` green: backend 253 passed (PostgreSQL tests **not** skipped — check the summary), Vitest 26 passed.
-- [ ] `make e2e` green (6 passed + 1 expected failure until BUG-001 is fixed; after the fix remove `test.fail` → 7 passed). On a fresh machine first: `cd frontend && npx playwright install chromium`.
+- [ ] `make e2e` green (6 passed, 1 skipped: the small-screen check runs only in the mobile-360 project). On a fresh machine first: `cd frontend && npx playwright install chromium`.
 - [ ] README (Spanish) states: one command to run, demo credentials (`new@`, `veteran@`, `teacher@` · `LastTrain2026!`), env vars, how to run the tests (`make test`, `make test E2E=1`), the 10-item blueprint, known limitations (speech fallback PD-014; teacher view not built; `/simulate` not built).
 - [ ] `.env` not committed; `.env.example` has working local defaults; `git status` clean; no `test-results/`, `playwright-report/`, `node_modules/`, `dist/` in git.
 - [ ] Docker: `docker compose up` path works if the README offers it.

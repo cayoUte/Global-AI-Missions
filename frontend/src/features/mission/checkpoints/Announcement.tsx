@@ -82,7 +82,9 @@ export function Announcement({ speaker, audioScript, rate }: Props) {
         aria-keyshortcuts="L"
       >
         {speaking ? 'Listening…' : played ? 'Listen again' : 'Listen'}
-        <kbd className="ml-2 hidden text-xs text-fog-400 lg:inline">L</kbd>
+        <kbd aria-hidden="true" className="ml-2 hidden text-xs text-fog-400 lg:inline">
+          L
+        </kbd>
       </Button>
       <p className="sr-only" role="status">
         {speaking ? 'Playing the announcement.' : ''}

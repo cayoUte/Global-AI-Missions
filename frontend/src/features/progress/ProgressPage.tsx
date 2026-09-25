@@ -162,7 +162,7 @@ function SkillCell({ score }: { score: SkillScore | undefined }) {
 function HistoryTable({ rows }: { rows: HistoryRow[] }) {
   const head = 'px-2 py-2 text-left text-xs font-bold tracking-wide text-fog-200 uppercase'
   return (
-    <div className="rounded-card bg-ink-800">
+    <div className="overflow-x-auto rounded-card bg-ink-800">
       <table className="w-full border-collapse">
         <caption className="sr-only">Attempt history, newest first</caption>
         <thead>
