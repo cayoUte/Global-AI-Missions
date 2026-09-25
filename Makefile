@@ -4,8 +4,8 @@
 # Backend commands run with uv from backend/ (F-13); frontend commands with npm from frontend/.
 
 .DEFAULT_GOAL := help
-.PHONY: help env install up down reset migrate seed test test-backend test-frontend e2e \
-        lint lint-backend lint-frontend gen-api validate-content
+.PHONY: help env install app up down reset migrate seed dev-backend dev-frontend test test-backend \
+        test-frontend e2e lint lint-backend lint-frontend gen-api validate-content
 
 COMPOSE := docker compose
 BACKEND := cd backend &&
@@ -22,6 +22,9 @@ env: ## Create .env from .env.example if it does not exist
 install: ## Install backend (uv sync) and frontend (npm ci) dependencies
 	$(BACKEND) uv sync
 	$(FRONTEND) npm ci
+
+app: env ## Build and start the whole app in Docker (PostgreSQL + API + SPA) on http://localhost:8000
+	$(COMPOSE) up -d --build
 
 up: env ## Start PostgreSQL 16 and wait until it is healthy
 	$(COMPOSE) up -d --wait db
@@ -42,6 +45,12 @@ migrate: env ## Apply Alembic migrations (alembic upgrade head)
 seed: env ## Load reference data, missions and demo users (idempotent)
 	@if [ -f backend/seed/__main__.py ]; then $(BACKEND) uv run python -m seed; \
 	else echo "seed: not implemented yet (backend/seed/__main__.py missing; data-engineer)"; fi
+
+dev-backend: env ## FastAPI with auto-reload on http://127.0.0.1:8000 (after make up migrate seed)
+	$(BACKEND) uv run uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+
+dev-frontend: ## Vite dev server on http://localhost:5173 (proxies /api to 127.0.0.1:8000)
+	$(FRONTEND) npm run dev
 
 test: test-backend test-frontend ## Run backend and frontend tests (E2E too with `make test E2E=1`)
 	@if [ "$(E2E)" = "1" ]; then $(MAKE) --no-print-directory e2e; fi
