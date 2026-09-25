@@ -218,12 +218,12 @@ El repositorio trae un Blueprint, [`render.yaml`](render.yaml): un servicio web 
 
 1. Sube el repositorio a GitHub (o usa el tuyo) y entra en [dashboard.render.com](https://dashboard.render.com).
 2. **New → Blueprint**, conecta el repositorio y elige la rama. Render lee `render.yaml` y muestra el servicio `global-ai-missions` y la base `global-ai-missions-db`.
-3. Render pide los valores de las variables opcionales del LLM (`OPENAI_COMPAT_*`, `ANTHROPIC_*`). Déjalas vacías para usar el mock. **Apply**.
+3. Render pide los valores secretos: pega tu clave de Groq en `OPENAI_COMPAT_API_KEY` (se crea gratis en [console.groq.com](https://console.groq.com), sin tarjeta) y deja vacías las `ANTHROPIC_*`. **Apply**. Sin clave, Maya usa el mock.
 4. Espera el build y el primer arranque (el entrypoint convierte la URL `postgresql://` de Render a `postgresql+psycopg://`, migra y siembra). Comprueba `https://<tu-servicio>.onrender.com/api/health` → `{"status":"ok"}` y entra con `new@globalai.test` / `LastTrain2026!`.
-5. Opcional, IA real: en el servicio, **Environment** → `COACH_PROVIDER=openai_compatible` y las cuatro `OPENAI_COMPAT_*` (o `anthropic` y sus variables) → **Save changes** (Render redespliega).
+5. Comprueba la IA real: juega una misión y, al enviarla, el pie del reporte debe decir "Written by Maya using Groq · Llama". Si dice "from her notebook (offline feedback)", Groq falló y se usó el mock: revisa en **Logs** la línea `coach.openai_compatible` o el error (401 clave, 404 modelo, 429 límite del plan gratuito). Para cambiar de modelo o usar Claude: **Environment** → edita `OPENAI_COMPAT_MODEL` (o `COACH_PROVIDER=anthropic` y sus variables) → **Save changes**.
 6. Copia la URL pública en la sección [Para evaluadores](#para-evaluadores).
 
-Ya configurado en el Blueprint: `JWT_SECRET` aleatorio generado por Render, `COOKIE_SECURE=true` (Render sirve solo HTTPS), `DEMO_MODE=true`, `COACH_PROVIDER=mock`, health check en `/api/health` y la base accesible solo desde la red privada de Render (`ipAllowList: []`).
+Ya configurado en el Blueprint: `JWT_SECRET` aleatorio generado por Render, `COOKIE_SECURE=true` (Render sirve solo HTTPS), `DEMO_MODE=true`, `COACH_PROVIDER=openai_compatible` con Groq (URL base, modelo y etiqueta; la clave la pones tú), health check en `/api/health` y la base accesible solo desde la red privada de Render (`ipAllowList: []`).
 
 **Límites del plan gratuito:** el servicio web se duerme tras ~15 minutos sin tráfico y la siguiente visita tarda alrededor de un minuto en despertarlo; la base PostgreSQL gratuita **caduca a los 30 días** de creada (hay que recrearla o pasar a un plan de pago); 512 MB de RAM.
 

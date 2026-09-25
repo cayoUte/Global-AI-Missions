@@ -27,18 +27,22 @@ services:
         value: "true" # Render serves HTTPS only
       - key: DEMO_MODE
         value: "true" # the check-in screen lists the demo accounts (evaluation demo)
+      # Maya's post-mission feedback through Groq (free tier, OpenAI-compatible API, PD-033).
+      # Only the key is secret: Render asks for it when the Blueprint is applied (never commit
+      # it). Without a key, or on any Groq error, timeout or rate limit, the app falls back to
+      # the deterministic mock, so the demo never breaks. Check the model id against Groq's
+      # current model list (console.groq.com) and change it here or in the dashboard.
       - key: COACH_PROVIDER
-        value: mock # works without any key; switch to openai_compatible or anthropic below
-      # Optional real LLM for Maya's feedback. Render asks for these values when the Blueprint
-      # is applied; leave them empty to keep the mock. Never commit their values.
+        value: openai_compatible
       - key: OPENAI_COMPAT_BASE_URL
-        sync: false
+        value: https://api.groq.com/openai/v1
+      - key: OPENAI_COMPAT_MODEL
+        value: llama-3.3-70b-versatile
+      - key: OPENAI_COMPAT_LABEL
+        value: Groq · Llama
       - key: OPENAI_COMPAT_API_KEY
         sync: false
-      - key: OPENAI_COMPAT_MODEL
-        sync: false
-      - key: OPENAI_COMPAT_LABEL
-        sync: false
+      # Claude instead of Groq: set COACH_PROVIDER=anthropic and these two in the dashboard.
       - key: ANTHROPIC_API_KEY
         sync: false
       - key: ANTHROPIC_MODEL
