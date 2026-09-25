@@ -4,7 +4,7 @@
 # Backend commands run with uv from backend/ (F-13); frontend commands with npm from frontend/.
 
 .DEFAULT_GOAL := help
-.PHONY: help env install up down reset migrate seed test test-backend test-frontend \
+.PHONY: help env install up down reset migrate seed test test-backend test-frontend e2e \
         lint lint-backend lint-frontend gen-api validate-content
 
 COMPOSE := docker compose
@@ -13,7 +13,7 @@ FRONTEND := cd frontend &&
 OPENAPI_JSON := ../docs/contracts/openapi.json
 
 help: ## List the targets
-	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*## "}; {printf "  %-18s %s\n", $$1, $$2}'
+	@grep -E '^[a-z0-9-]+:.*## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*## "}; {printf "  %-18s %s\n", $$1, $$2}'
 
 env: ## Create .env from .env.example if it does not exist
 	@if [ -f .env ]; then echo ".env already exists (not overwritten)"; \
@@ -43,13 +43,17 @@ seed: env ## Load reference data, missions and demo users (idempotent)
 	@if [ -f backend/seed/__main__.py ]; then $(BACKEND) uv run python -m seed; \
 	else echo "seed: not implemented yet (backend/seed/__main__.py missing; data-engineer)"; fi
 
-test: test-backend test-frontend ## Run backend and frontend tests
+test: test-backend test-frontend ## Run backend and frontend tests (E2E too with `make test E2E=1`)
+	@if [ "$(E2E)" = "1" ]; then $(MAKE) --no-print-directory e2e; fi
 
 test-backend: ## pytest (backend)
 	$(BACKEND) uv run pytest
 
 test-frontend: ## Vitest (frontend)
 	$(FRONTEND) npm test
+
+e2e: ## Playwright E2E: builds the SPA, serves it from FastAPI over a fresh gam_e2e database (needs `make up`)
+	$(FRONTEND) npm run test:e2e
 
 lint: lint-backend lint-frontend ## Lint, format check and typecheck both apps
 
