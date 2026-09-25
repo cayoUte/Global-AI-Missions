@@ -1,0 +1,186 @@
+# Global AI Missions — CI (delivery-engineer).
+# backend: ruff + pytest on PostgreSQL 16 · frontend: lint, typecheck, format, Vitest, build ·
+# e2e: Playwright over the real stack · docker: build the production image and smoke-test it.
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash # -eo pipefail
+
+env:
+  UV_VERSION: "0.8.17"
+  UV_PYTHON: "3.12"
+  NODE_VERSION: "22"
+
+jobs:
+  backend:
+    name: Backend (ruff + pytest)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: gam
+          POSTGRES_PASSWORD: gam
+          POSTGRES_DB: gam_test
+        # Same host port as docker compose, so the tests' defaults work unchanged.
+        ports: ["5433:5432"]
+        options: >-
+          --health-cmd "pg_isready -U gam -d gam_test"
+          --health-interval 3s --health-timeout 3s --health-retries 20
+    env:
+      # Test-only values (backend/tests/conftest.py uses the same defaults); never real secrets.
+      DATABASE_URL: postgresql+psycopg://gam:gam@127.0.0.1:5433/gam_test
+      JWT_SECRET: ci-only-secret-not-for-production-0123456789
+      COACH_PROVIDER: mock
+      DEMO_MODE: "true"
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: ${{ env.UV_VERSION }}
+          enable-cache: true
+          cache-dependency-glob: backend/uv.lock
+      - run: uv sync --locked
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - name: pytest (PostgreSQL tests must run, not skip)
+        run: |
+          uv run pytest -rs | tee pytest.log
+          if grep -q "PostgreSQL not reachable" pytest.log; then
+            echo "::error::PostgreSQL tests were skipped: the database service is unreachable"
+            exit 1
+          fi
+
+  frontend:
+    name: Frontend (lint, typecheck, format, Vitest, build)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run format:check
+      - run: npm test
+      - run: npm run build
+
+  e2e:
+    name: E2E (Playwright, real stack)
+    needs: [backend, frontend]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: gam
+          POSTGRES_PASSWORD: gam
+          POSTGRES_DB: gam
+        # frontend/playwright.config.ts points at 127.0.0.1:5433 and recreates gam_e2e itself.
+        ports: ["5433:5432"]
+        options: >-
+          --health-cmd "pg_isready -U gam -d gam"
+          --health-interval 3s --health-timeout 3s --health-retries 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: ${{ env.UV_VERSION }}
+          enable-cache: true
+          cache-dependency-glob: backend/uv.lock
+      - run: uv sync --locked
+        working-directory: backend
+      - uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci --no-audit --no-fund
+        working-directory: frontend
+      - run: npx playwright install --with-deps chromium
+        working-directory: frontend
+      # Builds the SPA, then e2e/serve.sh migrates + seeds gam_e2e and serves it from FastAPI.
+      - run: npm run test:e2e
+        working-directory: frontend
+      - name: Scan the built SPA for answer content
+        working-directory: backend
+        env:
+          DATABASE_URL: postgresql+psycopg://gam:gam@127.0.0.1:5433/gam_test
+          JWT_SECRET: ci-only-secret-not-for-production-0123456789
+        run: uv run pytest tests/contracts/test_spa_has_no_answers.py -rs
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: |
+            frontend/playwright-report
+            frontend/test-results
+          retention-days: 7
+
+  docker:
+    name: Docker image (build + smoke test, no push)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: gam
+          POSTGRES_PASSWORD: gam
+          POSTGRES_DB: gam
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U gam -d gam"
+          --health-interval 3s --health-timeout 3s --health-retries 20
+    steps:
+      - uses: actions/checkout@v5
+      - run: docker build -t global-ai-missions:ci .
+      - name: Start the image (Render-style postgresql:// URL) and check the API and the SPA
+        run: |
+          docker run -d --name app --network host \
+            -e DATABASE_URL=postgresql://gam:gam@127.0.0.1:5432/gam \
+            -e JWT_SECRET=ci-only-secret-not-for-production-0123456789 \
+            -e DEMO_MODE=true -e COACH_PROVIDER=mock -e PORT=8000 \
+            global-ai-missions:ci
+          for i in $(seq 1 30); do
+            curl -fsS http://127.0.0.1:8000/api/health && break
+            sleep 2
+          done
+          curl -fsS http://127.0.0.1:8000/api/health
+          curl -fsS http://127.0.0.1:8000/ | grep -q '<div id="root">'
+          curl -fsS -c jar -H 'Content-Type: application/json' \
+            -d '{"email":"new@globalai.test","password":"LastTrain2026!"}' \
+            http://127.0.0.1:8000/api/auth/login
+          curl -fsS -b jar http://127.0.0.1:8000/api/world > /dev/null
+      - if: always()
+        run: docker logs app || true
