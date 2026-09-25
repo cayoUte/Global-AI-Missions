@@ -1,0 +1,53 @@
+# Global AI Missions — Render Blueprint (delivery-engineer). Free plan only.
+# Render dashboard → New → Blueprint → pick this repository → Apply. See README "Deploy en Render".
+#
+# One Docker web service built from ./Dockerfile (the same image as `docker compose`) and one
+# managed PostgreSQL. On every start the entrypoint rewrites Render's postgresql:// URL to
+# postgresql+psycopg://, runs the migrations and the idempotent seed, then starts uvicorn on $PORT.
+# Free-plan limits: the web service sleeps after ~15 idle minutes (the first request then takes
+# about a minute) and the free database expires 30 days after it is created.
+
+services:
+  - type: web
+    name: global-ai-missions
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: global-ai-missions-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true # random 256-bit value, generated once by Render
+      - key: COOKIE_SECURE
+        value: "true" # Render serves HTTPS only
+      - key: DEMO_MODE
+        value: "true" # the check-in screen lists the demo accounts (evaluation demo)
+      - key: COACH_PROVIDER
+        value: mock # works without any key; switch to openai_compatible or anthropic below
+      # Optional real LLM for Maya's feedback. Render asks for these values when the Blueprint
+      # is applied; leave them empty to keep the mock. Never commit their values.
+      - key: OPENAI_COMPAT_BASE_URL
+        sync: false
+      - key: OPENAI_COMPAT_API_KEY
+        sync: false
+      - key: OPENAI_COMPAT_MODEL
+        sync: false
+      - key: OPENAI_COMPAT_LABEL
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: ANTHROPIC_MODEL
+        sync: false
+
+databases:
+  - name: global-ai-missions-db
+    plan: free
+    databaseName: gam
+    user: gam
+    postgresMajorVersion: "16"
+    ipAllowList: [] # reachable only from Render's private network (the web service)
