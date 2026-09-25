@@ -35,6 +35,23 @@ def test_factory_selects_by_coach_provider():
     assert default.model == "claude-opus-5"
 
 
+def test_real_settings_accept_any_provider_name_and_boot_with_the_mock(monkeypatch):
+    # CR-007: a new adapter needs only a file in app/ai plus COACH_PROVIDER=<name>; an unknown
+    # name must not stop the app from booting (the factory falls back to the mock).
+    from app.core.config import Settings
+
+    monkeypatch.delenv("COACH_PROVIDER", raising=False)
+    real = Settings(
+        _env_file=None,
+        database_url="postgresql+psycopg://u:p@127.0.0.1:5433/x",
+        jwt_secret="x" * 32,
+        coach_provider="gemini-someday",
+    )
+    assert real.coach_provider == "gemini-someday"
+    assert create_provider(real).provider == "mock"
+    assert Settings(_env_file=None, database_url="x", jwt_secret="x" * 32).coach_provider == "mock"
+
+
 REQUEST = coach.CoachRequest(
     first_name="Ana",
     suggested_cefr="A2",

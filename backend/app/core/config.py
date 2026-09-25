@@ -6,7 +6,6 @@ Nothing else in the codebase reads os.environ directly: import get_settings() in
 
 from functools import lru_cache
 from pathlib import Path
-from typing import Literal
 
 from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -31,8 +30,10 @@ class Settings(BaseSettings):
     # Secure flag on the session cookie. False for local http; true on any https deploy.
     cookie_secure: bool = False
 
-    # AI coach (see docs/contracts/api-contract.md, feedback_source).
-    coach_provider: Literal["mock", "anthropic"] = "mock"
+    # AI coach (see docs/contracts/api-contract.md, feedback_source). A plain string (CR-007):
+    # app.ai.factory maps each name to an adapter and falls back to the mock on unknown values,
+    # so a new provider needs only a file in app/ai plus COACH_PROVIDER=<name>.
+    coach_provider: str = "mock"
     anthropic_api_key: SecretStr | None = None
     anthropic_model: str | None = None
 

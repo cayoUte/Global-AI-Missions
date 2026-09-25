@@ -111,13 +111,13 @@ Decisions taken while freezing that go **beyond or refine** SHARED_CONTEXT. F-01
 - Decision (tech-lead): pending · Owners to act: none (informational)
 
 ### CR-007 — Coach seam follow-ups (CR-004 implemented on the app.ai side)
-- Requested by: ai-coach-engineer · Date: 2026-09-25 · Status: open
+- Requested by: ai-coach-engineer · Date: 2026-09-25 · Status: done
 - File(s): none frozen. `backend/app/core/config.py` (`coach_provider`), `backend/app/services/coach.py`, `backend/app/services/feedback.py`, `backend/app/models/coach.py` (backend-api / data-engineer).
 - Done under CR-004 (for the record): `app.ai.get_coach_provider()` exists and returns an adapter with `provider`/`model`/`prompt_version`/`label` and `generate(CoachRequest) -> dict`. `services/coach.py` was edited only inside the seam: the §7 template dicts are now re-exported from `app/ai/templates.py`, `FALLBACK_PROMPT_VERSION` is the mock's (`deterministic-v2`), and `deterministic_feedback()` delegates to the AI mock (templates + coach memory: "Nice to meet you, Ana." / "You usually do well with vocabulary. You still hesitate when someone speaks quickly."), keeping the old assembly as a safety net if the mock ever raises. Memory notes keep the old prefix "Strong in X; Y needs practice", so the veteran's seeded notes are read back without re-seeding.
 - Change requested: (1) widen `Settings.coach_provider` from `Literal["mock", "anthropic"]` to `str` (app.ai.factory already maps unknown values to the mock with a warning), so a new adapter needs only a file in `app/ai` plus `COACH_PROVIDER=<name>`; (2) optional: let `run_coach` keep the adapter's token usage (`input_tokens`, `output_tokens`) in `CoachResult.extra` and store it (a JSONB `usage` column or inside `content`); today usage is only logged by `app.ai` (`coach.usage …`); (3) optional: add the student's own text for missed fill-blank items to `CoachRequest.missed` as `student_answer` (≤ 80 chars): the port already accepts it and the prompt delimits it as data.
 - Why: (1) "switching providers needs no change outside backend/app/ai" (ai brief DoD); (2) cost per feedback measured per row instead of from logs; (3) richer feedback without new privacy exposure.
 - Impact: backend-api (config, coach.py, feedback.py), data-engineer only for (2) (migration). No API contract change. Tests: none break; `tests/ai` already cover the adapter side.
-- Decision (tech-lead): pending · Owners to act: backend-api-engineer (1, 3), data-engineer + backend-api-engineer (2)
+- Decision: (1) accepted by the human on 2026-09-25 and done: `Settings.coach_provider` is now `str` with default `"mock"`; test `test_real_settings_accept_any_provider_name_and_boot_with_the_mock` covers an unknown name booting with the mock. (2) and (3) are optional and not scheduled for the MVP (roadmap).
 
 ### CR-008 — Anonymous `GET /api/auth/me` 401 shows as a browser console error (informational)
 - Requested by: frontend-engineer · Date: 2026-09-25 · Status: open
