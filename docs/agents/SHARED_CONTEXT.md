@@ -100,7 +100,7 @@ Core loop: `EXPERIENCE → DECISIONS → ASSESSMENT → PROFILE → AI FEEDBACK 
 - `h(n)` = exact minimum story-minutes from node `n` to an ending using non-rescue edges, precomputed once per mission version with a backward uniform-cost search (Dijkstra on the reversed graph). An exact cost-to-go is admissible and consistent.
 - `slack = minutes_left − h(node)`.
 - At a checkpoint: `slack < 3` → **HINT** (a strategy, never the answer), otherwise **QUIET**.
-- After an incorrect answer: if the train has not departed, taking the normal detour would make `minutes_left < 0`, a rescue edge exists and no rescue was used yet → **RESCUE** (Maya takes the cheaper rescue edge; at most once per mission).
+- After an incorrect answer: if the train has not departed, the normal detour would lose the train even with every remaining answer correct (`minutes_left − cost − h(detour) < 0`), the rescue edge would still keep it catchable (`minutes_left − cost − h(rescue) ≥ 0`), a rescue edge exists and no rescue was used yet → **RESCUE** (Maya takes the cheaper rescue edge; at most once per mission). A rescue that cannot save the train is never spent (CR-002). Fill-blank normalization lives only in `app.engine.normalize_answer` (CR-003).
 - Maya's mood is a small finite-state machine (`curious`, `encouraging`, `worried`, `proud`) driven by outcomes and slack; it selects her expression and her generic mood lines.
 - The planner decides WHAT Maya does during the mission. The LLM decides HOW she speaks after the mission. The LLM never controls the flow and never sees answer keys of an open attempt.
 - Minimax / alpha-beta are deliberately not used: Maya and the student cooperate; nobody is an adversary.

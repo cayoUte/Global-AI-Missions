@@ -69,19 +69,60 @@ Decisions taken while freezing that go **beyond or refine** SHARED_CONTEXT. F-01
 - Decision: accepted by the human on 2026-09-24; conftest default changed to port 5433.
 
 ### CR-002 — Maya rescues only when the rescue can still save the train
-- Requested by: story-graph-engineer · Date: 2026-09-24 · Status: open
+- Requested by: story-graph-engineer · Date: 2026-09-24 · Status: done
 - File(s): `backend/app/engine/maya.py` (`decide`); SHARED_CONTEXT §5 wording.
 - Change: read literally, §5 makes Maya rescue at the last moment even when the train is already lost, wasting her single rescue. Proposed rule: RESCUE only if the normal detour would lose the train even with every remaining answer correct (using the same heuristic `h` as the hint rule) **and** the rescue edge keeps the train catchable.
 - Why: a rescue that cannot save the train is narratively empty and spends the one rescue.
 - Impact: engine only (already implemented; a one-line revert in `decide` if rejected). The narrative-designer noted the related case of a rescue at 0 minutes left.
-- Decision (tech-lead): pending
+- Decision: accepted by the human on 2026-09-25. Already implemented in the engine; SHARED_CONTEXT §5 updated.
 - Note: re-logged by the orchestrator from the story-graph-engineer's report; the original entry was lost to a concurrent write.
 
 ### CR-003 — Single fill-blank normalization function
-- Requested by: story-graph-engineer · Date: 2026-09-24 · Status: open
+- Requested by: story-graph-engineer · Date: 2026-09-24 · Status: accepted
 - File(s): `backend/app/engine` (`normalize_answer`), backend grading, seed.
 - Change: `app.engine.normalize_answer` (lowercase, trim, collapse spaces, strip final punctuation, straighten curly apostrophes) is the only fill-blank normalization; the backend and the seed import it instead of writing their own. ASSESSMENT_SPEC must confirm the same rule.
 - Why: one source of truth for grading and for storing accepted answers.
 - Impact: backend-api-engineer, data-engineer, assessment-designer.
-- Decision (tech-lead): pending
+- Decision: accepted by the human on 2026-09-25. ASSESSMENT_SPEC already mirrors app.engine.normalize_answer; backend grading and the seed must import it (status becomes done once both do).
 - Note: re-logged by the orchestrator from the story-graph-engineer's report; the original entry was lost to a concurrent write.
+
+### CR-004 — Coach provider seam used by submit phase 2 (interface note, no contract change)
+- Requested by: backend-api-engineer · Date: 2026-09-25 · Status: open
+- File(s): none frozen. Code: `backend/app/services/coach.py` (backend-api) ↔ `backend/app/ai/` (ai-coach-engineer).
+- Change: `services/coach.run_coach()` looks up `app.ai.get_coach_provider()`; if it is missing or returns `None` / a provider named `mock`, the deterministic feedback is used (status `fallback`). A provider is any object with `provider`, `model`, `prompt_version`, `label` attributes and `generate(request: CoachRequest) -> dict` returning the SHARED_CONTEXT §6 JSON. The service runs it in a worker thread with the 8-second budget, validates it (strength/challenge must equal the deterministic values, `next_mission_id` must be a candidate, texts non-empty ≤ 800 chars) and falls back on any error. It stores `provider_label` inside `coach_feedback.content` so the report can show it without a column.
+- Why: the report must always render and the LLM must never touch score, level or unlocks; the ai-coach-engineer can plug in without editing services.
+- Impact: ai-coach-engineer (implement `get_coach_provider` and the adapters; may move the deterministic text into `app/ai/mock_provider.py` and have `services/coach.deterministic_feedback` delegate to it). CR-003 is done on the backend side: services import `app.engine.normalize_answer`.
+- Decision (tech-lead): pending · Owners to act: ai-coach-engineer
+
+### CR-005 — Use 127.0.0.1 instead of localhost in DATABASE_URL (local runs hang on Windows)
+- Requested by: data-engineer · Date: 2026-09-25 · Status: done
+- File(s): `.env.example` (and each developer's `.env`), `backend/tests/conftest.py` default `DATABASE_URL`.
+- Change: `DATABASE_URL=postgresql+psycopg://gam:gam@127.0.0.1:5433/gam` (and `...@127.0.0.1:5433/gam_test` in the test default).
+- Why: on this machine (Windows + Docker Desktop) `localhost` resolves to IPv6 `::1` first and the connection to the published port stalls **forever** when no `connect_timeout` is set; `127.0.0.1` connects instantly. This hung `alembic`, `python -m seed` and `pytest` (including another agent's run). Mitigated on the data side already: `app/repositories/db.get_engine()` and `alembic/env.py` pass `connect_timeout=5`, so `localhost` now fails over to IPv4 after ~5 s instead of hanging, and the DB tests rewrite `@localhost:` to `@127.0.0.1:`. The fix above removes the 5 s delay per new connection.
+- Impact: delivery-engineer (`.env.example`, README), tech-lead (conftest default). No contract change.
+- Decision: accepted by the human on 2026-09-25. DATABASE_URL uses 127.0.0.1 in .env.example, the local .env and the tests default.
+
+### CR-006 — Data model notes beyond the brief's column list (informational, no new table)
+- Requested by: data-engineer · Date: 2026-09-25 · Status: open
+- File(s): none frozen. `backend/app/models/`, `backend/alembic/versions/0001_initial.py`, `docs/data/DATA_MODEL.md`.
+- Change: (1) `attempt_steps.state_after JSONB` = the engine state on arrival (`{minutes_left, flags, rescued, maya_mood}`), needed so the Diary resolves scene variants per step (`engine.StepRecord.flags`); (2) every attempt has a root step (seq 1, `on_event='start'`, no parent, no from_node) inserted by `create_attempt`, enforced by a CHECK; (3) `UNIQUE(mission_id, content_hash)` on `mission_versions`, and the active version = the most recently `published_at` (re-seeding an older hash republishes it); (4) extra CHECKs on `attempts` (a submitted row must carry its totals and level; a finished row its ending), `users.email = lower(email)` and a partial unique "one primary accepted answer per question".
+- Why: completes the persisted search Node (state, parent, action, path cost) and makes versioning and the invariants enforceable in the database.
+- Impact: backend-api (already codes against it). No API contract change.
+- Decision (tech-lead): pending · Owners to act: none (informational)
+
+### CR-007 — Coach seam follow-ups (CR-004 implemented on the app.ai side)
+- Requested by: ai-coach-engineer · Date: 2026-09-25 · Status: open
+- File(s): none frozen. `backend/app/core/config.py` (`coach_provider`), `backend/app/services/coach.py`, `backend/app/services/feedback.py`, `backend/app/models/coach.py` (backend-api / data-engineer).
+- Done under CR-004 (for the record): `app.ai.get_coach_provider()` exists and returns an adapter with `provider`/`model`/`prompt_version`/`label` and `generate(CoachRequest) -> dict`. `services/coach.py` was edited only inside the seam: the §7 template dicts are now re-exported from `app/ai/templates.py`, `FALLBACK_PROMPT_VERSION` is the mock's (`deterministic-v2`), and `deterministic_feedback()` delegates to the AI mock (templates + coach memory: "Nice to meet you, Ana." / "You usually do well with vocabulary. You still hesitate when someone speaks quickly."), keeping the old assembly as a safety net if the mock ever raises. Memory notes keep the old prefix "Strong in X; Y needs practice", so the veteran's seeded notes are read back without re-seeding.
+- Change requested: (1) widen `Settings.coach_provider` from `Literal["mock", "anthropic"]` to `str` (app.ai.factory already maps unknown values to the mock with a warning), so a new adapter needs only a file in `app/ai` plus `COACH_PROVIDER=<name>`; (2) optional: let `run_coach` keep the adapter's token usage (`input_tokens`, `output_tokens`) in `CoachResult.extra` and store it (a JSONB `usage` column or inside `content`); today usage is only logged by `app.ai` (`coach.usage …`); (3) optional: add the student's own text for missed fill-blank items to `CoachRequest.missed` as `student_answer` (≤ 80 chars): the port already accepts it and the prompt delimits it as data.
+- Why: (1) "switching providers needs no change outside backend/app/ai" (ai brief DoD); (2) cost per feedback measured per row instead of from logs; (3) richer feedback without new privacy exposure.
+- Impact: backend-api (config, coach.py, feedback.py), data-engineer only for (2) (migration). No API contract change. Tests: none break; `tests/ai` already cover the adapter side.
+- Decision (tech-lead): pending · Owners to act: backend-api-engineer (1, 3), data-engineer + backend-api-engineer (2)
+
+### CR-008 — Anonymous `GET /api/auth/me` 401 shows as a browser console error (informational)
+- Requested by: frontend-engineer · Date: 2026-09-25 · Status: open
+- File(s): `docs/contracts/api-contract.md` §5.5 (no change proposed unless the tech-lead wants a clean console).
+- Change: none required. Option if a completely clean DevTools console matters for the demo: `GET /api/auth/me` returns `200 null` (or `204`) for an anonymous visitor instead of `401 UNAUTHENTICATED`; the frontend already treats both as "not checked in".
+- Why: the route guard and the Check-in redirect ("already authenticated → home") must probe the httpOnly session, which the client cannot read. Chrome logs every 4xx fetch as "Failed to load resource … 401" even though no JavaScript error occurs. This is the only console error seen in the full browser run (both demo students).
+- Impact: backend-api (one endpoint) + one test; frontend needs no change either way (`features/auth/session.ts` maps 401 → null).
+- Decision (tech-lead): pending · Owners to act: backend-api-engineer (only if accepted)

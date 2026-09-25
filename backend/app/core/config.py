@@ -44,7 +44,6 @@ class Settings(BaseSettings):
     # Secure default is off; .env.example turns it on for local runs.
     demo_mode: bool = False
 
-
     def resolved_spa_dir(self) -> Path | None:
         candidate = self.spa_dist_dir or REPO_ROOT / "frontend" / "dist"
         return candidate if (candidate / "index.html").is_file() else None
