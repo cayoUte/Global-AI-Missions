@@ -12,14 +12,20 @@ export async function tabTo(page: Page, target: Locator, maxTabs = 60): Promise<
   throw new Error(`not reachable with Tab: ${target}`)
 }
 
-/** Check-in with the keyboard only (Tab, type, Enter) and land on the English World. */
-export async function checkIn(page: Page, email: string): Promise<void> {
+/** Check-in with the keyboard only (Tab, type, Enter) and land on the English World (students)
+ * or the teacher view. */
+export async function checkIn(
+  page: Page,
+  email: string,
+  home: 'world' | 'teacher' = 'world',
+): Promise<void> {
   await page.goto('/check-in')
   await tabTo(page, page.getByLabel('Email'))
   await page.keyboard.type(email)
   await tabTo(page, page.getByLabel('Password', { exact: true }))
   await page.keyboard.type(DEMO_PASSWORD)
   await page.keyboard.press('Enter')
+  if (home === 'teacher') return expect(page).toHaveURL(/\/teacher$/)
   await expect(page).toHaveURL(/\/world$/)
   await expect(page.getByRole('heading', { name: 'Missions' })).toBeVisible()
 }

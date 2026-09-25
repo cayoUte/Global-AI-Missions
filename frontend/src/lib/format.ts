@@ -65,3 +65,6 @@ export function splitClockLabel(label: string): [string, string | null] {
   const at = label.indexOf(' · ')
   return at === -1 ? [label, null] : [label.slice(0, at), label.slice(at + 3)]
 }
+
+/** The level part of a server report label ("A2 · The Last Train — 70%" → "A2"), layout only. */
+export const labelLevel = (label: string) => splitClockLabel(label)[0]

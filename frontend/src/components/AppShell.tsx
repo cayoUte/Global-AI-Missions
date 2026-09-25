@@ -7,15 +7,17 @@ import { useCheckOut } from '../features/auth/useCheckOut'
 import { Button } from './Button'
 import { OfflineBanner } from './OfflineBanner'
 
-const NAV = [
+export type NavItem = { to: string; label: string }
+
+const STUDENT_NAV: NavItem[] = [
   { to: '/world', label: 'English World' },
   { to: '/progress', label: 'Progress' },
 ]
 
-function NavItems({ className }: { className: string }) {
+function NavItems({ items, className }: { items: NavItem[]; className: string }) {
   return (
     <>
-      {NAV.map((item) => (
+      {items.map((item) => (
         <NavLink
           key={item.to}
           to={item.to}
@@ -34,10 +36,16 @@ function NavItems({ className }: { className: string }) {
   )
 }
 
-type Props = { children: ReactNode; nav?: boolean; width?: 'world' | 'player' }
+type Props = {
+  children: ReactNode
+  nav?: boolean
+  /** The nav links; the student's English World and Progress by default. */
+  navItems?: NavItem[]
+  width?: 'world' | 'player'
+}
 
 /** Shell for English World, Progress, Mission Report and the teacher page (UI_SPEC §4). */
-export function AppShell({ children, nav = true, width = 'world' }: Props) {
+export function AppShell({ children, nav = true, navItems = STUDENT_NAV, width = 'world' }: Props) {
   const checkOut = useCheckOut()
   return (
     <div className="min-h-dvh bg-ink-900">
@@ -47,7 +55,7 @@ export function AppShell({ children, nav = true, width = 'world' }: Props) {
           <span className="font-display text-lg font-semibold">Global AI Missions</span>
           {nav ? (
             <nav aria-label="Main" className="ml-4 hidden gap-2 md:flex">
-              <NavItems className="" />
+              <NavItems items={navItems} className="" />
             </nav>
           ) : null}
           <Button
@@ -64,9 +72,9 @@ export function AppShell({ children, nav = true, width = 'world' }: Props) {
         {nav ? (
           <nav
             aria-label="Main"
-            className="grid h-11 grid-cols-2 border-t border-ink-600 md:hidden"
+            className={`grid h-11 border-t border-ink-600 md:hidden ${navItems.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}`}
           >
-            <NavItems className="w-full" />
+            <NavItems items={navItems} className="w-full" />
           </nav>
         ) : null}
       </header>

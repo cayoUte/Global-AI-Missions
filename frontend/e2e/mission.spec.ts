@@ -112,3 +112,15 @@ test('Progress has no horizontal page scroll at 360 and 768 px', async ({ page }
     await expectNoHorizontalScroll(page)
   }
 })
+
+test('teacher: the seeded class with both students, read-only', async ({ page }, testInfo) => {
+  // PRODUCT §5.7: Ms. Clarke teaches Evening B1 (seed), with Ana and Leo.
+  await checkIn(page, 'teacher@globalai.test', 'teacher')
+  await expect(page.getByRole('heading', { level: 1, name: 'Hello, Ms. Clarke.' })).toBeVisible()
+  await expect(page.getByRole('heading', { level: 2, name: 'Evening B1' })).toBeVisible()
+  const table = page.getByRole('table', { name: 'Students in Evening B1' })
+  await expect(table.getByRole('rowheader', { name: 'Ana' })).toBeVisible()
+  await expect(table.getByRole('rowheader', { name: 'Leo' })).toBeVisible()
+  await expect(table.getByRole('link')).toHaveCount(0) // no drill-in (PD-030)
+  if (testInfo.project.name === 'mobile-360') await expectNoHorizontalScroll(page)
+})

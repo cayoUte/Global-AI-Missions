@@ -4,7 +4,15 @@
 import { ApiError } from '../http'
 import type { ApiClient } from '../client'
 import type { StateView, UserView } from '../types'
-import { MOCK_EMPTY_PROGRESS, MOCK_MISSION, MOCK_NODES, mockReport, mockWorld } from './fixtures'
+import {
+  MOCK_CLASS_PROGRESS,
+  MOCK_CLASSES,
+  MOCK_EMPTY_PROGRESS,
+  MOCK_MISSION,
+  MOCK_NODES,
+  mockReport,
+  mockWorld,
+} from './fixtures'
 
 type MockAttempt = {
   id: string
@@ -77,7 +85,8 @@ export const mockClient: ApiClient = {
   },
   async login(body) {
     await delay()
-    user = { id: 'mock-user', email: body.email, display_name: 'Mock', role: 'student' }
+    const role = body.email.startsWith('teacher') ? 'teacher' : 'student'
+    user = { id: 'mock-user', email: body.email, display_name: 'Mock', role }
     return user
   },
   async logout() {
@@ -153,10 +162,14 @@ export const mockClient: ApiClient = {
   },
   async teacherClasses() {
     await delay()
-    return { classes: [] }
+    requireUser()
+    return MOCK_CLASSES
   },
   async classProgress(classId) {
     await delay()
-    return { class_id: classId, name: 'Mock class', students: [] }
+    requireUser()
+    if (classId !== MOCK_CLASS_PROGRESS.class_id)
+      throw new ApiError(404, 'NOT_FOUND', 'mock: unknown class', null)
+    return MOCK_CLASS_PROGRESS
   },
 }

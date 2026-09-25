@@ -11,6 +11,7 @@ import { InlineNotice } from '../../components/InlineNotice'
 import { MayaPortrait } from '../../components/Maya'
 import { Skeleton } from '../../components/Skeleton'
 import { SkillBar } from '../../components/SkillBar'
+import { SkillCell } from '../../components/SkillCell'
 import { cefrLabel, plural, shortDate, skillAbbr, skillName, SCORED_SKILLS } from '../../lib/format'
 import { playerPath, reportPath } from '../mission/navigation'
 
@@ -143,21 +144,6 @@ function skillOf(row: HistoryRow, skill: SkillScore['skill']) {
   return row.skills.find((s) => s.skill === skill)
 }
 
-function SkillCell({ score }: { score: SkillScore | undefined }) {
-  if (!score) return <td className="px-2 py-2 text-sm text-fog-400">—</td>
-  return (
-    <td className="px-2 py-2 text-sm tabular-nums">
-      {score.pct}%
-      <div
-        aria-hidden="true"
-        className="mt-1 h-1 w-full min-w-8 overflow-hidden rounded-full bg-ink-700"
-      >
-        <div className="h-full bg-amber-400" style={{ width: `${score.pct}%` }} />
-      </div>
-    </td>
-  )
-}
-
 /** A real table; reading down a skill column is the trend, the level column the level history. */
 function HistoryTable({ rows }: { rows: HistoryRow[] }) {
   const head = 'px-2 py-2 text-left text-xs font-bold tracking-wide text-fog-200 uppercase'
@@ -235,7 +221,7 @@ function HistoryTable({ rows }: { rows: HistoryRow[] }) {
                 {row.incorrect}
               </td>
               {SCORED_SKILLS.map((skill) => (
-                <SkillCell key={skill} score={skillOf(row, skill)} />
+                <SkillCell key={skill} pct={skillOf(row, skill)?.pct} />
               ))}
             </tr>
           ))}

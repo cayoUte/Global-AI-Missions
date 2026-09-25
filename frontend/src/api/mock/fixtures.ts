@@ -1,6 +1,13 @@
 // Mock-mode fixtures (dev only, never in the production bundle). A tiny placeholder story that
 // exercises every renderer. It carries NO answer keys: the mock moves forward whatever the answer.
-import type { NodeView, ProgressResponse, Report, WorldResponse } from '../types'
+import type {
+  ClassProgressResponse,
+  ClassesResponse,
+  NodeView,
+  ProgressResponse,
+  Report,
+  WorldResponse,
+} from '../types'
 
 export const MOCK_MISSION = { id: 'the-last-train', title: 'The Last Train (mock)' }
 
@@ -289,4 +296,40 @@ export const MOCK_EMPTY_PROGRESS: ProgressResponse = {
   level_history: [],
   notes: [],
   open_attempt: null,
+}
+
+// Teacher view (check in with an email starting "teacher" in mock mode). Placeholder people.
+export const MOCK_CLASSES: ClassesResponse = {
+  classes: [
+    { class_id: 'mock-class', name: 'Mock class', teacher_name: 'Mock Teacher', student_count: 2 },
+  ],
+}
+
+export const MOCK_CLASS_PROGRESS: ClassProgressResponse = {
+  class_id: 'mock-class',
+  name: 'Mock class',
+  students: [
+    {
+      display_name: 'Student One',
+      missions_played: 0,
+      latest_label: null,
+      profile: null,
+      last_activity_at: null,
+    },
+    {
+      display_name: 'Student Two',
+      missions_played: 2,
+      latest_label: 'A2 · The Last Train (mock) — 60%',
+      profile: {
+        based_on_attempts: 2,
+        skills: [
+          { skill: 'grammar', pct: 50 },
+          { skill: 'listening', pct: 50 },
+          { skill: 'reading', pct: 100 },
+          { skill: 'vocabulary', pct: 50 },
+        ],
+      },
+      last_activity_at: '2026-09-24T21:58:00Z',
+    },
+  ],
 }

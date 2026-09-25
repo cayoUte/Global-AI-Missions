@@ -7,7 +7,7 @@ import { RequireRole, SessionWatcher } from '../features/auth/guards'
 import { MissionPlayerPage } from '../features/mission/MissionPlayerPage'
 import { ProgressPage } from '../features/progress/ProgressPage'
 import { ReportPage } from '../features/report/ReportPage'
-import { TeacherLanding } from '../features/teacher/TeacherLanding'
+import { TeacherPage } from '../features/teacher/TeacherPage'
 import { WorldPage } from '../features/world/WorldPage'
 import { NotFoundPage } from '../routes/NotFoundPage'
 
@@ -54,7 +54,7 @@ export function AppRoutes() {
           path="/teacher"
           element={
             <RequireRole roles={['teacher', 'admin']}>
-              <TeacherLanding />
+              <TeacherPage />
             </RequireRole>
           }
         />
