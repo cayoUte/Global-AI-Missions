@@ -1,0 +1,110 @@
+{
+  "scenario": "new_student",
+  "coach_input": {
+    "first_name": "Ana",
+    "suggested_level": "A2",
+    "score_pct": 70,
+    "skills": [
+      {
+        "skill": "grammar",
+        "correct": 3,
+        "total": 4,
+        "pct": 75
+      },
+      {
+        "skill": "listening",
+        "correct": 1,
+        "total": 2,
+        "pct": 50
+      },
+      {
+        "skill": "reading",
+        "correct": 2,
+        "total": 2,
+        "pct": 100
+      },
+      {
+        "skill": "vocabulary",
+        "correct": 1,
+        "total": 2,
+        "pct": 50
+      }
+    ],
+    "strength": "reading",
+    "challenge": "listening",
+    "missed_checkpoints": [
+      {
+        "skill": "listening",
+        "cefr": "B1",
+        "prompt": "What did the announcement say?",
+        "explanation": "The announcer said the barriers were out of order and asked passengers to show their tickets to staff at the side gate. The lift is only there to tell you where the gate is."
+      },
+      {
+        "skill": "vocabulary",
+        "cefr": "B1",
+        "prompt": "What does the guard mean by 'Hold on a minute'?",
+        "explanation": "'Hold on' is a phrasal verb that means 'wait'. 'Hold on a minute' is a friendly way to ask someone to wait for a short time."
+      },
+      {
+        "skill": "grammar",
+        "cefr": "B2",
+        "prompt": "Answer the passenger: 'Yes! If we ___ earlier, we wouldn't have had to run.'",
+        "explanation": "This is the third conditional, for a past situation that didn't happen: 'If + had + past participle, ... would have + past participle'. 'Would have' belongs in the other half of the sentence, not after 'if'."
+      }
+    ],
+    "path": {
+      "ending": "made_it",
+      "maya_rescue_used": false,
+      "hints_received": 1
+    },
+    "memory": {
+      "sessions_count": 1,
+      "relationship_stage": "first_meeting",
+      "notes": []
+    },
+    "candidate_missions": [
+      {
+        "id": "night-radio",
+        "trains": "listening"
+      },
+      {
+        "id": "dinner-for-two",
+        "trains": "vocabulary"
+      },
+      {
+        "id": "the-interview",
+        "trains": "grammar"
+      },
+      {
+        "id": "campus-day",
+        "trains": "reading"
+      }
+    ],
+    "suggested_next_mission_id": "night-radio"
+  },
+  "outputs": [
+    {
+      "meta": {
+        "provider": "mock",
+        "provider_label": "Maya's notebook",
+        "model": null,
+        "prompt_version": "deterministic-v2",
+        "status": "fallback",
+        "latency_ms": 8,
+        "input_tokens": null,
+        "output_tokens": null,
+        "fallback_reason": null,
+        "extra": {}
+      },
+      "feedback": {
+        "summary": "You can read short notices and messages and do simple travel tasks, like buying the right ticket. You read signs, notices and messages quickly and well. You get the main idea when people speak. Some details slip past. Nice to meet you, Ana.",
+        "strength": "reading",
+        "challenge": "listening",
+        "recommendation": "Listen for numbers first, then names. Play short announcements twice.",
+        "next_mission_id": "night-radio",
+        "memory_note": "Strong in reading; listening needs practice (A2, 70%). Caught the last train.",
+        "next_greeting": "Welcome back, Ana. Last time the announcements were fast. Tonight, listen for the numbers first."
+      }
+    }
+  ]
+}

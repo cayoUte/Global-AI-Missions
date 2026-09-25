@@ -20,64 +20,23 @@ from concurrent.futures import TimeoutError as FutureTimeout
 from dataclasses import dataclass, field
 from typing import Any
 
+from app.ai import templates
+from app.ai.mock_provider import MOCK_LABEL, MOCK_PROMPT_VERSION
 from app.services.leveling import cefr_label
 
 logger = logging.getLogger(__name__)
 
 COACH_BUDGET_SECONDS = 8.0
 FALLBACK_PROVIDER = "mock"
-FALLBACK_LABEL = "Maya's notebook"
-FALLBACK_PROMPT_VERSION = "deterministic-v1"
+FALLBACK_LABEL = MOCK_LABEL  # "Maya's notebook"
+FALLBACK_PROMPT_VERSION = MOCK_PROMPT_VERSION
 
-# PD-010: the challenge skill -> the catalog mission that trains it.
-MISSION_FOR_SKILL: dict[str, str] = {
-    "grammar": "the-interview",
-    "vocabulary": "dinner-for-two",
-    "reading": "campus-day",
-    "listening": "night-radio",
-}
-# ASSESSMENT_SPEC §7.2-§7.4: the reference register for the deterministic feedback.
-CAN_DO: dict[str, str] = {
-    "PRE_A1": "You can understand some very common words and numbers when people speak slowly "
-    "and clearly.",
-    "A1": "You can understand simple signs, numbers and short questions, like asking the way in "
-    "a station.",
-    "A2": "You can read short notices and messages and do simple travel tasks, like buying the "
-    "right ticket.",
-    "B1": "You can follow clear announcements and explain what happened to you, even when plans "
-    "change.",
-    "B2": "You can understand what people mean even when they don't say it directly, and talk "
-    "about what could have happened.",
-}
-SKILL_BANDS: dict[str, tuple[str, str, str]] = {  # strong >= 75 · developing 50-74 · focus < 50
-    "grammar": (
-        "You build clear sentences, even with tricky verb forms.",
-        "Your sentences mostly work. Some verb forms still need care.",
-        "Verb forms are slowing you down. Short, clear sentences come first.",
-    ),
-    "listening": (
-        "You catch numbers and details in announcements.",
-        "You get the main idea when people speak. Some details slip past.",
-        "Conversations are moving faster than you are.",
-    ),
-    "reading": (
-        "You read signs, notices and messages quickly and well.",
-        'You understand most of what you read. Small details, like times and "if", can trip you '
-        "up.",
-        "Written notices are hard for now. Read slowly and look for the key words.",
-    ),
-    "vocabulary": (
-        "You recognize common vocabulary quickly.",
-        "You know many everyday words. Phrases with two meanings are still tricky.",
-        "New words are your next step. Learn travel words in small groups.",
-    ),
-}
-RECOMMENDATIONS: dict[str, str] = {
-    "grammar": "Say one sentence about your day each evening, and check the verb.",
-    "listening": "Listen for numbers first, then names. Play short announcements twice.",
-    "reading": 'Read the whole notice once, then look for times and the word "if".',
-    "vocabulary": 'Learn words in pairs that go together, like "single" and "return".',
-}
+# ASSESSMENT_SPEC §7 templates and the PD-010 mapping live with the mock in app.ai (CR-004);
+# re-exported here for the backend's existing callers.
+MISSION_FOR_SKILL = templates.MISSION_FOR_SKILL
+CAN_DO = templates.CAN_DO
+SKILL_BANDS = templates.SKILL_BANDS
+RECOMMENDATIONS = templates.RECOMMENDATIONS
 
 
 def _band_line(skill: str, pct: int) -> str:
@@ -126,8 +85,19 @@ def default_next_mission(challenge: str, candidates: Sequence[str]) -> str:
 
 
 def deterministic_feedback(req: CoachRequest) -> dict[str, str]:
-    """The mock / fallback, assembled from ASSESSMENT_SPEC §7 (can-do line, the strength's strong
-    line, the challenge's line for its own band). Built only from the grading result."""
+    """The mock / fallback: app.ai's MockCoachProvider (ASSESSMENT_SPEC §7 templates + coach
+    memory, CR-004). If that ever raises, the plain template assembly below keeps the report up."""
+    try:
+        from app.ai.service import deterministic_content
+
+        return deterministic_content(req)
+    except Exception:
+        logger.exception("The AI mock could not build feedback; using the plain templates")
+        return _template_feedback(req)
+
+
+def _template_feedback(req: CoachRequest) -> dict[str, str]:
+    """Safety net: can-do line, the strength's strong line, the challenge's line for its band."""
     pct = {row["skill"]: int(row["pct"]) for row in req.skills}
     level = cefr_label(req.suggested_cefr)
     summary = " ".join(
@@ -184,8 +154,10 @@ def validate_output(req: CoachRequest, output: Any) -> dict[str, str] | None:
         value = output.get(key)
         if not isinstance(value, str) or not value.strip() or len(value) > 800:
             return None
-    return {key: str(output[key]) for key in (*_REQUIRED_TEXT, "strength", "challenge",
-                                             "next_mission_id")}
+    return {
+        key: str(output[key])
+        for key in (*_REQUIRED_TEXT, "strength", "challenge", "next_mission_id")
+    }
 
 
 def _load_provider() -> Any | None:

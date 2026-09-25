@@ -1,0 +1,115 @@
+{
+  "scenario": "veteran",
+  "coach_input": {
+    "first_name": "Leo",
+    "suggested_level": "A2",
+    "score_pct": 70,
+    "skills": [
+      {
+        "skill": "grammar",
+        "correct": 3,
+        "total": 4,
+        "pct": 75
+      },
+      {
+        "skill": "listening",
+        "correct": 1,
+        "total": 2,
+        "pct": 50
+      },
+      {
+        "skill": "reading",
+        "correct": 1,
+        "total": 2,
+        "pct": 50
+      },
+      {
+        "skill": "vocabulary",
+        "correct": 2,
+        "total": 2,
+        "pct": 100
+      }
+    ],
+    "strength": "vocabulary",
+    "challenge": "listening",
+    "missed_checkpoints": [
+      {
+        "skill": "grammar",
+        "cefr": "B1",
+        "prompt": "Yes, please. We ___ (look) for platform seven since we arrived.",
+        "explanation": "'Since' connects a past moment to now, so we need the present perfect: 'We have been looking' (or 'We have looked'). 'We look' or 'We looked' doesn't work with 'since' here."
+      },
+      {
+        "skill": "listening",
+        "cefr": "B1",
+        "prompt": "What did the announcement say?",
+        "explanation": "The announcer said the barriers were out of order and asked passengers to show their tickets to staff at the side gate. The lift is only there to tell you where the gate is."
+      },
+      {
+        "skill": "reading",
+        "cefr": "B2",
+        "prompt": "What does Sam want you to do when you get to Oxford?",
+        "explanation": "Sam says not to wait outside, that Rosa at the café knows you're coming, and that Sam will go 'there' (to the café) after work. So Sam expects you to wait at the café, even though the message never says it in one sentence."
+      }
+    ],
+    "path": {
+      "ending": "made_it_with_maya",
+      "maya_rescue_used": true,
+      "hints_received": 2
+    },
+    "memory": {
+      "sessions_count": 5,
+      "relationship_stage": "familiar",
+      "notes": [
+        "Strong in vocabulary; listening needs practice (A2, 60%). Took the night bus home with me.",
+        "Strong in vocabulary; reading needs practice (A2, 60%). Caught the last train with my shortcut.",
+        "Strong in grammar; listening needs practice (A1, 40%). Took the night bus home with me.",
+        "Strong in vocabulary; listening needs practice (A1, 30%). Took the night bus home with me."
+      ]
+    },
+    "candidate_missions": [
+      {
+        "id": "night-radio",
+        "trains": "listening"
+      },
+      {
+        "id": "dinner-for-two",
+        "trains": "vocabulary"
+      },
+      {
+        "id": "the-interview",
+        "trains": "grammar"
+      },
+      {
+        "id": "campus-day",
+        "trains": "reading"
+      }
+    ],
+    "suggested_next_mission_id": "night-radio"
+  },
+  "outputs": [
+    {
+      "meta": {
+        "provider": "mock",
+        "provider_label": "Maya's notebook",
+        "model": null,
+        "prompt_version": "deterministic-v2",
+        "status": "fallback",
+        "latency_ms": 0,
+        "input_tokens": null,
+        "output_tokens": null,
+        "fallback_reason": null,
+        "extra": {}
+      },
+      "feedback": {
+        "summary": "You can read short notices and messages and do simple travel tasks, like buying the right ticket. You recognize common vocabulary quickly. You get the main idea when people speak. Some details slip past. You usually do well with vocabulary. You still hesitate when someone speaks quickly.",
+        "strength": "vocabulary",
+        "challenge": "listening",
+        "recommendation": "Listen for numbers first, then names. Play short announcements twice.",
+        "next_mission_id": "night-radio",
+        "memory_note": "Strong in vocabulary; listening needs practice (A2, 70%). Caught the last train with my shortcut.",
+        "next_greeting": "Welcome back, Leo. Five nights in London now. Your vocabulary is steady. Tonight, listen for the numbers first."
+      }
+    }
+  ]
+}
