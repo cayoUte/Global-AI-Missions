@@ -4,7 +4,8 @@ import { useSearchParams } from 'react-router'
 import { api } from '../../api/client'
 import { TEACHER_CLASSES_KEY, classProgressKey } from '../../api/queryKeys'
 import type { ClassProgressResponse, ClassSummary } from '../../api/types'
-import { AppShell, PageHeading, type NavItem } from '../../components/AppShell'
+import { AppShell, PageHeading } from '../../components/AppShell'
+import { TEACHER_NAV } from '../../components/nav'
 import { Button } from '../../components/Button'
 import { InlineNotice } from '../../components/InlineNotice'
 import { Skeleton } from '../../components/Skeleton'
@@ -19,7 +20,6 @@ import {
 } from '../../lib/format'
 import { useMe } from '../auth/session'
 
-const TEACHER_NAV: NavItem[] = [{ to: '/teacher', label: 'Classes' }]
 const LOAD_ERROR = "We couldn't load your class."
 
 /**

@@ -4,15 +4,9 @@ import { useEffect, useRef } from 'react'
 import { NavLink } from 'react-router'
 
 import { useCheckOut } from '../features/auth/useCheckOut'
+import { STUDENT_NAV, type NavItem } from './nav'
 import { Button } from './Button'
 import { OfflineBanner } from './OfflineBanner'
-
-export type NavItem = { to: string; label: string }
-
-const STUDENT_NAV: NavItem[] = [
-  { to: '/world', label: 'English World' },
-  { to: '/progress', label: 'Progress' },
-]
 
 function NavItems({ items, className }: { items: NavItem[]; className: string }) {
   return (

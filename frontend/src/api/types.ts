@@ -39,6 +39,10 @@ export type HistoryRow = Schemas['HistoryRow']
 
 export type ClassesResponse = Schemas['ClassesResponse']
 export type ClassSummary = Schemas['ClassSummary']
+
+export type SimulationResponse = Schemas['SimulationResponse']
+export type SimulationStep = Schemas['SimulationStep']
+export type SimulationProfile = SimulationResponse['profile']
 export type ClassProgressResponse = Schemas['ClassProgressResponse']
 
 export type Mood = MayaView['mood']

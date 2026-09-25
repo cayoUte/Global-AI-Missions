@@ -4,21 +4,23 @@ import { Link, useLocation } from 'react-router'
 
 import { api } from '../../api/client'
 import { WORLD_KEY } from '../../api/queryKeys'
-import type { Greeting, Snapshot } from '../../api/types'
+import type { Greeting, MissionCard, Snapshot } from '../../api/types'
 import { AppShell, PageHeading } from '../../components/AppShell'
 import { Backdrop } from '../../components/Backdrop'
 import { Button } from '../../components/Button'
+import { buttonClasses } from '../../components/buttonClasses'
 import { InlineNotice } from '../../components/InlineNotice'
 import { MayaPortrait } from '../../components/Maya'
 import { Skeleton } from '../../components/Skeleton'
 import { SkillBar } from '../../components/SkillBar'
 import { plural } from '../../lib/format'
-import type { CheckInState } from '../auth/session'
+import { useConfig, type CheckInState } from '../auth/session'
 import { MissionCardView } from './MissionCardView'
 
 export function WorldPage() {
   const world = useQuery({ queryKey: WORLD_KEY, queryFn: () => api.world() })
   const arrival = (useLocation().state as CheckInState | null) ?? {}
+  const demoMode = useConfig().data?.demo_mode === true
 
   return (
     <AppShell>
@@ -61,6 +63,7 @@ export function WorldPage() {
           <div>
             <SnapshotCard snapshot={world.data.snapshot} />
           </div>
+          {demoMode ? <ReplayLink cards={world.data.cards} /> : null}
         </div>
       )}
     </AppShell>
@@ -150,5 +153,21 @@ function WorldSkeleton() {
       </div>
       <Skeleton className="h-64" />
     </div>
+  )
+}
+
+/** Demo mode only (PRODUCT §5.8): a discreet link to the simulated replay of a playable mission. */
+function ReplayLink({ cards }: { cards: MissionCard[] }) {
+  const mission = cards.find((c) => c.state !== 'locked' && c.state !== 'in_preparation')
+  if (!mission) return null
+  return (
+    <p className="lg:col-span-2">
+      <Link
+        to={`/replay?mission=${encodeURIComponent(mission.mission_id)}`}
+        className={buttonClasses('ghost', 'md', 'px-0 text-fog-200')}
+      >
+        Watch a simulated run
+      </Link>
+    </p>
   )
 }

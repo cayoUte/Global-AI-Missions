@@ -124,3 +124,29 @@ test('teacher: the seeded class with both students, read-only', async ({ page },
   await expect(table.getByRole('link')).toHaveCount(0) // no drill-in (PD-030)
   if (testInfo.project.name === 'mobile-360') await expectNoHorizontalScroll(page)
 })
+
+test('simulated replay (demo mode): profile A2, seed 7 → 10 checkpoints and an ending', async ({
+  page,
+}, testInfo) => {
+  // PRODUCT §5.8: a simulated student, never answer content. Keyboard only.
+  await checkIn(page, 'new@globalai.test')
+  await tabTo(page, page.getByRole('link', { name: 'Watch a simulated run' }))
+  await page.keyboard.press('Enter')
+  await expect(page).toHaveURL(/\/replay\?mission=the-last-train$/)
+  await expect(page.getByRole('heading', { level: 1, name: 'Simulated run' })).toBeVisible()
+  await expect(page.getByRole('radio', { name: 'A2', exact: true })).toBeChecked()
+  await tabTo(page, page.getByLabel('Seed'))
+  await page.keyboard.press('ControlOrMeta+a')
+  await page.keyboard.type('7')
+  const simulated = page.waitForResponse((r) => r.url().includes('/simulate?profile=A2&seed=7'))
+  await tabTo(page, page.getByRole('button', { name: 'Run simulation' }))
+  await page.keyboard.press('Enter')
+  expect((await simulated).status()).toBe(200)
+  await expect(page.getByRole('heading', { level: 2, name: /^Ending reached: / })).toBeVisible()
+  await tabTo(page, page.getByRole('button', { name: 'Show all' }))
+  await page.keyboard.press('Enter')
+  const path = page.getByRole('list', { name: 'Simulated path' })
+  await expect(path.getByText(/^(Understood|Missed)$/)).toHaveCount(10)
+  await expect(path.getByRole('listitem').last()).toContainText('Ending')
+  if (testInfo.project.name === 'mobile-360') await expectNoHorizontalScroll(page)
+})

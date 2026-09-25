@@ -13,6 +13,8 @@ import type {
   LoginRequest,
   ProgressResponse,
   Report,
+  SimulationProfile,
+  SimulationResponse,
   StateView,
   UserView,
   WorldResponse,
@@ -34,6 +36,8 @@ export interface ApiClient {
   report(attemptId: string): Promise<Report>
   teacherClasses(): Promise<ClassesResponse>
   classProgress(classId: string): Promise<ClassProgressResponse>
+  /** Demo mode only (404 otherwise): one seeded run of the simulated student, no answer content. */
+  simulate(missionId: string, profile: SimulationProfile, seed: number): Promise<SimulationResponse>
 }
 
 const id = (value: string) => encodeURIComponent(value)
@@ -58,6 +62,10 @@ export const realClient: ApiClient = {
   report: (attemptId) => request(`/api/attempts/${id(attemptId)}/report`),
   teacherClasses: () => request('/api/teacher/classes'),
   classProgress: (classId) => request(`/api/teacher/classes/${id(classId)}/progress`),
+  simulate: (missionId, profile, seed) =>
+    request(
+      `/api/missions/${id(missionId)}/simulate?profile=${id(profile)}&seed=${id(String(seed))}`,
+    ),
 }
 
 const useMock = import.meta.env.DEV && import.meta.env.VITE_API_MOCK === 'true'
@@ -88,4 +96,5 @@ export const api: ApiClient = {
   report: async (attemptId) => (await client()).report(attemptId),
   teacherClasses: async () => (await client()).teacherClasses(),
   classProgress: async (classId) => (await client()).classProgress(classId),
+  simulate: async (missionId, profile, seed) => (await client()).simulate(missionId, profile, seed),
 }

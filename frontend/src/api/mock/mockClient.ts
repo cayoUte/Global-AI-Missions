@@ -3,7 +3,7 @@
 // the story forward. Excluded from production builds (see ../client.ts).
 import { ApiError } from '../http'
 import type { ApiClient } from '../client'
-import type { StateView, UserView } from '../types'
+import type { SimulationStep, StateView, UserView } from '../types'
 import {
   MOCK_CLASS_PROGRESS,
   MOCK_CLASSES,
@@ -81,7 +81,25 @@ function moveOn(attempt: MockAttempt) {
 export const mockClient: ApiClient = {
   async config() {
     await delay()
-    return { demo_mode: false, demo_accounts: null, demo_password: null }
+    // Demo mode on, so the demo panel and the simulated replay can be built without a backend.
+    return {
+      demo_mode: true,
+      demo_accounts: [
+        {
+          email: 'student@mock.test',
+          display_name: 'Mock',
+          role: 'student',
+          purpose: 'Mock student.',
+        },
+        {
+          email: 'teacher@mock.test',
+          display_name: 'Mock',
+          role: 'teacher',
+          purpose: 'Mock teacher.',
+        },
+      ],
+      demo_password: 'mock',
+    }
   },
   async login(body) {
     await delay()
@@ -171,5 +189,41 @@ export const mockClient: ApiClient = {
     if (classId !== MOCK_CLASS_PROGRESS.class_id)
       throw new ApiError(404, 'NOT_FOUND', 'mock: unknown class', null)
     return MOCK_CLASS_PROGRESS
+  },
+  async simulate(missionId, profile, seed) {
+    await delay(600)
+    requireUser()
+    if (missionId !== MOCK_MISSION.id)
+      throw new ApiError(404, 'NOT_FOUND', 'mock: unknown mission', null)
+    // Walk the mock story; outcomes are a placeholder pattern from the seed (never a judgement).
+    const steps: SimulationStep[] = []
+    let nodeId: string | null = 'intro'
+    let minutesLeft = 18
+    let checkpoints = 0
+    while (nodeId) {
+      const entry: (typeof MOCK_NODES)[string] = MOCK_NODES[nodeId]
+      const checkpoint = entry.node.kind === 'checkpoint'
+      if (checkpoint) checkpoints += 1
+      steps.push({
+        seq: steps.length + 1,
+        node_id: entry.node.id,
+        kind: entry.node.kind,
+        clock: clockFor(minutesLeft),
+        outcome: checkpoint ? ((seed + checkpoints) % 3 === 0 ? 'missed' : 'understood') : null,
+        maya_decision: 'quiet',
+        maya_mood: 'curious',
+      })
+      minutesLeft -= entry.minutes
+      nodeId = entry.next
+    }
+    const ending = MOCK_NODES.end.node.ending ?? { key: 'made_it', title: 'Made It' }
+    return {
+      mission_id: missionId,
+      profile,
+      seed,
+      steps,
+      ending,
+      story_minutes_used: 18 - minutesLeft,
+    }
   },
 }

@@ -6,6 +6,7 @@ import { CheckInPage } from '../features/auth/CheckInPage'
 import { RequireRole, SessionWatcher } from '../features/auth/guards'
 import { MissionPlayerPage } from '../features/mission/MissionPlayerPage'
 import { ProgressPage } from '../features/progress/ProgressPage'
+import { ReplayPage } from '../features/replay/ReplayPage'
 import { ReportPage } from '../features/report/ReportPage'
 import { TeacherPage } from '../features/teacher/TeacherPage'
 import { WorldPage } from '../features/world/WorldPage'
@@ -55,6 +56,14 @@ export function AppRoutes() {
           element={
             <RequireRole roles={['teacher', 'admin']}>
               <TeacherPage />
+            </RequireRole>
+          }
+        />
+        <Route
+          path="/replay"
+          element={
+            <RequireRole roles={['student', 'teacher', 'admin']}>
+              <ReplayPage />
             </RequireRole>
           }
         />
