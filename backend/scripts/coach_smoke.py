@@ -2,6 +2,7 @@
 
     cd backend && uv run python scripts/coach_smoke.py
     cd backend && uv run python scripts/coach_smoke.py --scenario new_student
+    cd backend && uv run python scripts/coach_smoke.py --list-models   # OpenAI-compatible only
 
 Reads the provider exactly like the app (COACH_PROVIDER and its variables from the environment or
 the repo-root .env, see .env.example) and calls it DIRECTLY, not through the service's fallback,
@@ -71,9 +72,40 @@ def _describe_failure(exc: CoachProviderError, secrets: list[str]) -> list[str]:
     return lines
 
 
+def _list_models(settings: Any, secrets: list[str]) -> int:
+    """GET {OPENAI_COMPAT_BASE_URL}/models with the configured key; prints one id per line."""
+    base_url = str(getattr(settings, "openai_compat_base_url", None) or "").strip().rstrip("/")
+    key = _secret(getattr(settings, "openai_compat_api_key", None))
+    if not base_url or not key:
+        print("Set OPENAI_COMPAT_BASE_URL and OPENAI_COMPAT_API_KEY first.", file=sys.stderr)
+        return 2
+    try:
+        response = httpx.get(
+            f"{base_url}/models", headers={"Authorization": f"Bearer {key}"}, timeout=10
+        )
+        response.raise_for_status()
+        ids = sorted(str(m.get("id")) for m in response.json().get("data", []))
+    except (httpx.HTTPError, ValueError) as exc:
+        message = str(exc)
+        for secret in secrets:
+            message = message.replace(secret, "***")
+        print(f"FAILED: could not list models: {message}", file=sys.stderr)
+        return 1
+    print(f"{len(ids)} models available at {base_url}:")
+    for model_id in ids:
+        print(f"  {model_id}")
+    print("Pick a chat model (not whisper, tts, guard or embedding) for OPENAI_COMPAT_MODEL.")
+    return 0
+
+
 def main(argv: list[str] | None = None, settings: Any | None = None) -> int:
     parser = argparse.ArgumentParser(description="One live call to the configured coach LLM.")
     parser.add_argument("--scenario", choices=sorted(SCENARIOS), default="veteran")
+    parser.add_argument(
+        "--list-models",
+        action="store_true",
+        help="list the model ids your OPENAI_COMPAT key can use (GET {base_url}/models) and exit",
+    )
     args = parser.parse_args(argv)
     logging.basicConfig(level=logging.WARNING, format="%(levelname)s %(name)s: %(message)s")
 
@@ -89,6 +121,8 @@ def main(argv: list[str] | None = None, settings: Any | None = None) -> int:
         )
         if s
     ]
+    if args.list_models:
+        return _list_models(settings, secrets)
     provider = create_provider(settings)
     if provider.provider == "mock":
         print(
